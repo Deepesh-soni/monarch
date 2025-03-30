@@ -1,5 +1,4 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
-import Metrics from "../metrics";
 
 /**
  * Reference: https://nextjs.org/docs/basic-features/font-optimization
@@ -47,14 +46,6 @@ class MyDocument extends Document {
             href="/assets/images/favicon.svg"
           />
           <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
-          {/* <link
-            rel="preload"
-            fetchpriority="high"
-            as="image"
-            href=""
-            type="image/png"
-          /> */}
-          <Metrics />
         </Head>
         <body>
           <Main />
