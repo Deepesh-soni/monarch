@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "paths": {
+      "@*": ["./src/*"],
+      "@public/*": ["./public/*"],
+      "@images/*": ["./public/assets/images/*"],
+      "@constants/*": ["./src/constants/*"],
+      "@layout/*": ["./src/layout/*"],
+      "@components/*": ["./src/Components/*"],
+      "@common/*": ["./src/Components/common/*"],
+      "@redux/*": ["./src/redux/*"],
+      "@metadata/*": ["./src/metaData/*"],
+      "@HOC/*": ["./src/HOC/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@axiosClient": ["./src/services/axiosClient"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/index.jsx"],
+  "exclude": ["node_modules"]
+}
