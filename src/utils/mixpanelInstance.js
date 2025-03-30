@@ -41,7 +41,6 @@ export class MixpanelTracker {
   };
 
   trackEvent = ({ event, payload = {} }) => {
-    mixpanel.track(event, payload);
     if (process.env.NEXT_PUBLIC_ENV !== "production") {
       console.log("TRACK EVENT", event, payload);
     }
