@@ -2,16 +2,13 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Bugsnag from "@bugsnag/js";
 import { toast } from "react-toastify";
-
-import { URL } from "@constants/urls";
-import { client } from "@axiosClient";
-// import Image from "next/image";
-import Link from "next/link";
-import FlexBox from "@common/UI/FlexBox";
-import { H1, H3, H5, Display, Body1 } from "@common/UI/Headings";
-import { device } from "@common/UI/Responsive";
-import { PRIMARY_900 } from "@common/UI/colors";
 import { FaSearch } from "react-icons/fa";
+import Link from "next/link";
+
+import { client } from "@axiosClient";
+import FlexBox from "@common/UI/FlexBox";
+import { Display, Body1, H1 } from "@common/UI/Headings";
+import { device } from "@common/UI/Responsive";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -26,6 +23,15 @@ const Wrapper = styled(FlexBox)`
     gap: 2.5rem;
     width: 86.67%;
   }
+`;
+
+const CustomH1 = styled(Display)`
+  font-family: Montserrat;
+  font-weight: 500;
+  font-size: 91.31px;
+  line-height: 100%;
+  letter-spacing: -5%;
+  text-align: center;
 `;
 
 const Nav = styled.nav`
@@ -92,16 +98,18 @@ const Image = styled.img`
   height: 100%;
 `;
 
-const SearchContainer = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: 500px;
-  padding: 10px 15px;
-  border: 1px solid #ccc;
-  border-radius: 25px;
-  background: white;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+const Stocks = styled.img`
+  width: 304px;
+  height: 108px;
+`;
+
+const SearchContainer = styled(FlexBox)`
+  width: 806px;
+  gap: 16px;
+  border-radius: 18px;
+  border-width: 1px;
+  padding: 12px 16px;
+  border: 1px solid #687792;
 `;
 
 const SearchIcon = styled(FaSearch)`
@@ -162,59 +170,19 @@ const Card = styled(FlexBox)`
   padding: 16px;
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  gap: 8px;iii
+  gap: 8px;
 `;
 
 const Hr = styled.hr`
   width: 100%;
 `;
 
+const TextWrapper = styled(FlexBox)`
+  max-width: 695px;
+`;
+
 const Home = () => {
   const [filter, setFilter] = useState("all");
-  // const [gainer, setGainer] = useState([]);
-  // const [losers, setLosers] = useState([]);
-
-  // const getGainers = async () => {
-  //   try {
-  //     const response = await client.get(
-  //       "http://iosskwk0k8cgkcs8k0o80wc8.188.165.196.11.sslip.io/default/gainers"
-  //     );
-  //     console.log(response?.data, "response");
-  //     setGainer(response?.data?.results);
-  //   } catch (error) {
-  //     toast.error("Failed to load gainers");
-  //     if (Bugsnag) {
-  //       Bugsnag.notify(error);
-  //     } else {
-  //       console.error("Bugsnag not initialized:", error);
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getGainers();
-  // }, []);
-
-  // const getLosers = async () => {
-  //   try {
-  //     const response = await client.get(
-  //       "http://iosskwk0k8cgkcs8k0o80wc8.188.165.196.11.sslip.io/default/losers"
-  //     );
-  //     console.log(response?.data, "response");
-  //     setLosers(response?.data?.results);
-  //   } catch (error) {
-  //     toast.error("Failed to load gainers");
-  //     if (Bugsnag) {
-  //       Bugsnag.notify(error);
-  //     } else {
-  //       console.error("Bugsnag not initialized:", error);
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getLosers();
-  // }, []);
 
   const [stocks, setStocks] = useState([]);
 
@@ -244,11 +212,17 @@ const Home = () => {
   useEffect(() => {
     fetchStocks(filter);
   }, [filter]);
+
   return (
     <Wrapper>
       <Nav>
         <LogoContainer>
-          <Image alt="Monarch Logo" width={120} height={40} />
+          <Image
+            src="/assets/logo.svg"
+            alt="Monarch Logo"
+            width={120}
+            height={40}
+          />
         </LogoContainer>
         <NavLinks>
           <NavLink href="#">News</NavLink>
@@ -260,14 +234,19 @@ const Home = () => {
           <SignupButton>Sign up</SignupButton>
         </AuthButtons>
       </Nav>
-      <FlexBox width="100%" height="100%">
-        <Image
-          src="/projectImage.png"
-          alt="Monarch Logo"
-          width="100%"
-          height="100%"
-        />
+      <FlexBox column width="100%" align="center" justify="center">
+        <CustomH1>Discover & Analyze</CustomH1>
+        <FlexBox>
+          <Stocks src="/assets/home/stocks.svg" alt="Monarch Logo" />
+          <CustomH1>like never before</CustomH1>
+        </FlexBox>
       </FlexBox>
+      <TextWrapper>
+        <H1 textAlign="center">
+          Advanced stock screening, real-time analysis, and powerful tools to
+          make informed investment decisions
+        </H1>
+      </TextWrapper>
       <SearchContainer>
         <SearchIcon />
         <SearchInput
