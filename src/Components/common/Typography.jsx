@@ -38,3 +38,28 @@ export const H3 = typographyFactory("h3", "32px");
 export const H4 = typographyFactory("h4", "28px");
 export const H5 = typographyFactory("h5", "24px", "-2%");
 export const H6 = typographyFactory("h6", "20px", "-2%");
+
+export const Large = styled.p`
+  ${commonStyles}
+  font-size: 18px;
+  line-height: 145%;
+  letter-spacing: -4%;
+`;
+export const Medium = styled.p`
+  ${commonStyles}
+  font-size: 16px;
+  line-height: 145%;
+  letter-spacing: -4%;
+`;
+export const Small = styled.p`
+  ${commonStyles}
+  font-size: 14px;
+  line-height: 145%;
+  letter-spacing: -4%;
+`;
+export const XSmall = styled.p`
+  ${commonStyles}
+  font-size: 12px;
+  line-height: 145%;
+  letter-spacing: -4%;
+`;
