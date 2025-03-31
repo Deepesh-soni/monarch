@@ -95,6 +95,7 @@ const Card = styled(FlexBox)`
   border: 1px solid #ebf0f4;
   box-shadow: 0px 3px 3px 0px #00000040;
   padding: 0.5rem;
+  column-gap: 1rem;
 `;
 
 const Hr = styled.hr`
@@ -119,7 +120,13 @@ const index = () => {
           <SignupButton>Sign up</SignupButton>
         </AuthButtons>
       </Nav>
-      <FlexBox width="100%" height="100%" backgroundColor="#142C8E0D" column>
+      <FlexBox
+        width="100%"
+        height="100%"
+        backgroundColor="#142C8E0D"
+        column
+        columnGap="1rem"
+      >
         <FlexBox align="center" justify="space-between">
           <FlexBox columnGap="16px">
             <Support>Popular</Support>
@@ -140,7 +147,7 @@ const index = () => {
           <FlexBox>
             <img src="/imagesecond.svg"></img>
           </FlexBox>
-          <FlexBox column rowGap="18px" padding="1rem">
+          <FlexBox column rowGap="15px" padding="1rem">
             <Support>Market Insights</Support>
             <Body1>
               Market Analysis: Tech Stocks Rally Amid Strong Earnings Reports
