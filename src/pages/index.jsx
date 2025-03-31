@@ -1,29 +1,8 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
 import Meta from "@layout/Meta";
 
 import MerchantPage from "@components/LandingPage";
-import { trackEvent } from "@utils/helper";
 
 export default function Home() {
-  const user = useSelector(state => state.auth.user);
-  const storeId = useSelector(state => state.auth.storeId);
-
-  const router = useRouter();
-
-  useEffect(() => {
-    trackEvent("home_page_load");
-  }, []);
-
-  useEffect(() => {
-    if (user && storeId) {
-      router.replace("/dashboard/general");
-    } else if (user && !storeId) {
-      router.replace("/my-stores");
-    }
-  }, [user]);
-
   return (
     <>
       <Meta
