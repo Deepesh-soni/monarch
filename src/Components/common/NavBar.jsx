@@ -4,9 +4,11 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 import FlexBox from "@common/UI/FlexBox";
+import SearchableDropdown from "@Components/Search/SearchDropdownCmp";
 
 const Navbar = styled.nav`
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   width: 100%;
@@ -50,18 +52,24 @@ const NavBar = () => {
       <LogoContainer>
         <img src="/assets/logo.svg" alt="Logo" width={120} height={40} />
       </LogoContainer>
-      <FlexBox columnGap="20px">
+
+      {/* Center: Search */}
+      <div style={{ flex: 1, maxWidth: "600px", margin: "0 40px" }}>
+        <SearchableDropdown width="100%" onChange={(item) => router.push(`/stocks/${item.fqn}`)} />
+      </div>
+
+      {/* Right Side */}
+      <FlexBox columnGap="20px" align="center">
         <NavLink href="/news">News</NavLink>
         <NavLink href="/screens">Screens</NavLink>
         <NavLink href="/watch-list">Watchlist</NavLink>
-      </FlexBox>
-      <FlexBox columnGap="10px">
         <Button onClick={() => router.push("/auth/login")}>Log in</Button>
         <Button primary onClick={() => router.push("/auth/signup")}>
           Sign up
         </Button>
       </FlexBox>
     </Navbar>
+
   );
 };
 
