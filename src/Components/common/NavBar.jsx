@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 import FlexBox from "@common/UI/FlexBox";
-import SearchableDropdown from "@Components/Search/SearchDropdownCmp";
+import SearchableDropdown from "./UI/Search/SearchDropdownCmp";
 
 const Navbar = styled.nav`
   display: flex;
@@ -50,7 +50,9 @@ const NavBar = () => {
   return (
     <Navbar>
       <LogoContainer>
-        <img src="/assets/logo.svg" alt="Logo" width={120} height={40} />
+        <Link href="/" passHref>
+          <img src="/assets/logo.svg" alt="Logo" width={120} height={40} style={{ cursor: "pointer" }} />
+        </Link>
       </LogoContainer>
 
       {/* Center: Search */}

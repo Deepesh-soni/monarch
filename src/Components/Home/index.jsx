@@ -7,7 +7,7 @@ import Navbar from "@common/Navbar";
 import StocksGrid from "./StockGrid";
 import { Display, Body1, H1 } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
-import SearchableDropdown from "@Components/Search/SearchDropdownCmp";
+import SearchableDropdown from "@Components/common/UI/Search/SearchDropdownCmp";
 import { useRouter } from 'next/router';
 
 const Wrapper = styled.div`

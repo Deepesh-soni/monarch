@@ -13,6 +13,7 @@ import { WebSocketProvider } from "../../webSocket";
 import { URL } from "@constants/urls";
 import Bugsnag from "@bugsnag/js";
 import { client } from "@axiosClient";
+import RouteLoader from "../Components/common/UI/RouterLoader";
 
 function App({ Component, pageProps }) {
   useEffect(() => {
@@ -32,6 +33,7 @@ function App({ Component, pageProps }) {
           <CustomToastContainer />
           <StyledComponentsRegistry>
             <WebSocketProvider>
+              <RouteLoader />
               <Component {...pageProps} />
             </WebSocketProvider>
           </StyledComponentsRegistry>
