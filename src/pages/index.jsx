@@ -1,38 +1,12 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
 import Meta from "@layout/Meta";
+import Home from "@components/Home";
 
-import MerchantPage from "@components/LandingPage";
-import { trackEvent } from "@utils/helper";
-
-export default function Home() {
-  const user = useSelector(state => state.auth.user);
-  const storeId = useSelector(state => state.auth.storeId);
-
-  const router = useRouter();
-
-  useEffect(() => {
-    trackEvent("home_page_load");
-  }, []);
-
-  useEffect(() => {
-    if (user && storeId) {
-      router.replace("/dashboard/general");
-    } else if (user && !storeId) {
-      router.replace("/my-stores");
-    }
-  }, [user]);
-
+export default function HomePage() {
   return (
     <>
-      <Meta
-        title="Partner with Pamprazzi! Access Tools & Support for Salon Owners"
-        description="List your salon, effortlessly attract clients, and access powerful tools for managing your salon, marketing, and enhancing client interactions. Sign up for free today!"
-        keywords="salon management software, salon dashboard, salon crm, online appointment booking, salon staff, salon business tools, enhance salon visibility, pamprazzi partner platform"
-      />
+      <Meta title="" description="" keywords="" />
       <main>
-        <MerchantPage />
+        <Home />
       </main>
     </>
   );
