@@ -7,6 +7,8 @@ import Navbar from "@common/Navbar";
 import StocksGrid from "./StockGrid";
 import { Display, Body1, H1 } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
+import SearchableDropdown from "@Components/Search/SearchDropdownCmp";
+import { useRouter } from 'next/router';
 
 const Wrapper = styled.div`
   background: url("/assets/home/page-bg.png");
@@ -52,6 +54,13 @@ const TextWrapper = styled(FlexBox)`
 `;
 
 const Home = () => {
+
+  const router = useRouter();
+
+  const handleSearchSelect = (value) => {
+    router.push(`/stocks/${value.fqn}`);
+  }
+
   return (
     <Wrapper>
       <Container>
@@ -74,14 +83,9 @@ const Home = () => {
             make informed investment decisions
           </H1>
         </TextWrapper>
-        <SearchBar>
-          <FaSearch color="#888" />
-          <input
-            type="text"
-            placeholder="Search stocks, create screens.."
-            style={{ flex: 1, border: "none", outline: "none" }}
-          />
-        </SearchBar>
+        <div style={{ width: "100%", maxWidth: "806px" }}>
+          <SearchableDropdown width="100%" onChange={handleSearchSelect} />
+        </div>
         <FlexBox column align="center">
           <Display>Discover Trending Stocks</Display>
           <Body1 color="#687792">
