@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import Link from "next/link";
 import FlexBox from "@common/UI/FlexBox";
-import { Body1, Support } from "@common/UI/Headings";
+import { Body1, Support, H1 } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
 import { IoMdAdd } from "react-icons/io";
 import { CiExport } from "react-icons/ci";
@@ -75,6 +75,7 @@ const BusinessSectionLeft = styled(FlexBox)`
   border-radius: 12px;
   padding: 0.5rem;
   flex-direction: column;
+  gap: 1rem;
 `;
 
 const BusinessSectionRight = styled(FlexBox)`
@@ -83,7 +84,59 @@ const BusinessSectionRight = styled(FlexBox)`
   border-radius: 12px;
   padding: 0.5rem;
   flex-direction: column;
+  gap: 1rem;
 `;
+
+const TableContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 2rem;
+`;
+
+const Table = styled.div`
+  width: 100%;
+  border: 1px solid #3c3c3c;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fff;
+`;
+
+const StyledTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+`;
+
+const TableHeader = styled.th`
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: bold;
+  border-right: 2px solid;
+`;
+
+const TableRow = styled.tr``;
+
+const TableCell = styled.td`
+  padding: 0.75rem;
+`;
+
+const financialData = {
+  "Profit & Loss": [
+    { metric: "Book Value", values: [1287, 1287, 1287] },
+    { metric: "EPS", values: [1287, 1287, 1287] },
+    { metric: "Net Profit", values: [1287, 1287, 1287] },
+    { metric: "Operating Profit", values: [1287, 1287, 1287] },
+    { metric: "Revenue", values: [1287, 1287, 1287] },
+  ],
+  "Balance Sheet": [
+    { metric: "Cash & Equivalents", values: [1287, 1287, 1287] },
+    { metric: "Debt", values: [1287, 1287, 1287] },
+    { metric: "Net Worth", values: [1287, 1287, 1287] },
+    { metric: "Total Assets", values: [1287, 1287, 1287] },
+    { metric: "Total Liabilities", values: [1287, 1287, 1287] },
+  ],
+};
 
 const pagesix = () => {
   return (
@@ -175,9 +228,14 @@ const pagesix = () => {
             consectetur adipiscing elit, sed do eiusmod tempor incididunt ut.
           </Body1>
           <ul>
-            <li>Coffee</li>
-            <li>Tea</li>
-            <li>Milk</li>
+            <li>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut
+            </li>
+            <li>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut
+            </li>
           </ul>
           <Body1>
             Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quam, quis
@@ -188,8 +246,78 @@ const pagesix = () => {
         </BusinessSectionLeft>
         <BusinessSectionRight>
           <Body1 bold>APART Insights</Body1>
+          <Body1>
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quam, quis
+            optio minus sunt dignissimos hic laborum vel aut voluptatem ab
+            provident, officiis dolorum quod rem similique placeat? Architecto,
+            magni. Consectetur.
+          </Body1>
+          <Body1 bold>Strengths & Moat:</Body1>
+          <ul>
+            <li>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut
+            </li>
+            <li>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut
+            </li>
+          </ul>
+          <Body1 bold>Risks & Threats</Body1>
+          <ul>
+            <li>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut
+            </li>
+            <li>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut
+            </li>
+          </ul>
         </BusinessSectionRight>
       </Section>
+
+      <FlexBox column width="100%">
+        <H1 bold>Financial Fundamentals</H1>
+        <TableContainer>
+          {Object.entries(financialData).map(([section, data]) => (
+            <div key={section} style={{ width: "48%" }}>
+              <Body1 bold>{section}</Body1>
+              <Table>
+                <StyledTable>
+                  <thead>
+                    <tr>
+                      <TableHeader>Evaluation Metrics</TableHeader>
+                      <TableHeader>Mar 2022</TableHeader>
+                      <TableHeader>Mar 2023</TableHeader>
+                      <TableHeader>Mar 2024</TableHeader>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.map(row => (
+                      <TableRow key={row.metric}>
+                        <TableCell>{row.metric}</TableCell>
+                        {row.values.map((value, index) => (
+                          <TableCell key={index}>{value}</TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </tbody>
+                </StyledTable>
+              </Table>
+            </div>
+          ))}
+        </TableContainer>
+      </FlexBox>
+      <FlexBox width="100%" column>
+        <H1 bold>Cash Counter</H1>
+        <FlexBox padding="1rem 2rem" width="100%" justify="space-between">
+          <Support bold>Cash Flow from Investing Activities</Support>
+          <Support bold>Cash Flow from Investing Activities</Support>
+          <Support bold>Cash Flow from Investing Activities</Support>
+          <Support bold>Cash Flow from Investing Activities</Support>
+        </FlexBox>
+      </FlexBox>
     </Wrapper>
   );
 };

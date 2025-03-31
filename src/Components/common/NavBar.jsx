@@ -22,9 +22,9 @@ const Navbar = styled.nav`
   max-width: 75rem;
 `;
 
-const LogoContainer = styled(Link)`
-  text-decoration: none;
-  cursor: pointer;
+const LogoContainer = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const NavLink = styled(Link)`
