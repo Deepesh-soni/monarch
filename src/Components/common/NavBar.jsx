@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useRouter } from "next/router";
 import Link from "next/link";
 
 import FlexBox from "@common/UI/FlexBox";
@@ -42,21 +43,26 @@ const Button = styled.button`
   }
 `;
 
-const NavBar = () => (
-  <Navbar>
-    <LogoContainer>
-      <img src="/assets/logo.svg" alt="Logo" width={120} height={40} />
-    </LogoContainer>
-    <FlexBox columnGap="20px">
-      <NavLink href="#">News</NavLink>
-      <NavLink href="#">Screens</NavLink>
-      <NavLink href="#">Watchlist</NavLink>
-    </FlexBox>
-    <FlexBox columnGap="10px">
-      <Button>Log in</Button>
-      <Button primary>Sign up</Button>
-    </FlexBox>
-  </Navbar>
-);
+const NavBar = () => {
+  const router = useRouter();
+  return (
+    <Navbar>
+      <LogoContainer>
+        <img src="/assets/logo.svg" alt="Logo" width={120} height={40} />
+      </LogoContainer>
+      <FlexBox columnGap="20px">
+        <NavLink href="#">News</NavLink>
+        <NavLink href="#">Screens</NavLink>
+        <NavLink href="#">Watchlist</NavLink>
+      </FlexBox>
+      <FlexBox columnGap="10px">
+        <Button onClick={() => router.push("/auth/login")}>Log in</Button>
+        <Button primary onClick={() => router.push("/auth/signup")}>
+          Sign up
+        </Button>
+      </FlexBox>
+    </Navbar>
+  );
+};
 
 export default NavBar;
