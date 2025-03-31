@@ -29,7 +29,6 @@ const AddWatchListModal = ({
   cancelButtonText = "Cancel",
   confirmButtonText = "Create Watchlist",
   onConfirm = () => {},
-  onCancel = () => {},
 }) => {
   const [watchlistName, setWatchlistName] = useState("");
   const [description, setDescription] = useState("");
@@ -93,7 +92,7 @@ const AddWatchListModal = ({
             onChange={e => setDescription(e.target.value)}
           />
           <ButtonWrapper>
-            <Button outline onClick={onCancel} disabled={loading}>
+            <Button outline onClick={toggleModal} disabled={loading}>
               {cancelButtonText}
             </Button>
             <Button onClick={handleCreateWatchlist} disabled={loading}>
