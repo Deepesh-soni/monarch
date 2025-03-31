@@ -23,12 +23,9 @@ export const client = createAxiosClient({
   options: {
     baseURL: BASE_URL,
     timeout: 300000,
+    withCredentials: true, // Enables cookies/auth headers
     headers: {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*", // Replace '*' with the specific origin you want to allow
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS", // Specify the allowed HTTP methods
-      "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token", // Specify the allowed headers
-      "Access-Control-Allow-Credentials": true, // Set to true if you're sending credentials (e.g., cookies, HTTP authentication) with the request
     },
   },
   getCurrentAccessToken,
@@ -37,3 +34,4 @@ export const client = createAxiosClient({
   logout: terminateSession,
   setRefreshTokens,
 });
+

@@ -14,6 +14,13 @@ import { URL } from "@constants/urls";
 import Bugsnag from "@bugsnag/js";
 import { client } from "@axiosClient";
 import RouteLoader from "../Components/common/UI/RouterLoader";
+import SuperTokensReact, { SuperTokensWrapper } from 'supertokens-auth-react'
+import { frontendConfig } from "../Components/common/Auth/SuperTokenConfig";
+
+if (typeof window !== 'undefined') {
+  // we only want to call this init function on the frontend, so we check typeof window !== 'undefined'
+  SuperTokensReact.init(frontendConfig())
+}
 
 function App({ Component, pageProps }) {
   useEffect(() => {
@@ -28,17 +35,19 @@ function App({ Component, pageProps }) {
 
   return (
     <ErrorBoundary>
-      <PersistGate loading={null} persistor={persistor}>
-        <QueryParamProvider adapter={NextAdapter}>
-          <CustomToastContainer />
-          <StyledComponentsRegistry>
-            <WebSocketProvider>
-              <RouteLoader />
-              <Component {...pageProps} />
-            </WebSocketProvider>
-          </StyledComponentsRegistry>
-        </QueryParamProvider>
-      </PersistGate>
+      <SuperTokensWrapper>
+        <PersistGate loading={null} persistor={persistor}>
+          <QueryParamProvider adapter={NextAdapter}>
+            <CustomToastContainer />
+            <StyledComponentsRegistry>
+              <WebSocketProvider>
+                <RouteLoader />
+                <Component {...pageProps} />
+              </WebSocketProvider>
+            </StyledComponentsRegistry>
+          </QueryParamProvider>
+        </PersistGate>
+      </SuperTokensWrapper>
     </ErrorBoundary>
   );
 }
