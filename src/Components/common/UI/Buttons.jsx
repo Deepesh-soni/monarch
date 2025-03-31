@@ -1,54 +1,38 @@
 import styled, { css } from "styled-components";
-import { IoMdArrowRoundForward } from "react-icons/io";
 import {
-  PRIMARY_800,
   ACCENT_100,
-  PRIMARY_900,
   ACCENT_500,
   ERROR_RED_500,
   ERROR_RED_600,
   ACCENT_0,
-  PRIMARY_400,
-  PRIMARY_500,
-  ACCENT_400,
   ACCENT_800,
   ACCENT_900,
-  BLACK,
 } from "./colors";
-import FlexBox from "./FlexBox";
-
-const InnerWrapper = styled(FlexBox)`
-  align-items: center;
-  justify-content: center;
-  flex-direction: ${({ iconPosition }) =>
-    iconPosition === "right" ? "row-reverse" : "row"};
-  gap: ${({ columnGap }) => columnGap || "0.25rem"};
-`;
 
 export const Button = styled.button`
   box-sizing: border-box;
   display: ${({ block }) => (block ? "block" : "inline")};
-  background-color: ${({ color }) => color || PRIMARY_800};
+  background-color: ${({ color }) => color || "#142C8E"};
   padding: ${({ padding }) => padding || "0.5rem 1rem"};
   color: ${ACCENT_100};
   line-height: 1.25rem;
   min-width: ${({ width }) => !width && "7rem"};
   width: ${({ width }) => (width ? width : "fit-content")};
-  font-family: "Poppins";
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-family: "Montserrat";
+  font-size: 12.5px;
+  font-weight: 600;
   border-radius: 0.625rem;
-  border: 1px solid ${({ color }) => color || PRIMARY_800};
+  border: 1px solid ${({ color }) => color || "#142C8E"};
   overflow: hidden;
-  letter-spacing: 0.07rem;
+  letter-spacing: -2%;
   cursor: pointer;
   text-transform: uppercase;
   white-space: nowrap;
   border-radius: ${({ borderRadius }) => borderRadius || "0.625rem"};
 
   &:hover {
-    background-color: ${({ hoverColor }) => hoverColor || PRIMARY_900};
-    border-color: ${({ hoverColor }) => hoverColor || PRIMARY_900};
+    background-color: ${({ hoverColor }) => hoverColor || "#142C8E"};
+    border-color: ${({ hoverColor }) => hoverColor || "#142C8E"};
   }
 
   /* Danger Button */
@@ -64,13 +48,6 @@ export const Button = styled.button`
         border-color: ${ERROR_RED_600};
         color: ${({ hoverColor }) => hoverColor || ACCENT_0};
       }
-    `}
-
-  ${({ oval }) =>
-    oval &&
-    css`
-      padding: 0.5rem;
-      border-radius: 2rem;
     `}
 
   /* Secondary Button */
@@ -94,61 +71,13 @@ export const Button = styled.button`
     !secondary &&
     css`
       background-color: transparent;
-      color: ${({ color }) => color || PRIMARY_800};
-      border-color: ${PRIMARY_800};
+      color: ${({ color }) => color || "#142C8E"};
+      border-color: "#142C8E";
 
       &:hover {
         background-color: transparent;
-        color: ${({ hoverColor }) => hoverColor || PRIMARY_900};
-        border-color: ${PRIMARY_900};
-      }
-    `}
-
-  /* Outline Secondary Button */
-  ${({ outline, secondary }) =>
-    outline &&
-    secondary &&
-    css`
-      border: 1px solid ${PRIMARY_400};
-      background-color: ${ACCENT_100};
-      color: ${({ color }) => color || PRIMARY_800};
-
-      &:hover {
-        background-color: ${ACCENT_100};
-        color: ${({ hoverColor }) => hoverColor || PRIMARY_900};
-        border-color: ${PRIMARY_500};
-      }
-    `}
-
-  /* Outline Tertiary Button */
-  ${({ outline, tertiary }) =>
-    outline &&
-    tertiary &&
-    css`
-      background-color: transparent;
-      color: ${({ color }) => color || PRIMARY_800};
-      border: 1px solid ${ACCENT_400};
-
-      &:hover {
-        background-color: transparent;
-        color: ${({ hoverColor }) => hoverColor || PRIMARY_900};
-        border-color: ${ACCENT_500};
-      }
-    `}
-
-  /* Outline Danger Button */
-  ${({ outline, danger }) =>
-    outline &&
-    danger &&
-    css`
-      border: 1px solid ${ACCENT_400};
-      background-color: transparent;
-      color: ${({ color }) => color || ERROR_RED_500};
-
-      &:hover {
-        background-color: transparent;
-        color: ${({ hoverColor }) => hoverColor || ERROR_RED_600};
-        border-color: ${ACCENT_400};
+        color: ${({ hoverColor }) => hoverColor || "#142C8E"};
+        border-color: "#142C8E";
       }
     `}
 
@@ -174,7 +103,7 @@ export const Button = styled.button`
     textCta &&
     !secondary &&
     css`
-      color: ${({ color }) => color || PRIMARY_800};
+      color: ${({ color }) => color || "#142C8E"};
       border: none;
       padding: 0.5rem 0rem;
       min-width: unset;
@@ -183,7 +112,7 @@ export const Button = styled.button`
 
       &:hover {
         background-color: transparent;
-        color: ${({ color }) => color || PRIMARY_900};
+        color: ${({ color }) => color || "#142C8E"};
       }
     `}
 
@@ -204,68 +133,4 @@ export const Button = styled.button`
         color: ${({ color }) => color || ACCENT_900};
       }
     `}
-    
-// WhiteButton
-${({ whiteButton }) =>
-    whiteButton &&
-    css`
-      border: 1px solid ${ACCENT_0};
-      background-color: ${ACCENT_0};
-      color: ${({ color }) => color || BLACK};
-
-      &:hover {
-        background-color: ${ACCENT_0};
-        color: ${({ hoverColor }) => hoverColor || BLACK};
-        border-color: ${ACCENT_0};
-      }
-    `}
 `;
-
-/**
- * CTA with an icon on the either side of text.
- * Default icon is `IoMdArrowRoundForward` (Right arrow).
- * @example
- * ```
- * <IconButton color="red" iconPosition = "right" outline Icon={SomeIcon}>CLICK ME</IconButton>
- * ```
- */
-export const IconButton = ({
-  children,
-  iconPosition = "left",
-  spacing = 0,
-  Icon = IoMdArrowRoundForward,
-  strokeWidth = 2,
-  ...props
-}) => (
-  <Button {...props}>
-    <InnerWrapper iconPosition={iconPosition} columnGap={spacing}>
-      <Icon size="1rem" strokeWidth={strokeWidth} />
-      {children}
-    </InnerWrapper>
-  </Button>
-);
-
-/**
- * CTA without background color and border.
- * An icon on the right side of cta text is shown on hover.
- * Default icon is `IoMdArrowRoundForward` (Right arrow).
- *  * @example
- * ```
- * <TextButton color="red" iconPosition = "right" Icon={SomeIcon}>CLICK ME</TextButton>
- * ```
- */
-export const TextButton = ({
-  children,
-  Icon = IoMdArrowRoundForward,
-  iconPosition = "left",
-  ...props
-}) => {
-  return (
-    <Button textCta {...props}>
-      <InnerWrapper iconPosition={iconPosition}>
-        <Icon size="1rem" strokeWidth={2} />
-        {children}
-      </InnerWrapper>
-    </Button>
-  );
-};

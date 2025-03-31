@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { toast } from "react-toastify";
 
 import FlexBox from "@common/UI/FlexBox";
 import { Body1 } from "@common/UI/Headings";
 import { Button } from "@common/UI/Buttons";
 import Modal from "@common/UI/Modal";
-import { SECONDARY_200 } from "@common/UI/colors";
 import Input from "@common/UI/InputBox";
 import { client } from "@axiosClient";
-import { toast } from "react-toastify";
-// import TextArea from "antd/es/input/TextArea";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -17,12 +15,11 @@ const Wrapper = styled(FlexBox)`
 
 const Container = styled(FlexBox)`
   padding: 1rem;
-  border-top: 1px solid ${SECONDARY_200};
-  row-gap: 1.5rem;
+  gap: 0.5rem;
 `;
 
 const ButtonWrapper = styled(FlexBox)`
-  justify-content: center;
+  justify-content: end;
   align-items: center;
   gap: 1rem;
 `;
@@ -71,9 +68,13 @@ const AddWatchListModal = ({
       borderRadius="1rem"
     >
       <Wrapper>
-        <Body1 bold>Create New Watchlist</Body1>
+        <FlexBox padding="0.5rem 1rem">
+          <Body1 bold>Create New Watchlist</Body1>
+        </FlexBox>
         <Container column>
-          <Body1 textAlign="center">Watchlist Name</Body1>
+          <Body1 bold color="#687792">
+            Watchlist Name
+          </Body1>
           <Input
             type="text"
             placeholder="Enter watchlist name"
@@ -81,29 +82,21 @@ const AddWatchListModal = ({
             value={watchlistName}
             onChange={e => setWatchlistName(e.target.value)}
           />
-          <Body1>Description</Body1>
-          {/* <TextArea
+          <Body1 bold color="#687792">
+            Description
+          </Body1>
+          <textarea
             type="text"
             placeholder="Enter description"
             maxLength={2448}
             value={description}
             onChange={e => setDescription(e.target.value)}
-          /> */}
+          />
           <ButtonWrapper>
-            <Button
-              width="100%"
-              outline
-              secondary
-              onClick={onCancel}
-              disabled={loading}
-            >
+            <Button outline onClick={onCancel} disabled={loading}>
               {cancelButtonText}
             </Button>
-            <Button
-              width="100%"
-              onClick={handleCreateWatchlist}
-              disabled={loading}
-            >
+            <Button onClick={handleCreateWatchlist} disabled={loading}>
               {loading ? "Creating..." : confirmButtonText}
             </Button>
           </ButtonWrapper>
