@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import { client } from "@axiosClient";
 import FlexBox from "@common/UI/FlexBox";
 import { Body1 } from "@common/UI/Headings";
+import { useRouter } from 'next/router';
+
 
 const fadeIn = keyframes`
   from {
@@ -83,6 +85,12 @@ const StocksGrid = () => {
   const [stocksData, setStocksData] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const router = useRouter();
+
+  const handleCardClick = (fqn) => {
+    router.push(`/stocks/${fqn}`);
+  };
+
   const fetchStockData = async type => {
     setLoading(true);
     const urls = {
@@ -140,7 +148,11 @@ const StocksGrid = () => {
             const changeColor = isPositive ? "#16a34a" : isNegative ? "#dc2626" : "#6b7280";
 
             return (
-              <StockCard key={index}>
+              <StockCard
+                key={index}
+                onClick={() => handleCardClick(stock.fqn)}
+                style={{ cursor: "pointer" }}
+              >
                 <FlexBox justify="space-between" align="center">
                   <FlexBox column>
                     <Body1 style={{ fontWeight: 600, fontSize: "16px" }}>{stock.companyName}</Body1>

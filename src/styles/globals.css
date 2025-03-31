@@ -1,7 +1,7 @@
 :root {
-  font-family: "Poppins", sans-serif;
-  font-size: 16px;
-  outline: none;
+  --font-family-main: "Poppins", sans-serif;
+  --font-size-base: 16px;
+  --font-color: #333;
 }
 
 @media (max-width: 768px) {
@@ -11,7 +11,6 @@
 }
 
 * {
-  font-family: "Poppins", sans-serif;
   outline: none !important;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -tap-highlight-color: rgba(0, 0, 0, 0);
@@ -19,7 +18,15 @@
   -webkit-appearance: none;
   overflow: -moz-scrollbars-none;
   scrollbar-width: none;
-  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  font-family: inherit;
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
 }
 
 *::-webkit-scrollbar {
@@ -27,9 +34,13 @@
 }
 
 body {
-  box-sizing: border-box;
+  font-family: var(--font-family-main);
+  font-size: var(--font-size-base);
+  color: var(--font-color);
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+  background: #fff;
 }
 
 input[type="number"]::-webkit-outer-spin-button,
@@ -389,6 +400,7 @@ progress {
 .blink {
   animation: blink 1.25s infinite forwards;
 }
+
 .clinic-images-carousel {
   width: 100%;
   max-width: 100%;
@@ -427,55 +439,43 @@ progress {
   /* 
   CSS Gradient - complete browser support from http://www.colorzilla.com/gradient-editor/ 
   */
-  background: -moz-linear-gradient(
-    left,
-    rgba(255, 255, 255, 0) 0%,
-    rgb(168, 190, 141, 0.8) 50%,
-    rgba(128, 186, 232, 0) 99%,
-    rgba(125, 185, 232, 0) 100%
-  );
+  background: -moz-linear-gradient(left,
+      rgba(255, 255, 255, 0) 0%,
+      rgb(168, 190, 141, 0.8) 50%,
+      rgba(128, 186, 232, 0) 99%,
+      rgba(125, 185, 232, 0) 100%);
   /* FF3.6+ */
-  background: -webkit-gradient(
-    linear,
-    left top,
-    right top,
-    color-stop(0%, rgb(168, 190, 141, 0)),
-    color-stop(50%, rgb(168, 190, 141, 0.8)),
-    color-stop(99%, rgba(128, 186, 232, 0)),
-    color-stop(100%, rgba(125, 185, 232, 0))
-  );
+  background: -webkit-gradient(linear,
+      left top,
+      right top,
+      color-stop(0%, rgb(168, 190, 141, 0)),
+      color-stop(50%, rgb(168, 190, 141, 0.8)),
+      color-stop(99%, rgba(128, 186, 232, 0)),
+      color-stop(100%, rgba(125, 185, 232, 0)));
   /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(
-    left,
-    rgb(168, 190, 141, 0) 0%,
-    rgb(168, 190, 141, 0.8) 50%,
-    rgba(128, 186, 232, 0) 99%,
-    rgba(125, 185, 232, 0) 100%
-  );
+  background: -webkit-linear-gradient(left,
+      rgb(168, 190, 141, 0) 0%,
+      rgb(168, 190, 141, 0.8) 50%,
+      rgba(128, 186, 232, 0) 99%,
+      rgba(125, 185, 232, 0) 100%);
   /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(
-    left,
-    rgb(168, 190, 141, 0) 0%,
-    rgb(168, 190, 141, 0.8) 50%,
-    rgba(128, 186, 232, 0) 99%,
-    rgba(125, 185, 232, 0) 100%
-  );
+  background: -o-linear-gradient(left,
+      rgb(168, 190, 141, 0) 0%,
+      rgb(168, 190, 141, 0.8) 50%,
+      rgba(128, 186, 232, 0) 99%,
+      rgba(125, 185, 232, 0) 100%);
   /* Opera 11.10+ */
-  background: -ms-linear-gradient(
-    left,
-    rgb(168, 190, 141, 0) 0%,
-    rgb(168, 190, 141, 0.8) 50%,
-    rgba(128, 186, 232, 0) 99%,
-    rgba(125, 185, 232, 0) 100%
-  );
+  background: -ms-linear-gradient(left,
+      rgb(168, 190, 141, 0) 0%,
+      rgb(168, 190, 141, 0.8) 50%,
+      rgba(128, 186, 232, 0) 99%,
+      rgba(125, 185, 232, 0) 100%);
   /* IE10+ */
-  background: linear-gradient(
-    to right,
-    rgb(168, 190, 141, 0) 0%,
-    rgb(168, 190, 141, 0.8) 50%,
-    rgba(128, 186, 232, 0) 99%,
-    rgba(125, 185, 232, 0) 100%
-  );
+  background: linear-gradient(to right,
+      rgb(168, 190, 141, 0) 0%,
+      rgb(168, 190, 141, 0.8) 50%,
+      rgba(128, 186, 232, 0) 99%,
+      rgba(125, 185, 232, 0) 100%);
   /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ffffff', endColorstr='#007db9e8', GradientType=1);
   /* IE6-9 */
@@ -524,6 +524,7 @@ progress {
   width: 100% !important;
   border: none !important;
 }
+
 .ql-container .ql-snow .ql-editor .ql-blank {
   flex: 1 !important;
   width: 100% !important;
@@ -540,5 +541,5 @@ input:-webkit-autofill:active {
 
 a {
   text-decoration: underline;
-  color: #533A71; 
+  color: #533A71;
 }
