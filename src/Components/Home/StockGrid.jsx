@@ -72,6 +72,12 @@ const SkeletonBox = styled.div`
   border-radius: 4px;
 `;
 
+const formatIndianNumber = num => {
+  if (isNaN(num)) return num;
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+
 const StocksGrid = () => {
   const [filterType, setFilterType] = useState("all");
   const [stocksData, setStocksData] = useState([]);
@@ -121,39 +127,51 @@ const StocksGrid = () => {
       <StockGrid>
         {loading
           ? Array.from({ length: 4 }).map((_, index) => (
+            <StockCard key={index}>
+              <SkeletonBox style={{ height: "48px", width: "48px" }} />
+              <SkeletonBox />
+              <SkeletonBox />
+              <SkeletonBox />
+            </StockCard>
+          ))
+          : stocksData?.slice(0, 4).map((stock, index) => {
+            const isPositive = stock.change > 0;
+            const isNegative = stock.change < 0;
+            const changeColor = isPositive ? "#16a34a" : isNegative ? "#dc2626" : "#6b7280";
+
+            return (
               <StockCard key={index}>
-                <SkeletonBox style={{ height: "48px", width: "48px" }} />
-                <SkeletonBox />
-                <SkeletonBox />
-                <SkeletonBox />
-              </StockCard>
-            ))
-          : stocksData?.slice(0, 4).map((stock, index) => (
-              <StockCard key={index}>
-                <FlexBox align="center">
-                  <img
-                    src="/reliance.svg"
-                    width="48px"
-                    height="48px"
-                    alt="Stock Logo"
-                  />
+                <FlexBox justify="space-between" align="center">
                   <FlexBox column>
-                    <Body1>{stock.companyName}</Body1>
-                    <Body1 color="#687792">{stock.exchange}</Body1>
+                    <Body1 style={{ fontWeight: 600, fontSize: "16px" }}>{stock.companyName}</Body1>
+                    <Body1 style={{ color: "#687792", fontSize: "14px" }}>
+                      {stock.nseListed ? "NSE" : "BSE"}
+                    </Body1>
+                  </FlexBox>
+                  <FlexBox column align="end">
+                    <Body1 style={{ fontWeight: 700, fontSize: "18px" }}>
+                      ₹ {formatIndianNumber(stock.price)}
+                    </Body1>
+                    <Body1 style={{ color: changeColor, fontSize: "14px" }}>
+                      {stock.change > 0 ? "+" : ""}
+                      {stock.change}%
+                    </Body1>
                   </FlexBox>
                 </FlexBox>
-                <FlexBox align="center" justify="space-between">
+
+                <FlexBox justify="space-between" style={{ marginTop: "12px" }}>
                   <FlexBox column>
-                    <Body1>Market Cap</Body1>
-                    <Body1>{stock.mcap}</Body1>
+                    <Body1 style={{ color: "#687792", fontSize: "14px" }}>Mkt. Cap</Body1>
+                    <Body1 style={{ fontSize: "15px" }}>{formatIndianNumber(stock.mcap)} Cr.</Body1>
                   </FlexBox>
                   <FlexBox column>
-                    <Body1>Volume</Body1>
-                    <Body1>{stock.volume}</Body1>
+                    <Body1 style={{ color: "#687792", fontSize: "14px" }}>Volume</Body1>
+                    <Body1 style={{ fontSize: "15px" }}>{formatIndianNumber(stock.volume)}</Body1>
                   </FlexBox>
                 </FlexBox>
               </StockCard>
-            ))}
+            );
+          })}
       </StockGrid>
     </>
   );
