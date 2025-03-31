@@ -1,4 +1,10 @@
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import Bugsnag from "@bugsnag/js";
+import { toast } from "react-toastify";
+
+import { URL } from "@constants/urls";
+import { client } from "@axiosClient";
 // import Image from "next/image";
 import Link from "next/link";
 import FlexBox from "@common/UI/FlexBox";
@@ -103,6 +109,15 @@ const SearchIcon = styled(FaSearch)`
   margin-right: 10px;
 `;
 
+const FilterText = styled(Body1)`
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 const SearchInput = styled.input`
   flex: 1;
   border: none;
@@ -147,13 +162,88 @@ const Card = styled(FlexBox)`
   padding: 16px;
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  gap: 8px;
+  gap: 8px;iii
 `;
 
 const Hr = styled.hr`
   width: 100%;
 `;
+
 const Navbar = () => {
+  const [filter, setFilter] = useState("all");
+  // const [gainer, setGainer] = useState([]);
+  // const [losers, setLosers] = useState([]);
+
+  // const getGainers = async () => {
+  //   try {
+  //     const response = await client.get(
+  //       "http://iosskwk0k8cgkcs8k0o80wc8.188.165.196.11.sslip.io/default/gainers"
+  //     );
+  //     console.log(response?.data, "response");
+  //     setGainer(response?.data?.results);
+  //   } catch (error) {
+  //     toast.error("Failed to load gainers");
+  //     if (Bugsnag) {
+  //       Bugsnag.notify(error);
+  //     } else {
+  //       console.error("Bugsnag not initialized:", error);
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getGainers();
+  // }, []);
+
+  // const getLosers = async () => {
+  //   try {
+  //     const response = await client.get(
+  //       "http://iosskwk0k8cgkcs8k0o80wc8.188.165.196.11.sslip.io/default/losers"
+  //     );
+  //     console.log(response?.data, "response");
+  //     setLosers(response?.data?.results);
+  //   } catch (error) {
+  //     toast.error("Failed to load gainers");
+  //     if (Bugsnag) {
+  //       Bugsnag.notify(error);
+  //     } else {
+  //       console.error("Bugsnag not initialized:", error);
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getLosers();
+  // }, []);
+
+  const [stocks, setStocks] = useState([]);
+
+  const fetchStocks = async filterType => {
+    let url = "";
+    if (filterType === "gainers") {
+      url =
+        "http://iosskwk0k8cgkcs8k0o80wc8.188.165.196.11.sslip.io/default/gainers";
+    } else if (filterType === "losers") {
+      url =
+        "http://iosskwk0k8cgkcs8k0o80wc8.188.165.196.11.sslip.io/default/losers";
+    } else {
+      filterType === "all";
+      url =
+        "http://iosskwk0k8cgkcs8k0o80wc8.188.165.196.11.sslip.io/default/topMcap";
+    }
+
+    try {
+      const response = await client.get(url);
+      setStocks(response?.data?.results || []);
+    } catch (error) {
+      toast.error(`Failed to load ${filterType} stocks`);
+      Bugsnag?.notify(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchStocks(filter);
+  }, [filter]);
   return (
     <Wrapper>
       <Nav>
@@ -192,33 +282,45 @@ const Navbar = () => {
         </Body1>
       </FlexBox>
       <FilterContainer>
-        <Body1>All</Body1>
-        <Body1>Gainers</Body1>
-        <Body1>Losers</Body1>
+        <FilterText active={filter === "all"} onClick={() => setFilter("all")}>
+          All
+        </FilterText>
+        <FilterText
+          active={filter === "gainers"}
+          onClick={() => setFilter("gainers")}
+        >
+          Gainers
+        </FilterText>
+        <FilterText
+          active={filter === "losers"}
+          onClick={() => setFilter("losers")}
+        >
+          Losers
+        </FilterText>
       </FilterContainer>
       <GridContainer>
-        {[1, 2, 3, 4].map((item, index) => (
+        {stocks.map((stock, index) => (
           <Card key={index}>
             <FlexBox>
               <img src="/reliance.svg" width={48} />
               <FlexBox column>
-                <Body1>Reliance Industries</Body1>
-                <Body1 color="#687792">NSE</Body1>
+                <Body1>{stock.companyName}</Body1>
+                <Body1 color="#687792">{stock.exchange}</Body1>
               </FlexBox>
             </FlexBox>
             <FlexBox width="100%" column>
-              <Body1>₹ 2,456.75</Body1>
-              <Body1 color="green">+1.45%</Body1>
+              <Body1>{stock.price}</Body1>
+              <Body1 color={stock.color}>{stock.change}</Body1>
             </FlexBox>
             <Hr />
             <FlexBox width="100%" justify="space-between">
               <FlexBox column>
                 <Body1 color="#687792">Market Cap</Body1>
-                <Body1>16.7%</Body1>
+                <Body1>{stock.cap}</Body1>
               </FlexBox>
               <FlexBox column>
                 <Body1 color="#687792">Volume</Body1>
-                <Body1>200</Body1>
+                <Body1>{stock.volume}</Body1>
               </FlexBox>
             </FlexBox>
           </Card>

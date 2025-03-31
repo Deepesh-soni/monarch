@@ -1,4 +1,5 @@
-export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+export const BASE_URL =
+  "http://iosskwk0k8cgkcs8k0o80wc8.188.165.196.11.sslip.io";
 
 export const CDN = "https://assets-pamprazzi.b-cdn.net";
 
@@ -7,6 +8,8 @@ export const MAP_API_KEY = "AIzaSyCsLmYZRq52ktk5uJpucbc9YFIo9M7F_GI";
 export const SALON_URL = process.env.NEXT_PUBLIC_CLIENT_BASE_URL;
 
 export const URL = {
+  gainers: "/default/gainers",
+
   //auth
   sendOtp: "/admin/sendOtp",
   submitOtp: "/admin/verifyOtp",
@@ -26,7 +29,7 @@ export const URL = {
 
   //services
   getService: "/service",
-  getAllService:"/service/all",
+  getAllService: "/service/all",
   createService: "/service/createService",
   deleteService: "/service/deleteService",
   updateService: "/service/updateService",
@@ -79,11 +82,10 @@ export const URL = {
   ownerDetails: "/admin/getOwnerDetails",
   ownerEditDetails: "/admin/updateOwnerDetails",
 
-  contactUs:"/query/merchant",
+  contactUs: "/query/merchant",
   //dashboard
   totalCountData: "/store/count",
-  storeTransactions : "/store/storeTransactions",
+  storeTransactions: "/store/storeTransactions",
   storeClient: "/store/storeClient",
-  salesService : "/store/salesService"
-  
+  salesService: "/store/salesService",
 };
