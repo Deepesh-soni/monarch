@@ -6,6 +6,9 @@ import { usePathname } from "next/navigation";
 
 import FlexBox from "@common/UI/FlexBox";
 import SearchableDropdown from "./UI/Search/SearchDropdownCmp";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import Session from "supertokens-auth-react/recipe/session";
+
 
 const Navbar = styled.nav`
   display: flex;
@@ -55,7 +58,13 @@ const NavBar = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  console.log("pathname", pathname);
+  const { doesSessionExist } = useSessionContext();
+
+  const handleLogout = async () => {
+    await Session.signOut();
+    router.push("/auth");
+  };
+
   return (
     <Navbar>
       <LogoContainer href="/" passHref>
@@ -87,10 +96,13 @@ const NavBar = () => {
         <NavLink href="/watch-list" active={pathname?.includes("watch-list")}>
           Watchlist
         </NavLink>
-        <Button onClick={() => router.push("/auth/login")}>Log in</Button>
-        <Button primary onClick={() => router.push("/auth/signup")}>
-          Sign up
-        </Button>
+        {doesSessionExist ? (
+          <Button onClick={handleLogout}>Logout</Button>
+        ) : (
+          <Button primary onClick={() => router.push("/auth")}>
+            Login / Register
+          </Button>
+        )}
       </FlexBox>
     </Navbar>
   );
