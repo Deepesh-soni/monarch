@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import FlexBox from "@common/UI/FlexBox";
 import SearchableDropdown from "./UI/Search/SearchDropdownCmp";
@@ -31,6 +32,8 @@ const NavLink = styled(Link)`
   text-decoration: none;
   color: #333;
   font-size: 16px;
+  font-weight: ${({ active }) => (active ? "600" : "400")};
+
   &:hover {
     color: #0073e6;
   }
@@ -50,6 +53,9 @@ const Button = styled.button`
 
 const NavBar = () => {
   const router = useRouter();
+  const pathname = usePathname();
+
+  console.log("pathname", pathname);
   return (
     <Navbar>
       <LogoContainer href="/" passHref>
@@ -72,9 +78,15 @@ const NavBar = () => {
 
       {/* Right Side */}
       <FlexBox columnGap="20px" align="center">
-        <NavLink href="/news">News</NavLink>
-        <NavLink href="/screens">Screens</NavLink>
-        <NavLink href="/watch-list">Watchlist</NavLink>
+        <NavLink href="/news" active={pathname?.includes("news")}>
+          News
+        </NavLink>
+        <NavLink href="/screens" active={pathname?.includes("screens")}>
+          Screens
+        </NavLink>
+        <NavLink href="/watch-list" active={pathname?.includes("watch-list")}>
+          Watchlist
+        </NavLink>
         <Button onClick={() => router.push("/auth/login")}>Log in</Button>
         <Button primary onClick={() => router.push("/auth/signup")}>
           Sign up
