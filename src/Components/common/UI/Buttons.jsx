@@ -13,22 +13,22 @@ export const Button = styled.button`
   box-sizing: border-box;
   display: ${({ block }) => (block ? "block" : "inline")};
   background-color: ${({ color }) => color || "#142C8E"};
-  padding: ${({ padding }) => padding || "0.5rem 1rem"};
+  padding: ${({ padding }) => padding || "8px 16px"};
   color: ${ACCENT_100};
   line-height: 1.25rem;
   min-width: ${({ width }) => !width && "7rem"};
   width: ${({ width }) => (width ? width : "fit-content")};
   font-family: "Montserrat";
-  font-size: 12.5px;
-  font-weight: 600;
-  border-radius: 0.625rem;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
   border: 1px solid ${({ color }) => color || "#142C8E"};
   overflow: hidden;
   letter-spacing: -2%;
   cursor: pointer;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   white-space: nowrap;
-  border-radius: ${({ borderRadius }) => borderRadius || "0.625rem"};
+  border-radius: ${({ borderRadius }) => borderRadius || "8px"};
 
   &:hover {
     background-color: ${({ hoverColor }) => hoverColor || "#142C8E"};
