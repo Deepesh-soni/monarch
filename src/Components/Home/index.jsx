@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import Bugsnag from "@bugsnag/js";
-import { toast } from "react-toastify";
 import { FaSearch } from "react-icons/fa";
 
-import { client } from "@axiosClient";
 import FlexBox from "@common/UI/FlexBox";
 import Navbar from "@common/Navbar";
 import StocksGrid from "./StockGrid";
 import { Display, Body1, H1 } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
+import SearchableDropdown from "@Components/common/UI/Search/SearchDropdownCmp";
+import { useRouter } from 'next/router';
+
+const Wrapper = styled.div`
+  background: url("/assets/home/page-bg.png");
+  background-position: center;
+`;
 
 const Container = styled(FlexBox)`
   flex-direction: column;
@@ -23,6 +27,8 @@ const Container = styled(FlexBox)`
     margin: auto;
     gap: 2.5rem;
     width: 86.67%;
+    max-width: 75rem;
+    padding-bottom: 150px;
   }
 `;
 
@@ -48,66 +54,48 @@ const TextWrapper = styled(FlexBox)`
 `;
 
 const Home = () => {
-  const [filterType, setFilterType] = useState("all");
-  const [stocksData, setStocksData] = useState([]);
 
-  const fetchStockData = async type => {
-    const urls = {
-      gainers: "/default/gainers",
-      losers: "/default/losers",
-      all: "/default/topMcap",
-    };
+  const router = useRouter();
 
-    try {
-      const response = await client.get(urls[type]);
-      setStocksData(response?.data?.results || []);
-    } catch (error) {
-      toast.error(`Failed to load ${type} stocks`);
-      Bugsnag?.notify(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchStockData(filterType);
-  }, [filterType]);
+  const handleSearchSelect = (value) => {
+    router.push(`/stocks/${value.fqn}`);
+  }
 
   return (
-    <Container>
-      <Navbar />
-      <FlexBox column align="center">
-        <Heading>Discover & Analyze</Heading>
-        <FlexBox>
-          <img
-            src="/assets/home/stocks.svg"
-            alt="Stocks"
-            width={304}
-            height={108}
-          />
-          <Heading>like never before</Heading>{" "}
+    <Wrapper>
+      <Container>
+        <Navbar />
+        <FlexBox column align="center">
+          <Heading>Discover & Analyze</Heading>
+          <FlexBox>
+            <img
+              src="/assets/home/stocks.svg"
+              alt="Stocks"
+              width={304}
+              height={108}
+            />
+            <Heading>like never before</Heading>{" "}
+          </FlexBox>
         </FlexBox>
-      </FlexBox>
-      <TextWrapper>
-        <H1 textAlign="center">
-          Advanced stock screening, real-time analysis, and powerful tools to
-          make informed investment decisions
-        </H1>
-      </TextWrapper>
-      <SearchBar>
-        <FaSearch color="#888" />
-        <input
-          type="text"
-          placeholder="Search stocks, create screens.."
-          style={{ flex: 1, border: "none", outline: "none" }}
-        />
-      </SearchBar>
-      <FlexBox column align="center">
-        <Display>Discover Trending Stocks</Display>
-        <Body1 color="#687792">
-          Explore the most popular stocks that investors are watching right now.
-        </Body1>
-      </FlexBox>
-      <StocksGrid />
-    </Container>
+        <TextWrapper>
+          <H1 textAlign="center">
+            Advanced stock screening, real-time analysis, and powerful tools to
+            make informed investment decisions
+          </H1>
+        </TextWrapper>
+        <div style={{ width: "100%", maxWidth: "806px" }}>
+          <SearchableDropdown width="100%" onChange={handleSearchSelect} />
+        </div>
+        <FlexBox column align="center">
+          <Display>Discover Trending Stocks</Display>
+          <Body1 color="#687792">
+            Explore the most popular stocks that investors are watching right
+            now.
+          </Body1>
+        </FlexBox>
+        <StocksGrid />
+      </Container>
+    </Wrapper>
   );
 };
 

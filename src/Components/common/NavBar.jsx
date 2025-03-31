@@ -1,11 +1,14 @@
 import React from "react";
 import styled from "styled-components";
+import { useRouter } from "next/router";
 import Link from "next/link";
 
 import FlexBox from "@common/UI/FlexBox";
+import SearchableDropdown from "./UI/Search/SearchDropdownCmp";
 
 const Navbar = styled.nav`
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   width: 100%;
@@ -14,11 +17,16 @@ const Navbar = styled.nav`
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
   margin-top: 47px;
+
+  margin: auto;
+  gap: 2.5rem;
+  width: 86.67%;
+  max-width: 75rem;
 `;
 
-const LogoContainer = styled.div`
-  display: flex;
-  align-items: center;
+const LogoContainer = styled(Link)`
+  text-decoration: none;
+  cursor: pointer;
 `;
 
 const NavLink = styled(Link)`
@@ -42,21 +50,40 @@ const Button = styled.button`
   }
 `;
 
-const NavBar = () => (
-  <Navbar>
-    <LogoContainer>
-      <img src="/assets/logo.svg" alt="Logo" width={120} height={40} />
-    </LogoContainer>
-    <FlexBox columnGap="20px">
-      <NavLink href="#">News</NavLink>
-      <NavLink href="#">Screens</NavLink>
-      <NavLink href="#">Watchlist</NavLink>
-    </FlexBox>
-    <FlexBox columnGap="10px">
-      <Button>Log in</Button>
-      <Button primary>Sign up</Button>
-    </FlexBox>
-  </Navbar>
-);
+const NavBar = () => {
+  const router = useRouter();
+  return (
+    <Navbar>
+      <LogoContainer passHref>
+        <img
+          src="/assets/logo.svg"
+          alt="Logo"
+          width={120}
+          height={40}
+          style={{ cursor: "pointer" }}
+        />
+      </LogoContainer>
+
+      {/* Center: Search */}
+      <div style={{ flex: 1, maxWidth: "600px", margin: "0 40px" }}>
+        <SearchableDropdown
+          width="100%"
+          onChange={item => router.push(`/stocks/${item.fqn}`)}
+        />
+      </div>
+
+      {/* Right Side */}
+      <FlexBox columnGap="20px" align="center">
+        <NavLink href="/news">News</NavLink>
+        <NavLink href="/screens">Screens</NavLink>
+        <NavLink href="/watch-list">Watchlist</NavLink>
+        <Button onClick={() => router.push("/auth/login")}>Log in</Button>
+        <Button primary onClick={() => router.push("/auth/signup")}>
+          Sign up
+        </Button>
+      </FlexBox>
+    </Navbar>
+  );
+};
 
 export default NavBar;

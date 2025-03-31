@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Link from "next/link";
 import FlexBox from "@common/UI/FlexBox";
 import { Body1, Support } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
@@ -73,7 +72,7 @@ const watchlists = [
   },
 ];
 
-const Index = () => {
+const WatchList = () => {
   return (
     <Wrapper>
       <FlexBox width="100%" height="100%" backgroundColor="#142C8E0D" column>
@@ -117,4 +116,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default WatchList;

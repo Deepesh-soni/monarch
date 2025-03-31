@@ -144,7 +144,7 @@ const sectors = [
   "Cables",
 ];
 
-const Index = () => {
+const Screens = () => {
   const [search, setSearch] = useState("");
   const filteredSectors = sectors.filter(sector =>
     sector.toLowerCase().includes(search.toLowerCase())
@@ -247,4 +247,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Screens;
