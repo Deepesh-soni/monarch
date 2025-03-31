@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import Bugsnag from "@bugsnag/js";
-import { toast } from "react-toastify";
 import { FaSearch } from "react-icons/fa";
 
-import { client } from "@axiosClient";
 import FlexBox from "@common/UI/FlexBox";
 import Navbar from "@common/Navbar";
 import StocksGrid from "./StockGrid";
@@ -55,29 +52,6 @@ const TextWrapper = styled(FlexBox)`
 `;
 
 const Home = () => {
-  const [filterType, setFilterType] = useState("all");
-  const [stocksData, setStocksData] = useState([]);
-
-  const fetchStockData = async type => {
-    const urls = {
-      gainers: "/default/gainers",
-      losers: "/default/losers",
-      all: "/default/topMcap",
-    };
-
-    try {
-      const response = await client.get(urls[type]);
-      setStocksData(response?.data?.results || []);
-    } catch (error) {
-      toast.error(`Failed to load ${type} stocks`);
-      Bugsnag?.notify(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchStockData(filterType);
-  }, [filterType]);
-
   return (
     <Wrapper>
       <Container>

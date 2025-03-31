@@ -51,9 +51,9 @@ const NavBar = () => {
         <img src="/assets/logo.svg" alt="Logo" width={120} height={40} />
       </LogoContainer>
       <FlexBox columnGap="20px">
-        <NavLink href="#">News</NavLink>
-        <NavLink href="#">Screens</NavLink>
-        <NavLink href="#">Watchlist</NavLink>
+        <NavLink href="/news">News</NavLink>
+        <NavLink href="/screens">Screens</NavLink>
+        <NavLink href="/watch-list">Watchlist</NavLink>
       </FlexBox>
       <FlexBox columnGap="10px">
         <Button onClick={() => router.push("/auth/login")}>Log in</Button>
