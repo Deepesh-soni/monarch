@@ -6,6 +6,8 @@ import FlexBox from "@common/UI/FlexBox";
 import { Body1, Support } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
 import Navbar from "@common/Navbar";
+import Layout from "../layout/HomePageLayout";
+import News from "../Components/news";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -37,61 +39,12 @@ const Hr = styled.hr`
   border: 1px solid #ebf0f4;
 `;
 
-const News = () => {
+const NewsPage = () => {
   return (
-    <Wrapper>
-      <Navbar />
-      <FlexBox
-        width="100%"
-        height="100%"
-        backgroundColor="#142C8E0D"
-        column
-        columnGap="1rem"
-      >
-        <FlexBox align="center" justify="space-between">
-          <FlexBox columnGap="16px">
-            <Support>Popular</Support>
-            <Support>My news</Support>
-          </FlexBox>
-          <FlexBox
-            border="1.5px solid #142C8E"
-            align="center"
-            padding="0.5rem"
-            columnGap="0.5rem"
-            borderRadius="1.5px"
-          >
-            <IoFilter color="#142C8E" />
-            <Support color="#142C8E">Filter</Support>
-          </FlexBox>
-        </FlexBox>
-        <Card>
-          <FlexBox>
-            <img src="/imagesecond.svg"></img>
-          </FlexBox>
-          <FlexBox column rowGap="15px" padding="1rem">
-            <Support>Market Insights</Support>
-            <Body1>
-              Market Analysis: Tech Stocks Rally Amid Strong Earnings Reports
-            </Body1>
-            <Body1>
-              Major technology companies exceeded quarterly expectations,
-              driving a significant upturn in market performance. Analysts
-              predict continued growth through Q4, citing innovation and market
-              demand as key factors.
-            </Body1>
-            <Hr />
-            <FlexBox width="100%" justify="space-between">
-              <FlexBox columnGap="4px" align="center">
-                <CiClock2 />
-                <Support>2hours ago</Support>
-              </FlexBox>
-              <Support>Read More</Support>
-            </FlexBox>
-          </FlexBox>
-        </Card>
-      </FlexBox>
-    </Wrapper>
+    <Layout>
+      <News />
+    </Layout>
   );
 };
 
-export default News;
+export default NewsPage;

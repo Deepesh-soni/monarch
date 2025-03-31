@@ -15,11 +15,16 @@ const Navbar = styled.nav`
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
   margin-top: 47px;
+
+  margin: auto;
+  gap: 2.5rem;
+  width: 86.67%;
+  max-width: 75rem;
 `;
 
-const LogoContainer = styled.div`
-  display: flex;
-  align-items: center;
+const LogoContainer = styled(Link)`
+  text-decoration: none;
+  cursor: pointer;
 `;
 
 const NavLink = styled(Link)`
@@ -47,7 +52,7 @@ const NavBar = () => {
   const router = useRouter();
   return (
     <Navbar>
-      <LogoContainer>
+      <LogoContainer href="/">
         <img src="/assets/logo.svg" alt="Logo" width={120} height={40} />
       </LogoContainer>
       <FlexBox columnGap="20px">
