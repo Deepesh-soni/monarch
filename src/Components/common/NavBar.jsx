@@ -17,16 +17,11 @@ const Navbar = styled.nav`
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
   margin-top: 47px;
-
-  margin: auto;
-  gap: 2.5rem;
-  width: 86.67%;
-  max-width: 75rem;
 `;
 
-const LogoContainer = styled(Link)`
-  text-decoration: none;
-  cursor: pointer;
+const LogoContainer = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const NavLink = styled(Link)`
@@ -54,22 +49,15 @@ const NavBar = () => {
   const router = useRouter();
   return (
     <Navbar>
-      <LogoContainer passHref>
-        <img
-          src="/assets/logo.svg"
-          alt="Logo"
-          width={120}
-          height={40}
-          style={{ cursor: "pointer" }}
-        />
+      <LogoContainer>
+        <Link href="/" passHref>
+          <img src="/assets/logo.svg" alt="Logo" width={120} height={40} style={{ cursor: "pointer" }} />
+        </Link>
       </LogoContainer>
 
       {/* Center: Search */}
       <div style={{ flex: 1, maxWidth: "600px", margin: "0 40px" }}>
-        <SearchableDropdown
-          width="100%"
-          onChange={item => router.push(`/stocks/${item.fqn}`)}
-        />
+        <SearchableDropdown width="100%" onChange={(item) => router.push(`/stocks/${item.fqn}`)} />
       </div>
 
       {/* Right Side */}
@@ -83,6 +71,7 @@ const NavBar = () => {
         </Button>
       </FlexBox>
     </Navbar>
+
   );
 };
 
