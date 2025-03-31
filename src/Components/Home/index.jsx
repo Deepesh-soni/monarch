@@ -8,7 +8,7 @@ import StocksGrid from "./StockGrid";
 import { Display, Body1, H1 } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
 import SearchableDropdown from "@Components/common/UI/Search/SearchDropdownCmp";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 
 const Wrapper = styled.div`
   background: url("/assets/home/page-bg.png");
@@ -54,17 +54,16 @@ const TextWrapper = styled(FlexBox)`
 `;
 
 const Home = () => {
-
   const router = useRouter();
 
-  const handleSearchSelect = (value) => {
+  const handleSearchSelect = value => {
     router.push(`/stocks/${value.fqn}`);
-  }
+  };
 
   return (
     <Wrapper>
+      <Navbar />
       <Container>
-        <Navbar />
         <FlexBox column align="center">
           <Heading>Discover & Analyze</Heading>
           <FlexBox>
