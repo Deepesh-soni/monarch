@@ -16,9 +16,7 @@ const Navbar = styled.nav`
   background: white;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
-  margin-top: 47px;
-
-  margin: auto;
+  margin: 2rem auto;
   gap: 2.5rem;
   width: 86.67%;
   max-width: 75rem;
@@ -54,7 +52,7 @@ const NavBar = () => {
   const router = useRouter();
   return (
     <Navbar>
-      <LogoContainer passHref>
+      <LogoContainer href="/" passHref>
         <img
           src="/assets/logo.svg"
           alt="Logo"
