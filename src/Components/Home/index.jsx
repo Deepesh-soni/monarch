@@ -9,20 +9,27 @@ import { Display, Body1, H1 } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
 import SearchableDropdown from "@Components/common/UI/Search/SearchDropdownCmp";
 import { useRouter } from "next/router";
+import { H6, H2 } from "../common/Typography";
+import { Medium } from "../common/Paragraph";
 
 const Wrapper = styled.div`
   background: url("/assets/home/page-bg.png");
   background-position: center;
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const Container = styled(FlexBox)`
   flex-direction: column;
-  padding: 0 1rem;
+  padding: 1rem;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1.5rem;
+  width: 100%;
 
   @media ${device.laptop} {
-    flex-direction: column;
     justify-content: space-between;
     margin: auto;
     gap: 2.5rem;
@@ -35,14 +42,24 @@ const Container = styled(FlexBox)`
 const Heading = styled(Display)`
   font-family: Montserrat;
   font-weight: 500;
-  font-size: 91.31px;
-  line-height: 100%;
-  letter-spacing: -5%;
-  text-align: center;
+  font-size: 27px;
+  line-height: 120%;
+  letter-spacing: -2%;
+  padding: 0 1rem;
+
+  @media ${device.tablet} {
+    font-size: 48px;
+  }
+
+  @media ${device.laptop} {
+    font-size: 91.31px;
+    text-align: center;
+  }
 `;
 
 const SearchBar = styled(FlexBox)`
-  width: 806px;
+  width: 90%;
+  max-width: 806px;
   gap: 16px;
   border-radius: 18px;
   border: 1px solid #687792;
@@ -50,17 +67,30 @@ const SearchBar = styled(FlexBox)`
 `;
 
 const TextWrapper = styled(FlexBox)`
-  max-width: 695px;
+  max-width: 90%;
+  text-align: center;
+  padding: 0 1rem;
+
+  @media ${device.laptop} {
+    max-width: 695px;
+  }
 `;
 
 const Image = styled.img`
-  width: 100px;
-  height: 20px;
+  width: auto;
+  max-width: 120px;
+  height: auto;
+
+  @media ${device.tablet} {
+    max-width: 80px;
+  }
+
   @media ${device.laptop} {
-    width: 304px;
+    max-width: 304px;
     height: 108px;
   }
 `;
+
 const Home = () => {
   const router = useRouter();
 
@@ -76,24 +106,24 @@ const Home = () => {
           <Heading>Discover & Analyze</Heading>
           <FlexBox>
             <Image src="/assets/home/stocks.svg" alt="Stocks" />
-            <Heading>like never before</Heading>{" "}
+            <Heading>like never before</Heading>
           </FlexBox>
         </FlexBox>
         <TextWrapper>
-          <H1 textAlign="center">
+          <H6 textAlign="center">
             Advanced stock screening, real-time analysis, and powerful tools to
             make informed investment decisions
-          </H1>
+          </H6>
         </TextWrapper>
-        <div style={{ width: "100%", maxWidth: "806px" }}>
+        <div style={{ width: "100%", maxWidth: "806px", padding: "0 1rem" }}>
           <SearchableDropdown width="100%" onChange={handleSearchSelect} />
         </div>
         <FlexBox column align="center">
-          <Display textAlign="center">Discover Trending Stocks</Display>
-          <Body1 color="#687792" textAlign="center">
+          <H2 textAlign="center">Discover Trending Stocks</H2>
+          <Medium color="#687792" textAlign="center">
             Explore the most popular stocks that investors are watching right
             now.
-          </Body1>
+          </Medium>
         </FlexBox>
         <StocksGrid />
       </Container>
