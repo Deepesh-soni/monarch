@@ -12,6 +12,8 @@ import { toast } from "react-toastify";
 import { client } from "@axiosClient";
 import NewUpdatePopup from "../common/NewUpdatePopup";
 
+import { useRouter } from "next/router";
+
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
   padding: 0 1rem;
@@ -34,6 +36,7 @@ const Card = styled(FlexBox)`
   box-shadow: 0px 3px 3px 0px #00000040;
   padding: 1.5rem;
   border-radius: 12px;
+  cursor: pointer;
 `;
 
 const WatchList = () => {
@@ -44,6 +47,8 @@ const WatchList = () => {
   // For edit mode
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+
+  const router = useRouter();
 
   const fetchWatchlists = async () => {
     setLoading(true);
@@ -79,6 +84,14 @@ const WatchList = () => {
   const handleEdit = watchlist => {
     setEditingItem(watchlist);
     setIsEditModalOpen(true);
+  };
+
+  const handleClick = stocks => {
+    const queryString = stocks
+      .map(stock => `stocks=${encodeURIComponent(stock)}`)
+      .join("&");
+
+    router.push(`/watch-list/details?${queryString}`);
   };
 
   return (
@@ -138,7 +151,10 @@ const WatchList = () => {
             <Support color="#687792">Loading watchlists...</Support>
           ) : watchlists.length > 0 ? (
             watchlists.map(watchlist => (
-              <Card key={watchlist.id}>
+              <Card
+                key={watchlist.id}
+                onClick={() => handleClick(watchlist.stocks)}
+              >
                 <FlexBox align="center" justify="space-between">
                   <FlexBox column rowGap="0.25rem">
                     <Body1 bold>{watchlist.name}</Body1>

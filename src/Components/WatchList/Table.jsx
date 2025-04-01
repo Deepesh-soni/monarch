@@ -1,7 +1,10 @@
+import { useQueryParams, ArrayParam, withDefault } from "use-query-params";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 
 import FlexBox from "@common/UI/FlexBox";
 import { device } from "@common/UI/Responsive";
+import { client } from "@axiosClient";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -21,7 +24,6 @@ const Wrapper = styled(FlexBox)`
 const TableContainer = styled.div`
   width: 100%;
   overflow-x: auto;
-  background: #f8f9fc;
   padding: 20px;
   border-radius: 10px;
 `;
@@ -81,13 +83,18 @@ const data = [
 ];
 
 const Table = () => {
+  const [queryParams] = useQueryParams({
+    stocks: withDefault(ArrayParam, []),
+  });
+  const [loading, setLoading] = useState();
+
   const fetchWatchlists = async () => {
     setLoading(true);
     try {
       const res = await client.post("/stock/by-fqns", {
-        fqns: ["ieml", "reliance"],
+        fqns: queryParams?.stocks,
       });
-      setWatchlists(response.data || []);
+      // setWatchlists(response.data || []);
     } catch (error) {
       console.error("Failed to fetch watchlists", error);
     }
@@ -100,7 +107,7 @@ const Table = () => {
 
   return (
     <Wrapper>
-      <FlexBox width="100%" height="100%" backgroundColor="#142C8E0D" column>
+      <FlexBox width="100%" height="100%" column>
         <TableContainer>
           <StyledTable>
             <thead>
