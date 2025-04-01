@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { Modal } from "antd"; // for delete confirmation
 import { toast } from "react-toastify";
+import { H5 } from "../Components/common/Typography";
+import { Medium, Small, Large } from "../Components/common/Paragraph";
 
 import { client } from "@axiosClient";
 import NewUpdatePopup from "../common/NewUpdatePopup";
@@ -127,10 +129,10 @@ const WatchList = () => {
           {/* Header */}
           <FlexBox align="center" justify="space-between">
             <FlexBox column>
-              <Body1 bold>My Watchlists</Body1>
-              <Support color="#687792">
+              <H5 bold>My Watchlists</H5>
+              <Medium color="#687792">
                 Track and manage your favorite stocks
-              </Support>
+              </Medium>
             </FlexBox>
             <FlexBox
               border="1.5px solid #142C8E"
@@ -142,7 +144,7 @@ const WatchList = () => {
               cursor="pointer"
             >
               <IoMdAdd color="#142C8E" />
-              <Support color="#142C8E">New Watchlist</Support>
+              <Small color="#142C8E">New Watchlist</Small>
             </FlexBox>
           </FlexBox>
 
@@ -157,11 +159,11 @@ const WatchList = () => {
               >
                 <FlexBox align="center" justify="space-between">
                   <FlexBox column rowGap="0.25rem">
-                    <Body1 bold>{watchlist.name}</Body1>
-                    <Support color="#687792">
+                    <H5 bold>{watchlist.name}</H5>
+                    <Large color="#687792">
                       {watchlist.stocks?.length || 0} Stocks
-                    </Support>
-                    <Support color="#687792">{watchlist.description}</Support>
+                    </Large>
+                    <Medium color="#687792">{watchlist.description}</Medium>
                   </FlexBox>
 
                   {/* Edit & Delete icons */}
@@ -188,7 +190,7 @@ const WatchList = () => {
               border="1.5px solid #142C8E"
               align="center"
               padding="1rem"
-              borderRadius="0.8rem"
+              borderRadius="0.4rem"
               onClick={() => setIsNewModalOpen(true)}
               style={{ cursor: "pointer" }}
             >
