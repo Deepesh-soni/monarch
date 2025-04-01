@@ -10,7 +10,63 @@ import { client } from "@axiosClient";
 import { BiLinkExternal } from "react-icons/bi";
 import { Modal, Select, Button, Spin } from "antd";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { blue } from '@ant-design/colors';
+import _ from 'lodash';
+const keys = [
+    "Promoters",
+    "Retail",
+    "ForeignInstitution",
+    "MutualFund",
+    "OtherDomesticInstitution",
+    "Others"
+];
 
+const keyColors = {
+    Promoters: blue[2],
+    Retail: blue[3],
+    ForeignInstitution: blue[4],
+    MutualFund: blue[5],
+    OtherDomesticInstitution: blue[6],
+    Others: blue[7]
+};
+
+function prepareChartData(raw) {
+    return raw.map(item => ({
+        ...item,
+        YRC: formatYRC(item.YRC)
+    }));
+}
+
+function formatYRC(yrc) {
+    // Convert e.g. 202412 → "Dec 2024"
+    const year = Math.floor(yrc / 100);
+    const month = yrc % 100;
+
+    const monthNames = {
+        3: "Mar", 6: "Jun", 9: "Sep", 12: "Dec"
+    };
+
+    return `${monthNames[month] || "M" + month} ${year}`;
+}
+
+function StackedBarChart({ data }) {
+    const chartData = prepareChartData(data);
+
+    return (
+        <ResponsiveContainer width="100%" height={400}>
+            <BarChart data={chartData}>
+                <XAxis dataKey="YRC" />
+                <YAxis />
+                <Tooltip formatter={(value, name) => [value, _.startCase(name)]} />
+                <Legend formatter={(value) => _.startCase(value)} />
+                {keys.map(key => (
+                    <Bar key={key} dataKey={key} stackId="a" fill={keyColors[key]} />
+                ))}
+            </BarChart>
+        </ResponsiveContainer>
+    );
+}
 
 const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
     const [watchlists, setWatchlists] = useState([]);
@@ -316,6 +372,48 @@ const slugify = (text) =>
         .trim()
         .replace(/[\s\W-]+/g, "-");
 
+const PeerComparisonTable = ({ peer, currentStock }) => {
+    const rows = [
+        { label: "Price", peer: peer.price, current: currentStock.price },
+        { label: "Market Cap", peer: peer.mcap, current: currentStock.mcap },
+        { label: "Volume", peer: peer.volume, current: currentStock.volume },
+        { label: "Change", peer: peer.change, current: currentStock.change },
+        { label: "Dividend Yield", peer: peer.dividendYield, current: currentStock.dividendYield },
+        { label: "PB TTM", peer: peer.pbTtm, current: currentStock.pbTtm },
+        { label: "ROE TTM", peer: peer.roeTtm, current: currentStock.roeTtm },
+        { label: "PEG Ratio", peer: peer.pegRatio, current: currentStock.pegRatio },
+    ];
+
+    return (
+        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}>
+            <thead>
+                <tr>
+                    <th style={{ textAlign: "left", borderBottom: "2px solid #ccc", padding: "8px" }}>Metric</th>
+                    <th style={{ textAlign: "left", borderBottom: "2px solid #ccc", padding: "8px" }}><strong>{currentStock.companyName}</strong></th>
+                    <th style={{ textAlign: "left", borderBottom: "2px solid #ccc", padding: "8px" }}><strong>{peer.companyName}</strong></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {rows.map(row => (
+                    <tr key={row.label}>
+                        <td style={{ textAlign: "left", padding: "8px", borderBottom: "1px solid #eee" }}>
+                            {row.label}
+                        </td>
+                        <td style={{ textAlign: "left", padding: "8px", borderBottom: "1px solid #eee" }}>
+                            {row.current !== undefined ? row.current : "N/A"}
+                        </td>
+                        <td style={{ textAlign: "left", padding: "8px", borderBottom: "1px solid #eee" }}>
+                            {row.peer !== undefined ? row.peer : "N/A"}
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
+};
+
+
 const StockPage = () => {
     const router = useRouter();
     const { fqn } = router.query;
@@ -559,8 +657,19 @@ const StockPage = () => {
             {/* Peer Comparison Section */}
             <FlexBox width="100%" column id="peers">
                 <H1 bold>Peer Comparison</H1>
-                <Body1>Peer comparison data placeholder...</Body1>
+                {peers && peers.length > 0 ? (
+                    <PeerComparisonTable peer={peers[0]} currentStock={stock} />
+                ) : (
+                    <Body1>No peer data available.</Body1>
+                )}
             </FlexBox>
+
+            <FlexBox width="100%" column id="peers">
+                <H1 bold>Shareholding Analysis</H1>
+                {stockHoldingChart && <StackedBarChart data={stockHoldingChart?.chartData?.slice(0, 5)} />}
+            </FlexBox>
+
+
 
             {isLoggedIn && (
                 <AddToWatchlistPopup
