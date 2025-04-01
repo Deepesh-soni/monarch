@@ -21,45 +21,70 @@ const commonStyles = css`
 const typographyFactory = (
   Component,
   fontSize,
+  mobileSize,
   letterSpacing = "-4%",
   lineHeight = "120%"
-) => styled(Component)`
-  ${commonStyles}
-  font-size: ${fontSize};
-  line-height: ${lineHeight};
-  letter-spacing: ${letterSpacing};
-`;
+) =>
+  styled(Component)`
+    ${commonStyles}
+    font-size: ${fontSize};
+    line-height: ${lineHeight};
+    letter-spacing: ${letterSpacing};
 
-export const DisplaySmall = typographyFactory("small", "48px", "-4%", "100%");
-export const DisplayLarge = typographyFactory("large", "56px", "-4%", "100%");
-export const H1 = typographyFactory("h1", "40px");
-export const H2 = typographyFactory("h2", "36px");
-export const H3 = typographyFactory("h3", "32px");
-export const H4 = typographyFactory("h4", "28px");
-export const H5 = typographyFactory("h5", "24px", "-2%");
-export const H6 = typographyFactory("h6", "20px", "-2%");
+    @media (max-width: 768px) {
+      font-size: ${mobileSize};
+    }
+  `;
+
+export const DisplaySmall = typographyFactory("small", "48px", "36px");
+export const DisplayLarge = typographyFactory("large", "56px", "40px");
+export const H1 = typographyFactory("h1", "40px", "32px");
+export const H2 = typographyFactory("h2", "36px", "28px");
+export const H3 = typographyFactory("h3", "32px", "24px");
+export const H4 = typographyFactory("h4", "28px", "20px");
+export const H5 = typographyFactory("h5", "24px", "18px");
+export const H6 = typographyFactory("h6", "20px", "16px");
 
 export const Large = styled.p`
   ${commonStyles}
   font-size: 18px;
   line-height: 145%;
   letter-spacing: -4%;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 `;
+
 export const Medium = styled.p`
   ${commonStyles}
   font-size: 16px;
   line-height: 145%;
   letter-spacing: -4%;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
+
 export const Small = styled.p`
   ${commonStyles}
   font-size: 14px;
   line-height: 145%;
   letter-spacing: -4%;
+
+  @media (max-width: 768px) {
+    font-size: 10px;
+  }
 `;
+
 export const XSmall = styled.p`
   ${commonStyles}
   font-size: 12px;
   line-height: 145%;
   letter-spacing: -4%;
+
+  @media (max-width: 768px) {
+    font-size: 8px;
+  }
 `;
