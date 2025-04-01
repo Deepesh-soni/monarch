@@ -8,7 +8,7 @@ import { CiExport } from "react-icons/ci";
 import { FaArrowsRotate } from "react-icons/fa6";
 import { client } from "@axiosClient";
 import { BiLinkExternal } from "react-icons/bi";
-import { Modal, Select, Button } from "antd";
+import { Modal, Select, Button, Spin } from "antd";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 
 
@@ -322,6 +322,8 @@ const StockPage = () => {
     const [stock, setStock] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [peers, setPeers] = useState(null);
+    const [stockHoldingChart, setStockHoldingChart] = useState(null);
 
     const { doesSessionExist } = useSessionContext();
     const isLoggedIn = doesSessionExist;
@@ -334,8 +336,14 @@ const StockPage = () => {
         if (!fqn) return;
         const fetchStockDetails = async () => {
             try {
-                const response = await client.get(`/stock/details/${fqn}`);
-                setStock(response.data);
+                const [stockRes, peersRes, chartRes] = await Promise.all([
+                    client.get(`/stock/details/${fqn}`),
+                    client.get(`/stock/peers/${fqn}`),
+                    client.get(`/stock/chart/shareholding/${fqn}`),
+                ]);
+                setStock(stockRes.data);
+                setPeers(peersRes.data);
+                setStockHoldingChart(chartRes.data);
             } catch (err) {
                 setError("Failed to fetch stock details.");
             } finally {
@@ -345,13 +353,8 @@ const StockPage = () => {
         fetchStockDetails();
     }, [fqn]);
 
-    if (loading) {
-        return (
-            <Wrapper>
-                <Body1>Loading...</Body1>
-            </Wrapper>
-        );
-    }
+    if (loading) return <Spin style={{ margin: "100px auto", display: "block" }} />;
+
     if (error) {
         return (
             <Wrapper>
