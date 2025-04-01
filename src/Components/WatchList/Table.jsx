@@ -11,6 +11,7 @@ const Wrapper = styled(FlexBox)`
   padding: 0 1rem;
   align-items: center;
   gap: 0.5rem;
+  height: 100%;
 
   @media ${device.laptop} {
     flex-direction: column;
@@ -54,33 +55,6 @@ const Td = styled.td`
 `;
 
 const Tr = styled.tr``;
-
-const data = [
-  {
-    name: "Zomato",
-    CMP: 192,
-    PE: 37,
-    marketCap: 654,
-    dividend: 478,
-    netProfit: 308,
-    profitVar: 39,
-    sales: 241,
-    salesVar: 550,
-    ROCE: 339,
-  },
-  ...Array(9).fill({
-    name: "Info Beans Tech",
-    CMP: 192,
-    PE: 37,
-    marketCap: 654,
-    dividend: 478,
-    netProfit: 308,
-    profitVar: 39,
-    sales: 241,
-    salesVar: 550,
-    ROCE: 339,
-  }),
-];
 
 const Table = () => {
   const [queryParams] = useQueryParams({
@@ -167,7 +141,7 @@ const Table = () => {
               </tr>
             </thead>
             <tbody>
-              {stocks.map((stock, index) => (
+              {stocks?.map((stock, index) => (
                 <Tr key={index}>
                   <Td>{stock?.companyShortName}</Td>
                   <Td>{stock?.CMP}</Td>
