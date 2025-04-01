@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
-import { redirectToAuth } from "supertokens-auth-react";
-import { canHandleRoute, getRoutingComponent } from "supertokens-auth-react/ui";
+import { canHandleRoute, getRoutingComponent, redirectToAuth } from "supertokens-auth-react/ui";
 import styled from "styled-components";
 import FlexBox from "@Components/common/UI/FlexBox";
 import { device } from "@Components/common/UI/Responsive";
@@ -30,30 +29,34 @@ const Container = styled(FlexBox)`
   }
 `;
 
-const SuperTokensComponentNoSSR =
-  dynamic <
-  {} >
-  (new Promise(res =>
-    res(() => getRoutingComponent([EmailPasswordPreBuiltUI]))
-  ),
-  { ssr: false });
+const Auth = () => {
+  const [ComponentToRender, setComponentToRender] = useState(null);
 
-export default function Auth() {
-  // if the user visits a page that is not handled by us (like /auth/random), then we redirect them back to the auth page.
   useEffect(() => {
-    if (canHandleRoute([EmailPasswordPreBuiltUI]) === false) {
+    if (!canHandleRoute([EmailPasswordPreBuiltUI])) {
       redirectToAuth();
+    } else {
+      const Comp = getRoutingComponent([EmailPasswordPreBuiltUI]);
+      if (Comp && typeof Comp === "function") {
+        setComponentToRender(() => Comp);
+      } else {
+        setComponentToRender(null); // Don't render if invalid
+      }
     }
   }, []);
+
+  if (!ComponentToRender) return null;
 
   return (
     <Wrapper>
       <NavBar />
       <Container>
         <div style={{ marginTop: "40px", width: "100%", maxWidth: "480px" }}>
-          <SuperTokensComponentNoSSR />
+          <ComponentToRender />
         </div>
       </Container>
     </Wrapper>
   );
-}
+};
+
+export default Auth;
