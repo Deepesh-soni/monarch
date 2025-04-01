@@ -523,6 +523,12 @@ const Stock = () => {
     fetchStockDetails();
   }, [fqn]);
 
+  const handleCompareClick = () => {
+    if (stock && peers) {
+      router.push(`/stocks/compare/${stock.fqn}/${peers[0].fqn}`);
+    }
+  };
+
   if (loading)
     return <Spin style={{ margin: "100px auto", display: "block" }} />;
 
@@ -605,7 +611,7 @@ const Stock = () => {
                 <Body1>Add to Watchlist</Body1>
               </ActionButton>
             )}
-            <ActionButton>
+            <ActionButton onClick={handleCompareClick}>
               <CiExport />
               <Body1>Compare</Body1>
             </ActionButton>
