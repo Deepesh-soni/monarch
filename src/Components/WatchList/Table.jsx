@@ -108,6 +108,45 @@ const Table = () => {
     if (!!queryParams?.stocks?.length) fetchWatchlists();
   }, [queryParams?.stocks]);
 
+  //       "stockId": 3172,
+  //       "cmotsCo": 20659,
+  //       "lastRefreshed": "2025-03-30T18:06:56.000Z",
+  //       "fqn": "hathway",
+  //       "bseCode": "533162",
+  //       "nseSymbol": "HATHWAY",
+  //       "companyName": "Hathway Cable & Datacom Ltd",
+  //       "companyShortName": "Hathway Cable",
+  //       "categoryName": "company",
+  //       "isin": "INE982F01036",
+  //       "bseGroup": "B",
+  //       "mcapType": "Small Cap",
+  //       "sectorCode": "00000061",
+  //       "sectorName": "Telecomm-Service",
+  //       "industryCode": "00000090",
+  //       "industryName": "Telecommunications - Service Provider",
+  //       "bseListed": 1,
+  //       "nseListed": 1,
+  //       "mcap": 2299.37,
+  //       "displayType": "GEN",
+  //       "price": 13,
+  //       "open": 13.15,
+  //       "high": 13.6,
+  //       "low": 12.92,
+  //       "volume": 5185239,
+  //       "high52WeekPrice": 25.66,
+  //       "low52WeekPrice": 12.12,
+  //       "change": "-1.14",
+  //       "dividendYield": 0,
+  //       "pbTtm": 0.53,
+  //       "roeTtm": 2.33,
+  //       "roceTtm": 3.28,
+  //       "debtToEquity": 0,
+  //       "ebitdaGrowth": 10.87,
+  //       "evToSales": 1.06,
+  //       "evToEbitda": 4.64,
+  //       "interestCoverageRatios": 54.89,
+  //       "pegRatio": 0.68
+
   return (
     <Wrapper>
       <FlexBox width="100%" height="100%" column>
@@ -134,10 +173,10 @@ const Table = () => {
                   <Td>{stock?.CMP}</Td>
                   <Td>{stock?.PE}</Td>
                   <Td>{stock?.marketCap}</Td>
-                  <Td>{stock?.dividend}</Td>
+                  <Td>{stock?.dividendYield}</Td>
                   <Td>{stock?.netProfit}</Td>
                   <Td>{stock?.profitVar}</Td>
-                  <Td>{stock?.sales}</Td>
+                  <Td>{stock?.price}</Td>
                   <Td>{stock?.salesVar}</Td>
                   <Td>{stock?.ROCE}</Td>
                 </Tr>
