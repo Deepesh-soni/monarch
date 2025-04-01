@@ -4,12 +4,94 @@ import styled from "styled-components";
 import FlexBox from "@common/UI/FlexBox";
 import { Body1, Support, H1 } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
-import { IoMdAdd } from "react-icons/io";
 import { CiExport } from "react-icons/ci";
 import { FaArrowsRotate } from "react-icons/fa6";
 import { client } from "@axiosClient";
+import { BiLinkExternal } from "react-icons/bi";
+import { Modal, Select, Button } from "antd";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
 
-// Styled components (keeping most of your original styles)
+
+const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
+    const [watchlists, setWatchlists] = useState([]);
+    const [selectedWatchlist, setSelectedWatchlist] = useState(null);
+    const [loadingWatchlists, setLoadingWatchlists] = useState(false);
+    const [adding, setAdding] = useState(false);
+
+    useEffect(() => {
+        if (visible) {
+            setLoadingWatchlists(true);
+            client
+                .get("/watchlist")
+                .then((res) => setWatchlists(res.data || []))
+                .catch((err) => console.error("Failed to fetch watchlists", err))
+                .finally(() => setLoadingWatchlists(false));
+        }
+    }, [visible]);
+
+
+    const handleAdd = async () => {
+        if (!selectedWatchlist) return;
+        setAdding(true);
+        try {
+            // Find the selected watchlist details
+            const watchlist = watchlists.find((w) => w.fqn === selectedWatchlist);
+            let updatedStocks = Array.isArray(watchlist.stocks)
+                ? [...watchlist.stocks]
+                : [];
+            if (!updatedStocks.includes(stockFqn)) {
+                updatedStocks.push(stockFqn);
+            }
+            const payload = {
+                name: watchlist.name,
+                description: watchlist.description,
+                stocks: updatedStocks,
+            };
+            await client.put(`/watchlist/${watchlist.fqn}`, payload);
+            // Optionally show success message...
+            onClose();
+        } catch (error) {
+            console.error("Failed to add stock to watchlist", error);
+        } finally {
+            setAdding(false);
+        }
+    };
+
+    return (
+        <Modal
+            visible={visible}
+            onCancel={onClose}
+            title="Add to Watchlist"
+            footer={null}
+        >
+            <Select
+                style={{ width: "100%" }}
+                placeholder="Select a watchlist"
+                loading={loadingWatchlists}
+                onChange={(value) => setSelectedWatchlist(value)}
+            >
+                {watchlists.map((watchlist) => (
+                    <Select.Option key={watchlist.fqn} value={watchlist.fqn}>
+                        {watchlist.name}
+                    </Select.Option>
+                ))}
+            </Select>
+            <div style={{ marginTop: 16, textAlign: "right" }}>
+                <Button onClick={handleAdd} loading={adding} type="primary">
+                    Add
+                </Button>
+                <Button onClick={onClose} style={{ marginLeft: 8 }}>
+                    Cancel
+                </Button>
+                <Button type="link" onClick={() => {/* trigger create new popup */ }}>
+                    Create New Watchlist
+                </Button>
+            </div>
+        </Modal>
+    );
+};
+
+
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
   padding: 20px;
@@ -29,6 +111,31 @@ const Hr = styled.hr`
   width: 100%;
   border: 1px solid #ebf0f4;
   margin: 20px 0;
+`;
+
+/* Navigation links with a bottom highlight on hover */
+const NavLinks = styled(FlexBox)`
+  width: 100%;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 16px;
+`;
+
+const NavLink = styled.a`
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  font-weight: 500;
+  padding: 4px 0;
+  &:hover::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 2px;
+    width: 100%;
+    background: #142c8e;
+  }
 `;
 
 const SecuritySection = styled(FlexBox)`
@@ -74,7 +181,6 @@ const Section = styled(FlexBox)`
   flex-wrap: wrap;
   margin-top: 1rem;
 `;
-
 
 const BusinessSectionLeft = styled(FlexBox)`
   border: 1px solid #ebf0f4;
@@ -137,6 +243,54 @@ const TableCell = styled.td`
   border-bottom: 1px solid #ebf0f4;
 `;
 
+const LeftContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+
+const RightContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+`;
+
+// Header row container
+const HeaderRow = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+`;
+
+// Company title styled component
+const CompanyTitle = styled(H1)`
+  margin: 0;
+  font-size: 1.75rem;
+  color: #111111;
+`;
+
+// Exchange links row
+const ExchangeLinksRow = styled.div`
+  margin-top: 4px;
+  display: flex;
+  gap: 16px;
+`;
+
+// Each exchange link
+const ExchangeLink = styled.a`
+  display: inline-flex;
+  align-items: center;
+  color: #687792;
+  font-size: 0.875rem;
+  text-decoration: none;
+  gap: 4px;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 // Dummy financial data (for display purposes)
 const financialData = {
     "Profit & Loss": [
@@ -155,12 +309,25 @@ const financialData = {
     ],
 };
 
-const PageSix = () => {
+const slugify = (text) =>
+    text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/[\s\W-]+/g, "-");
+
+const StockPage = () => {
     const router = useRouter();
     const { fqn } = router.query;
     const [stock, setStock] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const { doesSessionExist } = useSessionContext();
+    const isLoggedIn = doesSessionExist;
+
+    const [showWatchlistPopup, setShowWatchlistPopup] = useState(false);
+
 
     // API integration: Fetch stock details using the fqn parameter
     useEffect(() => {
@@ -178,10 +345,20 @@ const PageSix = () => {
         fetchStockDetails();
     }, [fqn]);
 
-    if (loading)
-        return <Wrapper><Body1>Loading...</Body1></Wrapper>;
-    if (error)
-        return <Wrapper><Body1>{error}</Body1></Wrapper>;
+    if (loading) {
+        return (
+            <Wrapper>
+                <Body1>Loading...</Body1>
+            </Wrapper>
+        );
+    }
+    if (error) {
+        return (
+            <Wrapper>
+                <Body1>{error}</Body1>
+            </Wrapper>
+        );
+    }
     if (!stock) return null;
 
     // Calculate change color based on the change value
@@ -190,41 +367,66 @@ const PageSix = () => {
 
     return (
         <Wrapper>
-            {/* Top Navigation with Logo, Company Info and Price */}
-            <NavContainer>
-                <FlexBox columnGap="16px" align="center">
-                    <img src="/logopagesix.svg" width={56} height={56} alt="logo" />
-                    <FlexBox direction="column" gap="8px">
-                        <Body1 bold>{stock.companyName}</Body1>
-                        <Support>{stock.companyShortName}</Support>
-                    </FlexBox>
-                </FlexBox>
-                <FlexBox direction="column" gap="8px" align="center">
-                    <Body1 bold>₹ {stock.price}</Body1>
-                    <Support color={changeColor}>{stock.change}</Support>
-                </FlexBox>
-            </NavContainer>
-            <Hr />
+            {/* Top Navigation (no stock image as requested) */}
 
-            {/* Section Navigation Labels */}
-            <FlexBox width="100%" justify="space-around" wrap="wrap">
-                <Body1>Security Information</Body1>
-                <Body1>Business Description</Body1>
-                <Body1>APART Insights</Body1>
-                <Body1>Financial Fundamentals</Body1>
-                <Body1>Cash Counter</Body1>
-                <Body1>Peer Comparison</Body1>
-            </FlexBox>
+
+            <HeaderRow>
+                <LeftContainer>
+                    <CompanyTitle bold>{stock.companyName}</CompanyTitle>
+                    <ExchangeLinksRow>
+                        {stock.bseListed && stock.bseCode && (
+                            <ExchangeLink
+                                href={`https://www.bseindia.com/stock-share-price/${slugify(
+                                    stock.companyName
+                                )}/${stock.companyShortName}/${stock.bseCode}/`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <span>BSE: {stock.bseCode}</span>
+                                <BiLinkExternal size={14} />
+                            </ExchangeLink>
+                        )}
+                        {stock.nseListed && stock.nseSymbol && (
+                            <ExchangeLink
+                                href={`https://www.nseindia.com/get-quotes/equity?symbol=${stock.nseSymbol}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <span>NSE: {stock.nseSymbol}</span>
+                                <BiLinkExternal size={14} />
+                            </ExchangeLink>
+                        )}
+                    </ExchangeLinksRow>
+                </LeftContainer>
+                <RightContainer>
+                    <Body1 bold style={{ fontSize: "1.25rem" }}>
+                        ₹ {stock.price}
+                    </Body1>
+                    <Support style={{ color: changeColor }}>{stock.change}</Support>
+                </RightContainer>
+            </HeaderRow>
+
+            {/* Anchored Navigation */}
+            <NavLinks>
+                <NavLink href="#security">Security Information</NavLink>
+                <NavLink href="#business">Business Description</NavLink>
+                <NavLink href="#insights">APART Insights</NavLink>
+                <NavLink href="#fundamentals">Financial Fundamentals</NavLink>
+                <NavLink href="#cash">Cash Counter</NavLink>
+                <NavLink href="#peers">Peer Comparison</NavLink>
+            </NavLinks>
 
             {/* Security Section */}
-            <SecuritySection>
+            <SecuritySection id="security">
                 <FlexBox width="100%" align="center" justify="space-between" margin="0 0 1rem 0">
                     <Body1 bold>Security Information</Body1>
                     <FlexBox columnGap="16px">
-                        <ActionButton>
-                            <FaArrowsRotate />
-                            <Body1>Add to Watchlist</Body1>
-                        </ActionButton>
+                        {isLoggedIn && (
+                            <ActionButton onClick={() => setShowWatchlistPopup(true)}>
+                                <FaArrowsRotate size={18} />
+                                <Body1>Add to Watchlist</Body1>
+                            </ActionButton>
+                        )}
                         <ActionButton>
                             <CiExport />
                             <Body1>Compare</Body1>
@@ -274,10 +476,10 @@ const PageSix = () => {
 
             {/* Business & Insights Sections */}
             <Section>
-                <BusinessSectionLeft>
+                <BusinessSectionLeft id="business">
                     <Body1 bold>Business Description</Body1>
                     <Body1>
-                        {/* Replace with actual business description */}
+                        {/* Replace with actual business description if available */}
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                     </Body1>
                     <ul>
@@ -285,10 +487,10 @@ const PageSix = () => {
                         <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
                     </ul>
                     <Body1>
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quam, quis optio minus sunt dignissimos hic laborum.
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, quis optio minus sunt dignissimos hic laborum.
                     </Body1>
                 </BusinessSectionLeft>
-                <BusinessSectionRight>
+                <BusinessSectionRight id="insights">
                     <Body1 bold>APART Insights</Body1>
                     <Body1>
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, quis optio minus sunt dignissimos hic laborum.
@@ -307,7 +509,7 @@ const PageSix = () => {
             </Section>
 
             {/* Financial Fundamentals Section */}
-            <FlexBox column width="100%">
+            <FlexBox column width="100%" id="fundamentals">
                 <H1 bold>Financial Fundamentals</H1>
                 <TableContainer>
                     {Object.entries(financialData).map(([section, data]) => (
@@ -341,7 +543,7 @@ const PageSix = () => {
             </FlexBox>
 
             {/* Cash Counter Section */}
-            <FlexBox width="100%" column>
+            <FlexBox width="100%" column id="cash">
                 <H1 bold>Cash Counter</H1>
                 <FlexBox padding="1rem 2rem" width="100%" justify="space-between">
                     <Support bold>Cash Flow from Investing</Support>
@@ -350,8 +552,23 @@ const PageSix = () => {
                     <Support bold>Cash Flow from Equivalents</Support>
                 </FlexBox>
             </FlexBox>
+
+            {/* Peer Comparison Section */}
+            <FlexBox width="100%" column id="peers">
+                <H1 bold>Peer Comparison</H1>
+                <Body1>Peer comparison data placeholder...</Body1>
+            </FlexBox>
+
+            {isLoggedIn && (
+                <AddToWatchlistPopup
+                    visible={showWatchlistPopup}
+                    onClose={() => setShowWatchlistPopup(false)}
+                    stockFqn={stock.fqn}
+                />
+            )}
+
         </Wrapper>
     );
 };
 
-export default PageSix;
+export default StockPage;
