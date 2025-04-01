@@ -8,8 +8,8 @@ import { useEffect, useState } from "react";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { Modal } from "antd"; // for delete confirmation
 import { toast } from "react-toastify";
-import { H5 } from "../Components/common/Typography";
-import { Medium, Small, Large } from "../Components/common/Paragraph";
+import { H5 } from "../../Components/common/Typography";
+import { Medium, Small, Large } from "../../Components/common/Paragraph";
 
 import { client } from "@axiosClient";
 import NewUpdatePopup from "../common/NewUpdatePopup";
