@@ -31,7 +31,7 @@ COPY --from=builder /app/node_modules ./node_modules
 EXPOSE 3000
 
 # Set environment to production
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Start the Next.js server
 CMD ["yarn", "start"]
