@@ -72,7 +72,7 @@ const NavBar = () => {
   return (
     <Navbar>
       <LogoContainer href="/" passHref>
-        <img src="/assets/logo.svg" alt="Logo" width={120} height={40} />
+        <img src="/assets/logo.jpg" alt="Logo" width={120} height={40} />
       </LogoContainer>
 
       <SearchContainer>
