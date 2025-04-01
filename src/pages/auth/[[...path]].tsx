@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react'
-import dynamic from 'next/dynamic'
-import { EmailPasswordPreBuiltUI } from 'supertokens-auth-react/recipe/emailpassword/prebuiltui';
-import { redirectToAuth } from 'supertokens-auth-react'
-import { canHandleRoute, getRoutingComponent } from 'supertokens-auth-react/ui'
-import Navbar from '@common/Navbar';
-import styled from 'styled-components';
-import FlexBox from '@Components/common/UI/FlexBox';
-import { device } from '@Components/common/UI/Responsive';
-
+import React, { useEffect } from "react";
+import dynamic from "next/dynamic";
+import { EmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe/emailpassword/prebuiltui";
+import { redirectToAuth } from "supertokens-auth-react";
+import { canHandleRoute, getRoutingComponent } from "supertokens-auth-react/ui";
+import Navbar from "@common/NavBar";
+import styled from "styled-components";
+import FlexBox from "@Components/common/UI/FlexBox";
+import { device } from "@Components/common/UI/Responsive";
 
 const Wrapper = styled.div`
   background: url("/assets/home/page-bg.png");
@@ -31,30 +30,27 @@ const Container = styled(FlexBox)`
   }
 `;
 
-
-
 const SuperTokensComponentNoSSR = dynamic<{}>(
-    new Promise((res) => res(() => getRoutingComponent([EmailPasswordPreBuiltUI]))),
-    { ssr: false }
-)
+  new Promise(res => res(() => getRoutingComponent([EmailPasswordPreBuiltUI]))),
+  { ssr: false }
+);
 
 export default function Auth() {
+  // if the user visits a page that is not handled by us (like /auth/random), then we redirect them back to the auth page.
+  useEffect(() => {
+    if (canHandleRoute([EmailPasswordPreBuiltUI]) === false) {
+      redirectToAuth();
+    }
+  }, []);
 
-    // if the user visits a page that is not handled by us (like /auth/random), then we redirect them back to the auth page.
-    useEffect(() => {
-        if (canHandleRoute([EmailPasswordPreBuiltUI]) === false) {
-            redirectToAuth()
-        }
-    }, [])
-
-    return (
-        <Wrapper>
-            <Navbar />
-            <Container>
-                <div style={{ marginTop: '40px', width: '100%', maxWidth: '480px' }}>
-                    <SuperTokensComponentNoSSR />
-                </div>
-            </Container>
-        </Wrapper>
-    )
+  return (
+    <Wrapper>
+      <Navbar />
+      <Container>
+        <div style={{ marginTop: "40px", width: "100%", maxWidth: "480px" }}>
+          <SuperTokensComponentNoSSR />
+        </div>
+      </Container>
+    </Wrapper>
+  );
 }
