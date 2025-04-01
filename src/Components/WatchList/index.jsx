@@ -72,11 +72,11 @@ const WatchList = () => {
         } catch (error) {
           toast.error(`Failed to delete "${name}".`);
         }
-      }
+      },
     });
   };
 
-  const handleEdit = (watchlist) => {
+  const handleEdit = watchlist => {
     setEditingItem(watchlist);
     setIsEditModalOpen(true);
   };
@@ -137,7 +137,7 @@ const WatchList = () => {
           {loading ? (
             <Support color="#687792">Loading watchlists...</Support>
           ) : watchlists.length > 0 ? (
-            watchlists.map((watchlist) => (
+            watchlists.map(watchlist => (
               <Card key={watchlist.id}>
                 <FlexBox align="center" justify="space-between">
                   <FlexBox column rowGap="0.25rem">
@@ -145,9 +145,7 @@ const WatchList = () => {
                     <Support color="#687792">
                       {watchlist.stocks?.length || 0} Stocks
                     </Support>
-                    <Support color="#687792">
-                      {watchlist.description}
-                    </Support>
+                    <Support color="#687792">{watchlist.description}</Support>
                   </FlexBox>
 
                   {/* Edit & Delete icons */}
@@ -160,7 +158,9 @@ const WatchList = () => {
                     <AiOutlineDelete
                       size={20}
                       style={{ cursor: "pointer" }}
-                      onClick={() => handleDelete(watchlist.fqn, watchlist.name)}
+                      onClick={() =>
+                        handleDelete(watchlist.fqn, watchlist.name)
+                      }
                     />
                   </FlexBox>
                 </FlexBox>
