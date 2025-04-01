@@ -446,7 +446,9 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
               padding: "8px",
             }}
           >
-            <strong><a href={`/stocks/${peer.fqn}`}>{peer.companyName}</a></strong>
+            <strong>
+              <a href={`/stocks/${peer.fqn}`}>{peer.companyName}</a>
+            </strong>
           </th>
         </tr>
       </thead>

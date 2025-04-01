@@ -165,7 +165,10 @@ const WatchList = () => {
                     <AiOutlineEdit
                       size={20}
                       style={{ cursor: "pointer" }}
-                      onClick={() => handleEdit(watchlist)}
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleEdit(watchlist);
+                      }}
                     />
                     <AiOutlineDelete
                       size={20}
