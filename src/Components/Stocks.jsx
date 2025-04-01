@@ -231,6 +231,13 @@ const SecuritySection = styled(FlexBox)`
   background: #fff;
 `;
 
+const CashContainer = styled(FlexBox)`
+  width: 100%;
+  justify-content: space-between;
+  @media ${device.laptop} {
+    padding: 1rem 2rem;
+  }
+`;
 const ActionButton = styled(FlexBox)`
   border: 1.5px solid #142c8e;
   display: inline-flex;
@@ -247,10 +254,13 @@ const ActionButton = styled(FlexBox)`
 
 const GridContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 1rem;
   margin-top: 1rem;
-  column-gap: 6rem;
+  @media ${device.laptop} {
+    column-gap: 6rem;
+    grid-template-columns: repeat(2, 1fr);
+  }
 `;
 
 const GridItem = styled.div`
@@ -269,41 +279,58 @@ const GridItem = styled.div`
 const Section = styled(FlexBox)`
   width: 100%;
   justify-content: space-between;
-  column-gap: 1rem;
+  flex-direction: column;
+  row-gap: 1rem;
+  @media ${device.laptop} {
+    flex-direction: row;
+    column-gap: 1rem;
+  }
 `;
 const BusinessSectionLeft = styled(FlexBox)`
   border: 1px solid #3c3c3c;
-  width: 60%;
+  width: 100%;
   border-radius: 12px;
   padding: 0.5rem;
   flex-direction: column;
   gap: 1rem;
+  @media ${device.laptop} {
+    width: 60%;
+  }
 `;
 
 const BusinessSectionRight = styled(FlexBox)`
   border: 1px solid #3c3c3c;
-  width: 40%;
+  width: 100%;
   border-radius: 12px;
   padding: 0.5rem;
   flex-direction: column;
   gap: 1rem;
+  @media ${device.laptop} {
+    width: 40%;
+  }
 `;
 
 const ShareholdingLeft = styled(FlexBox)`
   border: 1px solid #3c3c3c;
-  width: 55%;
+  width: 100%;
   border-radius: 12px;
   padding: 0.5rem;
   flex-direction: column;
   gap: 1rem;
+  @media ${device.laptop} {
+    width: 55%;
+  }
 `;
 const ShareholdingRight = styled(FlexBox)`
   border: 1px solid #3c3c3c;
-  width: 45%;
+  width: 100%;
   border-radius: 12px;
   padding: 0.5rem;
   flex-direction: column;
   gap: 1rem;
+  @media ${device.laptop} {
+    width: 45%;
+  }
 `;
 const TableContainer = styled.div`
   width: 100%;
@@ -396,6 +423,15 @@ const ScoreCard = styled(FlexBox)`
   border: 1px solid #888888;
 `;
 
+const TableCard = styled.div`
+  display: flex;
+  width: 100%;
+  row-gap: 1rem;
+  flex-direction: column;
+  @media ${device.laptop} {
+    width: 50%;
+  }
+`;
 // Dummy financial data (for display purposes)
 const financialData = {
   "Profit & Loss": [
@@ -731,7 +767,7 @@ const Stock = () => {
         <H1 bold>Financial Fundamentals</H1>
         <TableContainer>
           {Object.entries(financialData).map(([section, data]) => (
-            <div key={section} style={{ width: "48%" }}>
+            <TableCard key={section}>
               <Body1 bold>{section}</Body1>
               <Table>
                 <StyledTable>
@@ -755,7 +791,7 @@ const Stock = () => {
                   </tbody>
                 </StyledTable>
               </Table>
-            </div>
+            </TableCard>
           ))}
         </TableContainer>
       </FlexBox>
@@ -763,12 +799,12 @@ const Stock = () => {
       {/* Cash Counter Section */}
       <FlexBox width="100%" column id="cash">
         <H1 bold>Cash Counter</H1>
-        <FlexBox padding="1rem 2rem" width="100%" justify="space-between">
+        <CashContainer>
           <Support bold>Cash Flow from Investing</Support>
           <Support bold>Cash Flow from Financing</Support>
           <Support bold>Cash Flow from Operating</Support>
           <Support bold>Cash Flow from Equivalents</Support>
-        </FlexBox>
+        </CashContainer>
       </FlexBox>
 
       {/* Peer Comparison Section */}
@@ -804,7 +840,9 @@ const Stock = () => {
             <StackedBarChart data={stockHoldingChart?.chartData} />
           )}
         </ShareholdingLeft>
-        <ShareholdingRight></ShareholdingRight>
+        <ShareholdingRight>
+          <H1 bold>Valuation</H1>
+        </ShareholdingRight>
       </Section>
 
       {isLoggedIn && (
