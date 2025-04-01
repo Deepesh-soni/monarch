@@ -76,9 +76,9 @@ function StackedBarChart({ data }) {
     <ResponsiveContainer width="100%" height={400}>
       <BarChart data={chartData}>
         <XAxis dataKey="YRC" />
-        <YAxis />
+        {/* <YAxis /> */}
         <Tooltip formatter={(value, name) => [value, _.startCase(name)]} />
-        <Legend formatter={value => _.startCase(value)} />
+        {/* <Legend formatter={value => _.startCase(value)} /> */}
         {keys.map(key => (
           <Bar key={key} dataKey={key} stackId="a" fill={keyColors[key]}>
             <LabelList
@@ -283,6 +283,23 @@ const BusinessSectionLeft = styled(FlexBox)`
 const BusinessSectionRight = styled(FlexBox)`
   border: 1px solid #3c3c3c;
   width: 40%;
+  border-radius: 12px;
+  padding: 0.5rem;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const ShareholdingLeft = styled(FlexBox)`
+  border: 1px solid #3c3c3c;
+  width: 55%;
+  border-radius: 12px;
+  padding: 0.5rem;
+  flex-direction: column;
+  gap: 1rem;
+`;
+const ShareholdingRight = styled(FlexBox)`
+  border: 1px solid #3c3c3c;
+  width: 45%;
   border-radius: 12px;
   padding: 0.5rem;
   flex-direction: column;
@@ -780,12 +797,15 @@ const Stock = () => {
         )}
       </FlexBox>
 
-      <FlexBox width="100%" column id="peers">
-        <H1 bold>Shareholding Analysis</H1>
-        {stockHoldingChart && (
-          <StackedBarChart data={stockHoldingChart?.chartData} />
-        )}
-      </FlexBox>
+      <Section>
+        <ShareholdingLeft width="100%" column id="peers">
+          <H1 bold>Shareholding Analysis</H1>
+          {stockHoldingChart && (
+            <StackedBarChart data={stockHoldingChart?.chartData} />
+          )}
+        </ShareholdingLeft>
+        <ShareholdingRight></ShareholdingRight>
+      </Section>
 
       {isLoggedIn && (
         <AddToWatchlistPopup
