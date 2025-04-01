@@ -53,6 +53,14 @@ const TextWrapper = styled(FlexBox)`
   max-width: 695px;
 `;
 
+const Image = styled.img`
+  width: 100px;
+  height: 20px;
+  @media ${device.laptop} {
+    width: 304px;
+    height: 108px;
+  }
+`;
 const Home = () => {
   const router = useRouter();
 
@@ -67,12 +75,7 @@ const Home = () => {
         <FlexBox column align="center">
           <Heading>Discover & Analyze</Heading>
           <FlexBox>
-            <img
-              src="/assets/home/stocks.svg"
-              alt="Stocks"
-              width={304}
-              height={108}
-            />
+            <Image src="/assets/home/stocks.svg" alt="Stocks" />
             <Heading>like never before</Heading>{" "}
           </FlexBox>
         </FlexBox>
@@ -86,8 +89,8 @@ const Home = () => {
           <SearchableDropdown width="100%" onChange={handleSearchSelect} />
         </div>
         <FlexBox column align="center">
-          <Display>Discover Trending Stocks</Display>
-          <Body1 color="#687792">
+          <Display textAlign="center">Discover Trending Stocks</Display>
+          <Body1 color="#687792" textAlign="center">
             Explore the most popular stocks that investors are watching right
             now.
           </Body1>

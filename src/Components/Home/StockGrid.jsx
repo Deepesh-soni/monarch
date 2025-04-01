@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import styled, { css, keyframes } from "styled-components";
 import Bugsnag from "@bugsnag/js";
 import { toast } from "react-toastify";
+import { device } from "@common/UI/Responsive";
 
 import { client } from "@axiosClient";
 import FlexBox from "@common/UI/FlexBox";
 import { Body1 } from "@common/UI/Headings";
-import { useRouter } from 'next/router';
-
+import { useRouter } from "next/router";
 
 const fadeIn = keyframes`
   from {
@@ -46,13 +46,16 @@ const FilterOption = styled(Body1)`
 
 const StockGrid = styled(FlexBox)`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 16px;
   background: #ffffff;
   width: 100%;
   padding: 20px;
   border-radius: 10px;
   animation: ${fadeIn} 0.5s ease-in-out;
+  @media ${device.laptop} {
+    grid-template-columns: repeat(2, 1fr);
+  }
 `;
 
 const StockCard = styled(FlexBox)`
@@ -79,7 +82,6 @@ const formatIndianNumber = num => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
-
 const StocksGrid = () => {
   const [filterType, setFilterType] = useState("all");
   const [stocksData, setStocksData] = useState([]);
@@ -87,7 +89,7 @@ const StocksGrid = () => {
 
   const router = useRouter();
 
-  const handleCardClick = (fqn) => {
+  const handleCardClick = fqn => {
     router.push(`/stocks/${fqn}`);
   };
 
@@ -135,55 +137,72 @@ const StocksGrid = () => {
       <StockGrid>
         {loading
           ? Array.from({ length: 4 }).map((_, index) => (
-            <StockCard key={index}>
-              <SkeletonBox style={{ height: "48px", width: "48px" }} />
-              <SkeletonBox />
-              <SkeletonBox />
-              <SkeletonBox />
-            </StockCard>
-          ))
-          : stocksData?.slice(0, 4).map((stock, index) => {
-            const isPositive = stock.change > 0;
-            const isNegative = stock.change < 0;
-            const changeColor = isPositive ? "#16a34a" : isNegative ? "#dc2626" : "#6b7280";
-
-            return (
-              <StockCard
-                key={index}
-                onClick={() => handleCardClick(stock.fqn)}
-                style={{ cursor: "pointer" }}
-              >
-                <FlexBox justify="space-between" align="center">
-                  <FlexBox column>
-                    <Body1 style={{ fontWeight: 600, fontSize: "16px" }}>{stock.companyName}</Body1>
-                    <Body1 style={{ color: "#687792", fontSize: "14px" }}>
-                      {stock.nseListed ? "NSE" : "BSE"}
-                    </Body1>
-                  </FlexBox>
-                  <FlexBox column align="end">
-                    <Body1 style={{ fontWeight: 700, fontSize: "18px" }}>
-                      ₹ {formatIndianNumber(stock.price)}
-                    </Body1>
-                    <Body1 style={{ color: changeColor, fontSize: "14px" }}>
-                      {stock.change > 0 ? "+" : ""}
-                      {stock.change}%
-                    </Body1>
-                  </FlexBox>
-                </FlexBox>
-
-                <FlexBox justify="space-between" style={{ marginTop: "12px" }}>
-                  <FlexBox column>
-                    <Body1 style={{ color: "#687792", fontSize: "14px" }}>Mkt. Cap</Body1>
-                    <Body1 style={{ fontSize: "15px" }}>{formatIndianNumber(stock.mcap)} Cr.</Body1>
-                  </FlexBox>
-                  <FlexBox column>
-                    <Body1 style={{ color: "#687792", fontSize: "14px" }}>Volume</Body1>
-                    <Body1 style={{ fontSize: "15px" }}>{formatIndianNumber(stock.volume)}</Body1>
-                  </FlexBox>
-                </FlexBox>
+              <StockCard key={index}>
+                <SkeletonBox style={{ height: "48px", width: "48px" }} />
+                <SkeletonBox />
+                <SkeletonBox />
+                <SkeletonBox />
               </StockCard>
-            );
-          })}
+            ))
+          : stocksData?.slice(0, 4).map((stock, index) => {
+              const isPositive = stock.change > 0;
+              const isNegative = stock.change < 0;
+              const changeColor = isPositive
+                ? "#16a34a"
+                : isNegative
+                ? "#dc2626"
+                : "#6b7280";
+
+              return (
+                <StockCard
+                  key={index}
+                  onClick={() => handleCardClick(stock.fqn)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <FlexBox justify="space-between" align="center">
+                    <FlexBox column>
+                      <Body1 style={{ fontWeight: 600, fontSize: "16px" }}>
+                        {stock.companyName}
+                      </Body1>
+                      <Body1 style={{ color: "#687792", fontSize: "14px" }}>
+                        {stock.nseListed ? "NSE" : "BSE"}
+                      </Body1>
+                    </FlexBox>
+                    <FlexBox column align="end">
+                      <Body1 style={{ fontWeight: 700, fontSize: "18px" }}>
+                        ₹ {formatIndianNumber(stock.price)}
+                      </Body1>
+                      <Body1 style={{ color: changeColor, fontSize: "14px" }}>
+                        {stock.change > 0 ? "+" : ""}
+                        {stock.change}%
+                      </Body1>
+                    </FlexBox>
+                  </FlexBox>
+
+                  <FlexBox
+                    justify="space-between"
+                    style={{ marginTop: "12px" }}
+                  >
+                    <FlexBox column>
+                      <Body1 style={{ color: "#687792", fontSize: "14px" }}>
+                        Mkt. Cap
+                      </Body1>
+                      <Body1 style={{ fontSize: "15px" }}>
+                        {formatIndianNumber(stock.mcap)} Cr.
+                      </Body1>
+                    </FlexBox>
+                    <FlexBox column>
+                      <Body1 style={{ color: "#687792", fontSize: "14px" }}>
+                        Volume
+                      </Body1>
+                      <Body1 style={{ fontSize: "15px" }}>
+                        {formatIndianNumber(stock.volume)}
+                      </Body1>
+                    </FlexBox>
+                  </FlexBox>
+                </StockCard>
+              );
+            })}
       </StockGrid>
     </>
   );
