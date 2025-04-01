@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import Navbar from "@common/Navbar";
+import Navbar from "@common/NavBar";
 
 const ChildrenWrapper = styled.div`
   background-color: #142c8e0d;

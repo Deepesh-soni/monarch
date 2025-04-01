@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { FaSearch } from "react-icons/fa";
 
 import FlexBox from "@common/UI/FlexBox";
-import Navbar from "@common/Navbar";
+import Navbar from "@common/NavBar";
 import StocksGrid from "./StockGrid";
 import { Display, Body1, H1 } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
