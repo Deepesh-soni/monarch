@@ -501,6 +501,12 @@ const Stock = () => {
 
   const [showWatchlistPopup, setShowWatchlistPopup] = useState(false);
 
+  const handleCompareClick = () => {
+    if (stock && peers) {
+      router.push(`/stocks/compare/${stock.fqn}/${peers[0].fqn}`);
+    }
+  };
+
   // API integration: Fetch stock details using the fqn parameter
   useEffect(() => {
     if (!fqn) return;
@@ -605,7 +611,7 @@ const Stock = () => {
                 <Body1>Add to Watchlist</Body1>
               </ActionButton>
             )}
-            <ActionButton>
+            <ActionButton onClick={handleCompareClick}>
               <CiExport />
               <Body1>Compare</Body1>
             </ActionButton>
