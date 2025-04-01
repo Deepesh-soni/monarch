@@ -3,32 +3,30 @@ import styled from "styled-components";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-import FlexBox from "@common/UI/FlexBox";
-import SearchableDropdown from "./UI/Search/SearchDropdownCmp";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import Session from "supertokens-auth-react/recipe/session";
 
+import FlexBox from "@common/UI/FlexBox";
+import SearchableDropdown from "./UI/Search/SearchDropdownCmp";
 
 const Navbar = styled.nav`
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
   align-items: center;
-  width: 100%;
+  justify-content: space-between;
+  width: 86.67%;
+  max-width: 75rem;
   padding: 10px 20px;
   background: white;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
   margin: 2rem auto;
   gap: 2.5rem;
-  width: 86.67%;
-  max-width: 75rem;
 `;
 
 const LogoContainer = styled(Link)`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 const NavLink = styled(Link)`
@@ -49,15 +47,21 @@ const Button = styled.button`
   border: ${({ primary }) => (primary ? "none" : "2px solid #0033a0")};
   background: ${({ primary }) => (primary ? "#0033a0" : "white")};
   color: ${({ primary }) => (primary ? "white" : "#0033a0")};
+
   &:hover {
     background: ${({ primary }) => (primary ? "#002080" : "#f0f0f0")};
   }
 `;
 
+const SearchContainer = styled.div`
+  flex: 1;
+  max-width: 600px;
+  margin: 0 40px;
+`;
+
 const NavBar = () => {
   const router = useRouter();
   const pathname = usePathname();
-
   const { doesSessionExist } = useSessionContext();
 
   const handleLogout = async () => {
@@ -68,34 +72,27 @@ const NavBar = () => {
   return (
     <Navbar>
       <LogoContainer href="/" passHref>
-        <img
-          src="/assets/logo.svg"
-          alt="Logo"
-          width={120}
-          height={40}
-          style={{ cursor: "pointer" }}
-        />
+        <img src="/assets/logo.jpg" alt="Logo" width={120} height={40} />
       </LogoContainer>
 
-      {/* Center: Search */}
-      <div style={{ flex: 1, maxWidth: "600px", margin: "0 40px" }}>
+      <SearchContainer>
         <SearchableDropdown
           width="100%"
           onChange={item => router.push(`/stocks/${item.fqn}`)}
         />
-      </div>
+      </SearchContainer>
 
-      {/* Right Side */}
       <FlexBox columnGap="20px" align="center">
-        <NavLink href="/news" active={pathname?.includes("news")}>
-          News
-        </NavLink>
-        <NavLink href="/screens" active={pathname?.includes("screens")}>
-          Screens
-        </NavLink>
-        <NavLink href="/watch-list" active={pathname?.includes("watch-list")}>
-          Watchlist
-        </NavLink>
+        {[
+          { path: "/news", label: "News" },
+          { path: "/screens", label: "Screens" },
+          { path: "/watch-list", label: "Watchlist" },
+        ].map(({ path, label }) => (
+          <NavLink key={path} href={path} active={pathname?.includes(path)}>
+            {label}
+          </NavLink>
+        ))}
+
         {doesSessionExist ? (
           <Button onClick={handleLogout}>Logout</Button>
         ) : (
