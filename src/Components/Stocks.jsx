@@ -21,6 +21,8 @@ import {
 } from "recharts";
 import { blue } from "@ant-design/colors";
 import _ from "lodash";
+import { LabelList } from "recharts";
+
 const keys = [
   "Promoters",
   "Retail",
@@ -40,25 +42,29 @@ const keyColors = {
 };
 
 function prepareChartData(raw) {
-  return raw.map(item => ({
+  const yearMap = new Map();
+
+  raw.forEach(item => {
+    const year = Math.floor(item.YRC / 100);
+    if (!yearMap.has(year)) {
+      yearMap.set(year, item); // take only first entry per year
+    }
+  });
+
+  // Get only the last 5 years
+  const filtered = Array.from(yearMap.values())
+    .sort((a, b) => a.YRC - b.YRC)
+    .slice(-5);
+
+  return filtered.map(item => ({
     ...item,
     YRC: formatYRC(item.YRC),
   }));
 }
 
 function formatYRC(yrc) {
-  // Convert e.g. 202412 → "Dec 2024"
   const year = Math.floor(yrc / 100);
-  const month = yrc % 100;
-
-  const monthNames = {
-    3: "Mar",
-    6: "Jun",
-    9: "Sep",
-    12: "Dec",
-  };
-
-  return `${monthNames[month] || "M" + month} ${year}`;
+  return `${year}`;
 }
 
 function StackedBarChart({ data }) {
@@ -72,7 +78,14 @@ function StackedBarChart({ data }) {
         <Tooltip formatter={(value, name) => [value, _.startCase(name)]} />
         <Legend formatter={value => _.startCase(value)} />
         {keys.map(key => (
-          <Bar key={key} dataKey={key} stackId="a" fill={keyColors[key]} />
+          <Bar key={key} dataKey={key} stackId="a" fill={keyColors[key]}>
+            <LabelList
+              dataKey={key}
+              position="center"
+              formatter={val => `${val.toFixed(1)}%`}
+              style={{ fill: "#fff", fontSize: 10 }}
+            />
+          </Bar>
         ))}
       </BarChart>
     </ResponsiveContainer>
@@ -734,7 +747,7 @@ const Stock = () => {
       <FlexBox width="100%" column id="peers">
         <H1 bold>Shareholding Analysis</H1>
         {stockHoldingChart && (
-          <StackedBarChart data={stockHoldingChart?.chartData?.slice(0, 5)} />
+          <StackedBarChart data={stockHoldingChart?.chartData} />
         )}
       </FlexBox>
 
