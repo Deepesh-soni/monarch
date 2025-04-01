@@ -50,11 +50,11 @@ const StockGrid = styled(FlexBox)`
   gap: 16px;
   background: #ffffff;
   width: 100%;
-  padding: 20px;
   border-radius: 10px;
   animation: ${fadeIn} 0.5s ease-in-out;
   @media ${device.laptop} {
     grid-template-columns: repeat(2, 1fr);
+    padding: 20px;
   }
 `;
 
