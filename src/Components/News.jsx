@@ -73,14 +73,14 @@ const FilterButton = styled(FlexBox)`
   }
 `;
 
-// const Image = styled.img`
-//   width: 20px;
-//   height: 20px;
-//   @media ${device.laptop} {
-//     width: 100%;
-//     height: 100%;
-//   }
-// `;
+const Image = styled.img`
+  width: 20px;
+  height: 20px;
+  @media ${device.laptop} {
+    width: 100%;
+    height: 100%;
+  }
+`;
 
 const News = () => {
   return (
@@ -96,12 +96,26 @@ const News = () => {
             <HoverSmall bold>Popular</HoverSmall>
             <HoverSmall bold>My news</HoverSmall>
           </FlexBox>
-          <Button outline>Filter</Button>
+          <FlexBox
+            border="1.5px solid #142C8E"
+            align="center"
+            padding="0.5rem 1rem"
+            columnGap="0.75rem"
+            borderRadius="0.4rem"
+            cursor="pointer"
+          >
+            <IoFilterOutline color="#142C8E" size={20} />
+            <Small color="#142C8E">Filter</Small>
+          </FlexBox>
         </FlexBox>
 
         <Card>
           <FlexBox>
-            <img src="/imagesecond.svg" alt="Market Insights" />
+            <img
+              src="/imagesecond.svg"
+              alt="Market Insights"
+              style={{ objectFit: "cover" }}
+            />
           </FlexBox>
           <FlexBox column rowGap="15px" padding="1rem">
             <Support color="#142C8E">Market Insights</Support>
