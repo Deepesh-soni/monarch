@@ -40,13 +40,7 @@ const Hr = styled.hr`
 const News = () => {
   return (
     <Wrapper>
-      <FlexBox
-        width="100%"
-        height="100%"
-        backgroundColor="#142C8E0D"
-        column
-        columnGap="1rem"
-      >
+      <FlexBox width="100%" height="100%" column columnGap="1rem">
         <FlexBox align="center" justify="space-between">
           <FlexBox columnGap="16px">
             <Support>Popular</Support>
