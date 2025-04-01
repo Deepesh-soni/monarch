@@ -26,7 +26,7 @@ const Navbar = styled.nav`
   max-width: 75rem;
 `;
 
-const LogoContainer = styled.div`
+const LogoContainer = styled(Link)`
   display: flex;
   align-items: center;
 `;

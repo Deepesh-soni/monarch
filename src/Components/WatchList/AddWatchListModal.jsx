@@ -28,7 +28,7 @@ const AddWatchListModal = ({
   toggleModal,
   cancelButtonText = "Cancel",
   confirmButtonText = "Create Watchlist",
-  onConfirm = () => {},
+  onConfirm = () => { },
 }) => {
   const [watchlistName, setWatchlistName] = useState("");
   const [description, setDescription] = useState("");
@@ -42,9 +42,10 @@ const AddWatchListModal = ({
 
     setLoading(true);
     try {
-      await client.post("/watchlists", {
+      await client.post("/watchlist", {
         name: watchlistName,
         description,
+        stocks: []
       });
       toast.success("Watchlist created successfully!");
       onConfirm();

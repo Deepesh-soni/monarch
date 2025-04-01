@@ -32,6 +32,7 @@ const Container = styled(FlexBox)`
 `;
 
 
+
 const SuperTokensComponentNoSSR = dynamic<{}>(
     new Promise((res) => res(() => getRoutingComponent([EmailPasswordPreBuiltUI]))),
     { ssr: false }
@@ -48,8 +49,8 @@ export default function Auth() {
 
     return (
         <Wrapper>
+            <Navbar />
             <Container>
-                <Navbar />
                 <div style={{ marginTop: '40px', width: '100%', maxWidth: '480px' }}>
                     <SuperTokensComponentNoSSR />
                 </div>
