@@ -1,6 +1,5 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { IoMdAdd } from "react-icons/io";
 import { SlArrowRight } from "react-icons/sl";
 import FlexBox from "@common/UI/FlexBox";
 import { Body1, Support, H1 } from "@common/UI/Headings";
@@ -17,6 +16,7 @@ const Wrapper = styled(FlexBox)`
 
   @media ${device.laptop} {
     width: 86.67%;
+    max-width: 75rem;
     margin: auto;
     gap: 2.5rem;
   }
@@ -24,8 +24,9 @@ const Wrapper = styled(FlexBox)`
 
 const Section = styled(FlexBox)`
   width: 100%;
-  column-gap: 0.25rem;
+  column-gap: 1.25rem;
   flex-direction: column;
+
   @media ${device.laptop} {
     flex-direction: row;
     width: 100%;
@@ -35,8 +36,9 @@ const Section = styled(FlexBox)`
 const LeftSection = styled(FlexBox)`
   width: 100%;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 1.25rem;
   min-height: 100%;
+
   @media ${device.laptop} {
     width: 60%;
   }
@@ -48,7 +50,7 @@ const RightSection = styled(FlexBox)`
   background: #ffffff;
   border: 1px solid #ebf0f4;
   box-shadow: 0px 3px 3px 0px #00000040;
-  padding: 0.5rem;
+  padding: 1rem;
   border-radius: 0.4rem;
   min-height: 100%;
 `;
@@ -57,13 +59,13 @@ const Container = styled(FlexBox)`
   background: #ffffff;
   border: 1px solid #ebf0f4;
   box-shadow: 0px 3px 3px 0px #00000040;
-  padding: 0.5rem;
+  padding: 1rem;
   border-radius: 0.4rem;
 `;
 
 const CardGridContainer = styled.div`
   display: grid;
-  grid-template-row: repeat(1, 1fr);
+  grid-template-rows: repeat(1, 1fr);
   gap: 1rem;
   @media ${device.laptop} {
     grid-template-columns: repeat(2, 1fr);
@@ -182,7 +184,7 @@ const Screen = () => {
 
   return (
     <Wrapper>
-      <FlexBox width="100%" height="100%" column rowGap="2rem">
+      <FlexBox width="100%" height="100%" column rowGap="1.5rem">
         <HeadingContainer>
           <FlexBox column>
             <H5 bold>Stock Screens</H5>

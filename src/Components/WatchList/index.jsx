@@ -22,10 +22,12 @@ const Wrapper = styled(FlexBox)`
   align-items: center;
   gap: 0.5rem;
   min-height: 100vh; /* Full screen minimum height */
+
   @media ${device.laptop} {
     margin: auto;
     gap: 2.5rem;
     width: 86.67%;
+    max-width: 75rem;
     padding: 2rem;
   }
 `;
@@ -88,14 +90,6 @@ const WatchList = () => {
     setIsEditModalOpen(true);
   };
 
-  const handleClick = stocks => {
-    const queryString = stocks
-      .map(stock => `stocks=${encodeURIComponent(stock)}`)
-      .join("&");
-
-    router.push(`/watch-list/details?${queryString}`);
-  };
-
   return (
     <SessionAuth>
       <Wrapper>
@@ -155,7 +149,7 @@ const WatchList = () => {
             watchlists.map(watchlist => (
               <Card
                 key={watchlist.id}
-                onClick={() => handleClick(watchlist.stocks)}
+                onClick={() => router.push(`/watch-list/${watchlist?.fqn}`)}
               >
                 <FlexBox align="center" justify="space-between">
                   <FlexBox column rowGap="0.25rem">

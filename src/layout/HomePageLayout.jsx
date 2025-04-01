@@ -6,7 +6,6 @@ import Navbar from "@common/NavBar";
 const ChildrenWrapper = styled.div`
   width: 100%;
   height: 100%;
-  background-color: #142c8e0d;
 `;
 
 const Layout = ({ children }) => (
