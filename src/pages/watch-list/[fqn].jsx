@@ -1,5 +1,5 @@
 import Layout from "../../layout/HomePageLayout";
-import Table from "../../Components/WatchList/table";
+import Table from "../../Components/WatchList/Table";
 
 const WatchListPage = () => {
   return (
