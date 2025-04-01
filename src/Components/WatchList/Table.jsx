@@ -1,7 +1,10 @@
+import { useQueryParams, ArrayParam, withDefault } from "use-query-params";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 
 import FlexBox from "@common/UI/FlexBox";
 import { device } from "@common/UI/Responsive";
+import { client } from "@axiosClient";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -21,7 +24,6 @@ const Wrapper = styled(FlexBox)`
 const TableContainer = styled.div`
   width: 100%;
   overflow-x: auto;
-  background: #f8f9fc;
   padding: 20px;
   border-radius: 10px;
 `;
@@ -81,13 +83,21 @@ const data = [
 ];
 
 const Table = () => {
+  const [queryParams] = useQueryParams({
+    stocks: withDefault(ArrayParam, []),
+  });
+  const [loading, setLoading] = useState();
+  const [stocks, setStocks] = useState();
+
   const fetchWatchlists = async () => {
+    debugger;
     setLoading(true);
     try {
       const res = await client.post("/stock/by-fqns", {
-        fqns: ["ieml", "reliance"],
+        fqns: queryParams?.stocks,
       });
-      setWatchlists(response.data || []);
+      setStocks(res.data || []);
+      debugger;
     } catch (error) {
       console.error("Failed to fetch watchlists", error);
     }
@@ -95,12 +105,12 @@ const Table = () => {
   };
 
   useEffect(() => {
-    fetchWatchlists();
-  }, []);
+    if (!!queryParams?.stocks?.length) fetchWatchlists();
+  }, [queryParams?.stocks]);
 
   return (
     <Wrapper>
-      <FlexBox width="100%" height="100%" backgroundColor="#142C8E0D" column>
+      <FlexBox width="100%" height="100%" column>
         <TableContainer>
           <StyledTable>
             <thead>
@@ -118,18 +128,18 @@ const Table = () => {
               </tr>
             </thead>
             <tbody>
-              {data.map((row, index) => (
+              {stocks.map((stock, index) => (
                 <Tr key={index}>
-                  <Td>{row.name}</Td>
-                  <Td>{row.CMP}</Td>
-                  <Td>{row.PE}</Td>
-                  <Td>{row.marketCap}</Td>
-                  <Td>{row.dividend}</Td>
-                  <Td>{row.netProfit}</Td>
-                  <Td>{row.profitVar}</Td>
-                  <Td>{row.sales}</Td>
-                  <Td>{row.salesVar}</Td>
-                  <Td>{row.ROCE}</Td>
+                  <Td>{stock?.companyShortName}</Td>
+                  <Td>{stock?.CMP}</Td>
+                  <Td>{stock?.PE}</Td>
+                  <Td>{stock?.marketCap}</Td>
+                  <Td>{stock?.dividend}</Td>
+                  <Td>{stock?.netProfit}</Td>
+                  <Td>{stock?.profitVar}</Td>
+                  <Td>{stock?.sales}</Td>
+                  <Td>{stock?.salesVar}</Td>
+                  <Td>{stock?.ROCE}</Td>
                 </Tr>
               ))}
             </tbody>
