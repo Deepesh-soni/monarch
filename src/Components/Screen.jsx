@@ -6,6 +6,8 @@ import FlexBox from "@common/UI/FlexBox";
 import { Body1, Support, H1 } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
 import { IoMdSearch } from "react-icons/io";
+import { H5 } from "../Components/common/Typography";
+import { Medium } from "../Components/common/Paragraph";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -23,13 +25,21 @@ const Wrapper = styled(FlexBox)`
 const Section = styled(FlexBox)`
   width: 100%;
   column-gap: 0.25rem;
+  flex-direction: column;
+  @media ${device.laptop} {
+    flex-direction: row;
+    width: 100%;
+  }
 `;
 
 const LeftSection = styled(FlexBox)`
-  width: 60%;
+  width: 100%;
   flex-direction: column;
   gap: 0.25rem;
   min-height: 100%;
+  @media ${device.laptop} {
+    width: 60%;
+  }
 `;
 
 const RightSection = styled(FlexBox)`
@@ -53,8 +63,11 @@ const Container = styled(FlexBox)`
 
 const CardGridContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-row: repeat(1, 1fr);
   gap: 1rem;
+  @media ${device.laptop} {
+    grid-template-columns: repeat(2, 1fr);
+  }
 `;
 
 const Card = styled(FlexBox)`
@@ -132,6 +145,23 @@ const ListItem = styled.li`
   }
 `;
 
+const HeadingContainer = styled(FlexBox)`
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 0.5rem;
+  width: 100%;
+`;
+
+const Button = styled.button`
+  border-radius: 8px;
+  cursor: pointer;
+  border: ${({ primary }) => (primary ? "none" : "2px solid #0033a0")};
+  background: #0033a0;
+  color: white;
+  &:hover {
+    background: ${({ primary }) => (primary ? "#002080" : "#f0f0f0")};
+  }
+`;
 const sectors = [
   "Aerospace & Defence",
   "Air Transport Service",
@@ -152,15 +182,16 @@ const Screen = () => {
 
   return (
     <Wrapper>
-      <FlexBox width="100%" height="100%" backgroundColor="#142C8E0D" column>
-        <FlexBox align="center" justify="space-between">
+      <FlexBox width="100%" height="100%" column rowGap="2rem">
+        <HeadingContainer>
           <FlexBox column>
-            <Body1 bold>Stock Screens</Body1>
-            <Support color="#687792">
+            <H5 bold>Stock Screens</H5>
+            <Medium color="#687792">
               Create your own custom screening criteria
-            </Support>
+            </Medium>
           </FlexBox>
-          <FlexBox
+          <Button>New Screens</Button>
+          {/* <FlexBox
             align="center"
             padding="0.5rem"
             columnGap="0.5rem"
@@ -169,12 +200,12 @@ const Screen = () => {
           >
             <IoMdAdd color="#FFFFFF" />
             <Support color="#FFFFFF">New Screen</Support>
-          </FlexBox>
-        </FlexBox>
+          </FlexBox> */}
+        </HeadingContainer>
         <Section>
           <LeftSection>
             <Container column>
-              <Body1 bold>Your Custom Screens</Body1>
+              <Medium bold>Your Custom Screens</Medium>
               <Support>Screens created by you</Support>
               <CardGridContainer>
                 {[...Array(4)].map((_, index) => (
