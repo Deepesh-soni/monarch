@@ -1,11 +1,16 @@
 import Layout from "../../layout/HomePageLayout";
 import WatchList from "../../Components/WatchList";
 
+import Meta from "@layout/Meta";
+
 const WatchListPage = () => {
   return (
-    <Layout>
-      <WatchList />
-    </Layout>
+    <>
+      <Meta title="My WatchList" />
+      <Layout>
+        <WatchList />
+      </Layout>
+    </>
   );
 };
 

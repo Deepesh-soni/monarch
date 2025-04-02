@@ -12,6 +12,7 @@ import StockTableView from "../../../Components/WatchList/StockTable";
 import { toast } from "react-toastify";
 import Layout from "../../../layout/HomePageLayout";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import Meta from "@layout/Meta";
 
 const { Title } = Typography;
 
@@ -121,54 +122,57 @@ const Query = () => {
   }, [loadingFields, shouldRun]);
 
   return (
-    <Layout>
-      <Wrapper>
-        <div style={{ width: "100%", marginBottom: "1rem" }}>
-          <Title level={2}>
-            {screener?.details?.name ?? "Stock Screener Query"}
-          </Title>
-          <Typography.Text>
-            {screener?.details?.description ?? ""}
-          </Typography.Text>
-        </div>
+    <>
+      <Meta title="Build Queries" />
+      <Layout>
+        <Wrapper>
+          <div style={{ width: "100%", marginBottom: "1rem" }}>
+            <Title level={2}>
+              {screener?.details?.name ?? "Stock Screener Query"}
+            </Title>
+            <Typography.Text>
+              {screener?.details?.description ?? ""}
+            </Typography.Text>
+          </div>
 
-        {doesSessionExist && !preset && (
-          <StyledCard>
-            <Title level={5}>Query Builder</Title>
-            {loadingFields ? (
-              <Skeleton active paragraph={{ rows: 2 }} />
-            ) : (
-              <QueryBuilderAntD>
-                <QueryBuilder
-                  fields={fields}
-                  query={query}
-                  onQueryChange={setQuery}
-                  controlElements={{ addGroupAction: () => null }}
-                  showCombinatorsBetweenRules={false}
-                  enableDragAndDrop={false}
-                />
-              </QueryBuilderAntD>
-            )}
+          {doesSessionExist && !preset && (
+            <StyledCard>
+              <Title level={5}>Query Builder</Title>
+              {loadingFields ? (
+                <Skeleton active paragraph={{ rows: 2 }} />
+              ) : (
+                <QueryBuilderAntD>
+                  <QueryBuilder
+                    fields={fields}
+                    query={query}
+                    onQueryChange={setQuery}
+                    controlElements={{ addGroupAction: () => null }}
+                    showCombinatorsBetweenRules={false}
+                    enableDragAndDrop={false}
+                  />
+                </QueryBuilderAntD>
+              )}
 
-            <ButtonRow>
-              <Button type="primary" loading={running} onClick={handleRun}>
-                Run Screen
-              </Button>
-            </ButtonRow>
-          </StyledCard>
-        )}
+              <ButtonRow>
+                <Button type="primary" loading={running} onClick={handleRun}>
+                  Run Screen
+                </Button>
+              </ButtonRow>
+            </StyledCard>
+          )}
 
-        {loadingData ? (
-          <Skeleton
-            active
-            paragraph={{ rows: 8 }}
-            style={{ marginTop: "2rem" }}
-          />
-        ) : (
-          data?.length > 0 && <StockTableView data={data} />
-        )}
-      </Wrapper>
-    </Layout>
+          {loadingData ? (
+            <Skeleton
+              active
+              paragraph={{ rows: 8 }}
+              style={{ marginTop: "2rem" }}
+            />
+          ) : (
+            data?.length > 0 && <StockTableView data={data} />
+          )}
+        </Wrapper>
+      </Layout>
+    </>
   );
 };
 

@@ -1,7 +1,7 @@
 import Head from "next/head";
 
 const Meta = props => {
-  const seoTitle = props.title ? `${props.title} | Pamprazzi` : "Monarch";
+  const seoTitle = props.title ? `${props.title} | FinEase` : "FinEase";
 
   return (
     <>

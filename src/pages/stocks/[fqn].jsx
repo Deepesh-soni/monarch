@@ -2,12 +2,16 @@ import React from "react";
 import _ from "lodash";
 import Stock from "@Components/Stocks";
 import Layout from "../../layout/HomePageLayout";
+import Meta from "@layout/Meta";
 
 const StockPage = () => {
   return (
-    <Layout>
-      <Stock />
-    </Layout>
+    <>
+      <Meta title="Stocks" />
+      <Layout>
+        <Stock />
+      </Layout>
+    </>
   );
 };
 
