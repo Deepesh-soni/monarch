@@ -6,6 +6,7 @@ import styled from "styled-components";
 import FlexBox from "@common/UI/FlexBox";
 import { device } from "@common/UI/Responsive";
 import { useRouter } from "next/router";
+import StockTableView from "./StockTable";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -18,40 +19,8 @@ const Wrapper = styled(FlexBox)`
   }
 `;
 
-const columnKeysToShow = [
-  "companyName",
-  "nseSymbol",
-  "bseCode",
-  "price",
-  "change",
-  "volume",
-  "mcap",
-  "sectorName",
-  "industryName",
-  "high52WeekPrice",
-  "low52WeekPrice",
-  "roeTtm",
-  "debtToEquity",
-];
-
-const allColumns = {
-  companyName: "Company",
-  nseSymbol: "NSE Symbol",
-  bseCode: "BSE Code",
-  price: "Price",
-  change: "Change",
-  mcap: "Market Cap",
-  sectorName: "Sector",
-  industryName: "Industry",
-  high52WeekPrice: "52W High",
-  low52WeekPrice: "52W Low",
-  roeTtm: "ROE TTM",
-  debtToEquity: "Debt/Equity",
-};
 
 export default function StockTable() {
-  const [searchText, setSearchText] = useState("");
-  const [visibleColumns, setVisibleColumns] = useState(columnKeysToShow);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [watchlist, setWatchlist] = useState();
@@ -80,51 +49,6 @@ export default function StockTable() {
     fetchWatchlists();
   }, [fetchWatchlists]);
 
-  const handleSearch = useCallback(e => {
-    setSearchText(e.target.value.toLowerCase());
-  }, []);
-
-  const filteredData = useMemo(() => {
-    return data?.filter(item =>
-      visibleColumns.some(key =>
-        String(item[key] ?? "")
-          .toLowerCase()
-          .includes(searchText)
-      )
-    );
-  }, [searchText, data, visibleColumns]);
-
-  const columns = useMemo(() => {
-    return visibleColumns.map(key => ({
-      title: allColumns[key],
-      dataIndex: key,
-      key,
-      sorter: (a, b) =>
-        (a[key] ?? "").toString().localeCompare((b[key] ?? "").toString()),
-    }));
-  }, [visibleColumns]);
-
-  const handleColumnChange = useCallback((key, checked) => {
-    setVisibleColumns(prev =>
-      checked ? [...prev, key] : prev.filter(col => col !== key)
-    );
-  }, []);
-
-  const columnSelectorMenu = (
-    <Menu>
-      {Object.entries(allColumns).map(([key, label]) => (
-        <Menu.Item key={key}>
-          <Checkbox
-            checked={visibleColumns.includes(key)}
-            onChange={e => handleColumnChange(key, e.target.checked)}
-          >
-            {label}
-          </Checkbox>
-        </Menu.Item>
-      ))}
-    </Menu>
-  );
-
   if (loading) {
     return (
       <Wrapper>
@@ -133,41 +57,9 @@ export default function StockTable() {
     );
   }
 
-  console.log(watchlist);
-
   return (
     <Wrapper>
-      <div style={{ width: "100%", marginBottom: "1rem" }}>
-        <h2>{watchlist?.details?.name ?? ''}</h2>
-        <p>{watchlist?.details?.description ?? ''}</p>
-      </div>
-
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "flex-end",
-          gap: 8,
-          marginBottom: "1.5rem",
-        }}
-      >
-        <Input
-          placeholder="Search..."
-          prefix={<SearchOutlined />}
-          onChange={handleSearch}
-          style={{ width: 300 }}
-        />
-        <Dropdown overlay={columnSelectorMenu} trigger={["click"]}>
-          <Button icon={<SettingOutlined />}>Columns</Button>
-        </Dropdown>
-      </div>
-
-      <Table
-        dataSource={filteredData}
-        columns={columns}
-        rowKey="stockId"
-        pagination={{ pageSize: 10 }}
-      />
+      <StockTableView data={data} watchlist={watchlist} />
     </Wrapper>
   );
 
