@@ -9,7 +9,7 @@ import { Display } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
 import SearchableDropdown from "@Components/common/UI/Search/SearchDropdownCmp";
 import { H6, H2 } from "../common/Typography";
-import { Medium } from "../common/Paragraph";
+import { Medium, Small } from "../common/Paragraph";
 
 const Wrapper = styled.div`
   background: url("/assets/home/page-bg.png");
@@ -80,7 +80,13 @@ const Image = styled.img`
     max-width: unset;
   }
 `;
-
+const CopyRightBox = styled(FlexBox)`
+  background-color: black;
+  width: 100%;
+  height: 3rem;
+  justify-content: center;
+  align-items: center;
+`;
 const Home = () => {
   const router = useRouter();
 
@@ -89,35 +95,42 @@ const Home = () => {
   };
 
   return (
-    <Wrapper>
-      <Navbar />
-      <Container>
-        <FlexBox column align="center">
-          <Heading>Discover & Analyze</Heading>
-          <FlexBox>
-            <Image src="/assets/home/stocks.svg" alt="Stocks" />
-            <Heading>like never before</Heading>
+    <>
+      <Wrapper>
+        <Navbar />
+        <Container>
+          <FlexBox column align="center">
+            <Heading>Discover & Analyze</Heading>
+            <FlexBox>
+              <Image src="/assets/home/stocks.svg" alt="Stocks" />
+              <Heading>like never before</Heading>
+            </FlexBox>
           </FlexBox>
-        </FlexBox>
-        <TextWrapper>
-          <H6 textAlign="center">
-            Advanced stock screening, real-time analysis, and powerful tools to
-            make informed investment decisions
-          </H6>
-        </TextWrapper>
-        <div style={{ width: "100%", maxWidth: "806px", padding: "0 1rem" }}>
-          <SearchableDropdown width="100%" onChange={handleSearchSelect} />
-        </div>
-        <FlexBox column align="center">
-          <H2 textAlign="center">Discover Trending Stocks</H2>
-          <Medium color="#687792" textAlign="center">
-            Explore the most popular stocks that investors are watching right
-            now.
-          </Medium>
-        </FlexBox>
-        <StocksGrid />
-      </Container>
-    </Wrapper>
+          <TextWrapper>
+            <H6 textAlign="center">
+              Advanced stock screening, real-time analysis, and powerful tools
+              to make informed investment decisions
+            </H6>
+          </TextWrapper>
+          <div style={{ width: "100%", maxWidth: "806px", padding: "0 1rem" }}>
+            <SearchableDropdown width="100%" onChange={handleSearchSelect} />
+          </div>
+          <FlexBox column align="center">
+            <H2 textAlign="center">Discover Trending Stocks</H2>
+            <Medium color="#687792" textAlign="center">
+              Explore the most popular stocks that investors are watching right
+              now.
+            </Medium>
+          </FlexBox>
+          <StocksGrid />
+        </Container>
+      </Wrapper>
+      <CopyRightBox>
+        <Small color="white">
+          Copyright © 2024 Self Care Simplified-Pamprazzi. All rights reserved.
+        </Small>
+      </CopyRightBox>
+    </>
   );
 };
 
