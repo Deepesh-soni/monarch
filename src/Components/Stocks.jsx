@@ -8,6 +8,8 @@ import { CiExport } from "react-icons/ci";
 import { FaArrowsRotate } from "react-icons/fa6";
 import { client } from "@axiosClient";
 import { BiLinkExternal } from "react-icons/bi";
+import { H5, H2, H6, H4 } from "../Components/common/Typography";
+import { Medium, Large } from "../Components/common/Paragraph";
 import { Modal, Select, Button, Spin } from "antd";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import {
@@ -74,9 +76,9 @@ function StackedBarChart({ data }) {
     <ResponsiveContainer width="100%" height={400}>
       <BarChart data={chartData}>
         <XAxis dataKey="YRC" />
-        <YAxis />
+        {/* <YAxis /> */}
         <Tooltip formatter={(value, name) => [value, _.startCase(name)]} />
-        <Legend formatter={value => _.startCase(value)} />
+        {/* <Legend formatter={value => _.startCase(value)} /> */}
         {keys.map(key => (
           <Bar key={key} dataKey={key} stackId="a" fill={keyColors[key]}>
             <LabelList
@@ -193,13 +195,12 @@ const NavContainer = styled(FlexBox)`
 const Hr = styled.hr`
   width: 100%;
   border: 1px solid #ebf0f4;
-  margin: 20px 0;
 `;
 
 /* Navigation links with a bottom highlight on hover */
 const NavLinks = styled(FlexBox)`
   width: 100%;
-  justify-content: space-around;
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
 `;
@@ -223,13 +224,20 @@ const NavLink = styled.a`
 
 const SecuritySection = styled(FlexBox)`
   width: 100%;
-  border: 1px solid #ebf0f4;
+  border: 1px solid #3c3c3c;
   border-radius: 12px;
   padding: 1rem;
   flex-direction: column;
   background: #fff;
 `;
 
+const CashContainer = styled(FlexBox)`
+  width: 100%;
+  justify-content: space-between;
+  @media ${device.laptop} {
+    padding: 1rem 2rem;
+  }
+`;
 const ActionButton = styled(FlexBox)`
   border: 1.5px solid #142c8e;
   display: inline-flex;
@@ -246,10 +254,13 @@ const ActionButton = styled(FlexBox)`
 
 const GridContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 1rem;
   margin-top: 1rem;
-  column-gap: 2rem;
+  @media ${device.laptop} {
+    column-gap: 6rem;
+    grid-template-columns: repeat(2, 1fr);
+  }
 `;
 
 const GridItem = styled.div`
@@ -257,40 +268,70 @@ const GridItem = styled.div`
   justify-content: space-between;
 `;
 
+// const Section = styled(FlexBox)`
+//   width: 100%;
+//   justify-content: space-between;
+//   column-gap: 1rem;
+//   flex-wrap: wrap;
+//   margin-top: 1rem;
+// `;
+
 const Section = styled(FlexBox)`
   width: 100%;
   justify-content: space-between;
-  column-gap: 1rem;
-  flex-wrap: wrap;
-  margin-top: 1rem;
-`;
-
-const BusinessSectionLeft = styled(FlexBox)`
-  border: 1px solid #ebf0f4;
-  width: 60%;
-  border-radius: 12px;
-  padding: 20px;
   flex-direction: column;
-  gap: 16px;
-  background: #fff;
+  row-gap: 1rem;
   @media ${device.laptop} {
-    width: 100%;
+    flex-direction: row;
+    column-gap: 1rem;
+  }
+`;
+const BusinessSectionLeft = styled(FlexBox)`
+  border: 1px solid #3c3c3c;
+  width: 100%;
+  border-radius: 12px;
+  padding: 0.5rem;
+  flex-direction: column;
+  gap: 1rem;
+  @media ${device.laptop} {
+    width: 60%;
   }
 `;
 
 const BusinessSectionRight = styled(FlexBox)`
-  border: 1px solid #ebf0f4;
-  width: 38%;
+  border: 1px solid #3c3c3c;
+  width: 100%;
   border-radius: 12px;
-  padding: 20px;
+  padding: 0.5rem;
   flex-direction: column;
-  gap: 16px;
-  background: #fff;
+  gap: 1rem;
   @media ${device.laptop} {
-    width: 100%;
+    width: 40%;
   }
 `;
 
+const ShareholdingLeft = styled(FlexBox)`
+  border: 1px solid #3c3c3c;
+  width: 100%;
+  border-radius: 12px;
+  padding: 0.5rem;
+  flex-direction: column;
+  gap: 1rem;
+  @media ${device.laptop} {
+    width: 55%;
+  }
+`;
+const ShareholdingRight = styled(FlexBox)`
+  border: 1px solid #3c3c3c;
+  width: 100%;
+  border-radius: 12px;
+  padding: 0.5rem;
+  flex-direction: column;
+  gap: 1rem;
+  @media ${device.laptop} {
+    width: 45%;
+  }
+`;
 const TableContainer = styled.div`
   width: 100%;
   display: flex;
@@ -374,6 +415,23 @@ const ExchangeLink = styled.a`
   }
 `;
 
+const ScoreCard = styled(FlexBox)`
+  justify-content: center;
+  width: fit-content;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #888888;
+`;
+
+const TableCard = styled.div`
+  display: flex;
+  width: 100%;
+  row-gap: 1rem;
+  flex-direction: column;
+  @media ${device.laptop} {
+    width: 50%;
+  }
+`;
 // Dummy financial data (for display purposes)
 const financialData = {
   "Profit & Loss": [
@@ -417,22 +475,27 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
 
   return (
     <table
-      style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}
+      style={{
+        width: "100%",
+        marginTop: "1rem",
+        border: "1px solid black",
+        borderRadius: "8px",
+      }}
     >
       <thead>
         <tr>
           <th
             style={{
-              textAlign: "left",
+              textAlign: "left", // Align "Metric" column to the left
               borderBottom: "2px solid #ccc",
-              padding: "8px",
+              padding: "0.75rem",
             }}
           >
             Metric
           </th>
           <th
             style={{
-              textAlign: "left",
+              textAlign: "center", // Center-align the Reliance Industries Ltd column
               borderBottom: "2px solid #ccc",
               padding: "8px",
             }}
@@ -441,7 +504,7 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
           </th>
           <th
             style={{
-              textAlign: "left",
+              textAlign: "right", // Right-align the Indian Oil Corporation Ltd column
               borderBottom: "2px solid #ccc",
               padding: "8px",
             }}
@@ -457,7 +520,7 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
           <tr key={row.label}>
             <td
               style={{
-                textAlign: "left",
+                textAlign: "left", // Left-align the "Metric" column content
                 padding: "8px",
                 borderBottom: "1px solid #eee",
               }}
@@ -466,7 +529,7 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
             </td>
             <td
               style={{
-                textAlign: "left",
+                textAlign: "center", // Center-align the value for Reliance Industries Ltd
                 padding: "8px",
                 borderBottom: "1px solid #eee",
               }}
@@ -475,7 +538,7 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
             </td>
             <td
               style={{
-                textAlign: "left",
+                textAlign: "right", // Right-align the value for Indian Oil Corporation Ltd
                 padding: "8px",
                 borderBottom: "1px solid #eee",
               }}
@@ -553,7 +616,7 @@ const Stock = () => {
 
       <HeaderRow>
         <LeftContainer>
-          <CompanyTitle bold>{stock.companyName}</CompanyTitle>
+          <H5 bold>{stock.companyName}</H5>
           <ExchangeLinksRow>
             {stock.bseListed && stock.bseCode && (
               <ExchangeLink
@@ -580,12 +643,13 @@ const Stock = () => {
           </ExchangeLinksRow>
         </LeftContainer>
         <RightContainer>
-          <Body1 bold style={{ fontSize: "1.25rem" }}>
+          <H4 bold style={{ fontSize: "1.25rem" }}>
             ₹ {stock.price}
-          </Body1>
-          <Support style={{ color: changeColor }}>{stock.change}</Support>
+          </H4>
+          <Medium style={{ color: changeColor }}>{stock.change}</Medium>
         </RightContainer>
       </HeaderRow>
+      <Hr />
 
       {/* Anchored Navigation */}
       <NavLinks>
@@ -599,24 +663,19 @@ const Stock = () => {
 
       {/* Security Section */}
       <SecuritySection id="security">
-        <FlexBox
-          width="100%"
-          align="center"
-          justify="space-between"
-          margin="0 0 1rem 0"
-        >
-          <Body1 bold>Security Information</Body1>
+        <FlexBox width="100%" align="center" justify="space-between">
+          <H5 bold>Security Information</H5>
           <FlexBox columnGap="16px">
             {isLoggedIn && (
-              <ActionButton onClick={() => setShowWatchlistPopup(true)}>
+              <Button outline onClick={() => setShowWatchlistPopup(true)}>
                 <FaArrowsRotate size={18} />
                 <Body1>Add to Watchlist</Body1>
-              </ActionButton>
+              </Button>
             )}
-            <ActionButton onClick={handleCompareClick}>
+            <Button outline onClick={handleCompareClick}>
               <CiExport />
               <Body1>Compare</Body1>
-            </ActionButton>
+            </Button>
           </FlexBox>
         </FlexBox>
 
@@ -669,10 +728,12 @@ const Stock = () => {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua.
           </Body1>
-          <ul>
-            <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-            <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-          </ul>
+          <FlexBox padding="0 0 0 1.5rem" width="100%">
+            <ul>
+              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+            </ul>
+          </FlexBox>
           <Body1>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, quis
             optio minus sunt dignissimos hic laborum.
@@ -685,15 +746,19 @@ const Stock = () => {
             optio minus sunt dignissimos hic laborum.
           </Body1>
           <Body1 bold>Strengths &amp; Moat:</Body1>
-          <ul>
-            <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-            <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-          </ul>
+          <FlexBox padding="0 0 0 1.5rem" width="100%">
+            <ul>
+              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+            </ul>
+          </FlexBox>
           <Body1 bold>Risks &amp; Threats</Body1>
-          <ul>
-            <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-            <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-          </ul>
+          <FlexBox padding="0 0 0 1.5rem" width="100%">
+            <ul>
+              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+            </ul>
+          </FlexBox>
         </BusinessSectionRight>
       </Section>
 
@@ -702,7 +767,7 @@ const Stock = () => {
         <H1 bold>Financial Fundamentals</H1>
         <TableContainer>
           {Object.entries(financialData).map(([section, data]) => (
-            <div key={section} style={{ width: "48%" }}>
+            <TableCard key={section}>
               <Body1 bold>{section}</Body1>
               <Table>
                 <StyledTable>
@@ -726,7 +791,7 @@ const Stock = () => {
                   </tbody>
                 </StyledTable>
               </Table>
-            </div>
+            </TableCard>
           ))}
         </TableContainer>
       </FlexBox>
@@ -734,17 +799,33 @@ const Stock = () => {
       {/* Cash Counter Section */}
       <FlexBox width="100%" column id="cash">
         <H1 bold>Cash Counter</H1>
-        <FlexBox padding="1rem 2rem" width="100%" justify="space-between">
+        <CashContainer>
           <Support bold>Cash Flow from Investing</Support>
           <Support bold>Cash Flow from Financing</Support>
           <Support bold>Cash Flow from Operating</Support>
           <Support bold>Cash Flow from Equivalents</Support>
-        </FlexBox>
+        </CashContainer>
       </FlexBox>
 
       {/* Peer Comparison Section */}
-      <FlexBox width="100%" column id="peers">
-        <H1 bold>Peer Comparison</H1>
+      <FlexBox width="100%" column id="peers" rowGap="2rem">
+        <FlexBox column>
+          <H1 bold>Peer Comparison</H1>
+          <Large bold>Similarity by APART</Large>
+        </FlexBox>
+        <FlexBox width="100%" justify="center" column>
+          <Large>
+            Conventional industrial classifications and peer determinations are
+            cursory, biased & often inaccurate. APART's Similarity Score peeps
+            through deep data to find securities & businesses that are more
+            similar to each other than the rest. This ensure that you are
+            comparing like to like and not apples to oranges! Phew!
+          </Large>
+          <ScoreCard>
+            <Body1 color="#287897">Similarity Score: </Body1>
+            <Body1 color="#287897">62%</Body1>
+          </ScoreCard>
+        </FlexBox>
         {peers && peers.length > 0 ? (
           <PeerComparisonTable peer={peers[0]} currentStock={stock} />
         ) : (
@@ -752,12 +833,17 @@ const Stock = () => {
         )}
       </FlexBox>
 
-      <FlexBox width="100%" column id="peers">
-        <H1 bold>Shareholding Analysis</H1>
-        {stockHoldingChart && (
-          <StackedBarChart data={stockHoldingChart?.chartData} />
-        )}
-      </FlexBox>
+      <Section>
+        <ShareholdingLeft width="100%" column id="peers">
+          <H1 bold>Shareholding Analysis</H1>
+          {stockHoldingChart && (
+            <StackedBarChart data={stockHoldingChart?.chartData} />
+          )}
+        </ShareholdingLeft>
+        <ShareholdingRight>
+          <H1 bold>Valuation</H1>
+        </ShareholdingRight>
+      </Section>
 
       {isLoggedIn && (
         <AddToWatchlistPopup

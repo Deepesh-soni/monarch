@@ -40,7 +40,6 @@ const allColumns = {
   bseCode: "BSE Code",
   price: "Price",
   change: "Change",
-  volume: "Volume",
   mcap: "Market Cap",
   sectorName: "Sector",
   industryName: "Industry",
@@ -55,6 +54,7 @@ export default function StockTable() {
   const [visibleColumns, setVisibleColumns] = useState(columnKeysToShow);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [watchlist, setWatchlist] = useState();
 
   const router = useRouter();
 
@@ -65,7 +65,7 @@ export default function StockTable() {
     try {
       const response = await client.get(`/watchlist/${router.query.fqn}`);
       const fqns = response.data?.details?.watchlistStocks;
-
+      setWatchlist(response.data);
       const res = await client.post("/stock/by-fqns", {
         fqns: JSON.parse(fqns || []),
       });
@@ -133,9 +133,24 @@ export default function StockTable() {
     );
   }
 
+  console.log(watchlist);
+
   return (
     <Wrapper>
-      <div style={{ marginBottom: 16, display: "flex", gap: 8 }}>
+      <div style={{ width: "100%", marginBottom: "1rem" }}>
+        <h2>{watchlist?.details?.name ?? ''}</h2>
+        <p>{watchlist?.details?.description ?? ''}</p>
+      </div>
+
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: 8,
+          marginBottom: "1.5rem",
+        }}
+      >
         <Input
           placeholder="Search..."
           prefix={<SearchOutlined />}
@@ -146,6 +161,7 @@ export default function StockTable() {
           <Button icon={<SettingOutlined />}>Columns</Button>
         </Dropdown>
       </div>
+
       <Table
         dataSource={filteredData}
         columns={columns}
@@ -154,4 +170,5 @@ export default function StockTable() {
       />
     </Wrapper>
   );
+
 }

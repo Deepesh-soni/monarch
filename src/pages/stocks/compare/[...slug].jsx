@@ -48,10 +48,10 @@ const Difference = styled.span`
 `;
 
 const metrics = [
-    { key: "mcap", label: "Market Cap" },
-    { key: "price", label: "Current Price" },
-    { key: "high52WeekPrice", label: "52 Week High" },
-    { key: "low52WeekPrice", label: "52 Week Low" },
+    { key: "mcap", label: "Market Cap", start: '₹ ', end: ' Cr.' },
+    { key: "price", label: "Current Price", start: '₹ ' },
+    { key: "high52WeekPrice", label: "52 Week High", start: '₹ ' },
+    { key: "low52WeekPrice", label: "52 Week Low", start: '₹ ' },
     { key: "pbTtm", label: "P/B Ratio" },
     { key: "roeTtm", label: "ROE (TTM)" },
     { key: "peRatio", label: "P/E Ratio" },
@@ -134,31 +134,38 @@ export default function StockComparePage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {metrics.map(({ key, label }) => {
+
+                            {metrics.map(({ key, label, start = '', end = '' }) => {
                                 const a = dataA?.[key];
                                 const b = dataB?.[key];
-                                const isNumeric =
-                                    typeof a === "number" && typeof b === "number";
-                                const diff = isNumeric
-                                    ? (((b - a) / a) * 100).toFixed(1)
-                                    : null;
+
+                                const isValid = typeof a === "number" && typeof b === "number" && a !== 0 && !isNaN(a) && !isNaN(b);
+                                const diff = isValid ? (((b - a) / a) * 100).toFixed(1) : null;
+
+                                const formatValue = (val) => {
+                                    if (val === undefined || val === null) return "-";
+                                    if (["mcap", "price", "high52WeekPrice", "low52WeekPrice"].includes(key)) {
+                                        return start + new Intl.NumberFormat('en-IN').format(val) + end;
+                                    }
+                                    return start + val + end;
+                                };
+
                                 return (
                                     <tr key={key}>
                                         <Td>{label}</Td>
-                                        <Td>{a !== undefined ? `₹ ${a}` : "-"}</Td>
-                                        <Td>{b !== undefined ? `₹ ${b}` : "-"}</Td>
+                                        <Td>{formatValue(a)}</Td>
+                                        <Td>{formatValue(b)}</Td>
                                         <Td>
-                                            {isNumeric ? (
-                                                <Difference positive={diff > 0}>
-                                                    {diff > 0 ? `+${diff}%` : `${diff}%`}
+                                            {diff !== null ? (
+                                                <Difference positive={parseFloat(diff) > 0}>
+                                                    {parseFloat(diff) > 0 ? `+${diff}%` : `${diff}%`}
                                                 </Difference>
-                                            ) : (
-                                                "-"
-                                            )}
+                                            ) : "-"}
                                         </Td>
                                     </tr>
                                 );
                             })}
+
                         </tbody>
                     </CompareTable>
                 )}

@@ -1618,6 +1618,21 @@
   resolved "https://registry.yarnpkg.com/@react-google-maps/marker-clusterer/-/marker-clusterer-2.20.0.tgz#6b64177843a60c66e0ebaf85037a47ecd07007df"
   integrity sha512-tieX9Va5w1yP88vMgfH1pHTacDQ9TgDTjox3tLlisKDXRQWdjw+QeVVghhf5XqqIxXHgPdcGwBvKY6UP+SIvLw==
 
+"@react-querybuilder/antd@^5.1.0":
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/@react-querybuilder/antd/-/antd-5.4.1.tgz#f4cd2a6d600860ce046185b070aeb866f3d5ab00"
+  integrity sha512-u6ei14wtoPz5Y37oKzxbFUdO2V7IMUKdhv0AxpJITTnUc+IvqPw152L7KmCDF9k7n9BTaQkxDIvgtlW75sam+g==
+
+"@react-querybuilder/ctx@^5.4.1":
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/@react-querybuilder/ctx/-/ctx-5.4.1.tgz#114ea413b19393785a0b8017c7bcbea4c4265de8"
+  integrity sha512-v4sIxzOZgr/io6Tz96YUDxpBw7XFxbWqB1qhr+p3gKNfM3x9qqIQSAx2i9sASXt0pv10EainVQYCy5BoYQ+lig==
+
+"@react-querybuilder/ts@^5.4.1":
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/@react-querybuilder/ts/-/ts-5.4.1.tgz#dd926c2aff33e1ef1770abe7e8cef4776ea080ed"
+  integrity sha512-zYquHYbyoVLQ3Fa7ky4o6dPXGOvJjKFZdgIg9IDiqzYZ8F4WXuP/4OkDCwLRZNbUAsW1kUoPBqBdGeiitmmCUg==
+
 "@reduxjs/toolkit@^1.9.5":
   version "1.9.7"
   resolved "https://registry.yarnpkg.com/@reduxjs/toolkit/-/toolkit-1.9.7.tgz#7fc07c0b0ebec52043f8cb43510cf346405f78a6"
@@ -2115,7 +2130,7 @@ ansi-styles@^4.1.0:
   dependencies:
     color-convert "^2.0.1"
 
-antd@^5.24.5:
+antd@^5.8.0:
   version "5.24.6"
   resolved "https://registry.yarnpkg.com/antd/-/antd-5.24.6.tgz#d3597d65d19c499dedd240acc693b96a63d72bf8"
   integrity sha512-xIlTa/1CTbgkZsdU/dOXkYvJXb9VoiMwsaCzpKFH2zAEY3xqOfwQ57/DdG7lAdrWP7QORtSld4UA6suxzuTHXw==
@@ -2594,6 +2609,11 @@ client-only@0.0.1:
   resolved "https://registry.yarnpkg.com/client-only/-/client-only-0.0.1.tgz#38bba5d403c41ab150bff64a95c85013cf73bca1"
   integrity sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==
 
+clsx@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
+  integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
+
 clsx@^2.0.0, clsx@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-2.1.1.tgz#eed397c9fd8bd882bfb18deab7102049a2f32999"
@@ -2859,7 +2879,7 @@ date-fns@^2.0.1, date-fns@^2.30.0:
   dependencies:
     "@babel/runtime" "^7.21.0"
 
-dayjs@^1.11.11, dayjs@^1.11.9:
+dayjs@^1.11.11, dayjs@^1.11.13:
   version "1.11.13"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.13.tgz#92430b0139055c3ebb60150aa13e860a4b5a366c"
   integrity sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==
@@ -3822,7 +3842,7 @@ ignore@^5.2.0:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.3.2.tgz#3cd40e729f3643fd87cb04e50bf0eb722bc596f5"
   integrity sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==
 
-immer@^9.0.21:
+immer@^9.0.17, immer@^9.0.21:
   version "9.0.21"
   resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.21.tgz#1e025ea31a40f24fb064f1fef23e931496330176"
   integrity sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA==
@@ -4171,6 +4191,11 @@ jest-worker@^27.4.5:
     "@types/node" "*"
     merge-stream "^2.0.0"
     supports-color "^8.0.0"
+
+js-base64@^3.7.7:
+  version "3.7.7"
+  resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-3.7.7.tgz#e51b84bf78fbf5702b9541e2cb7bfcb893b43e79"
+  integrity sha512-7rCnleh0z2CkXhH67J8K1Ytz0b2Y+yxTPL+/KOJoa20hfnVQ/3/T6W/KflYI4bRHRagNeXeU2bkNGI3v1oS/lw==
 
 js-sdsl@^4.1.4:
   version "4.4.2"
@@ -5336,6 +5361,16 @@ react-qr-code@^2.0.12:
   dependencies:
     prop-types "^15.8.1"
     qr.js "0.0.0"
+
+react-querybuilder@^5.1.0:
+  version "5.4.1"
+  resolved "https://registry.yarnpkg.com/react-querybuilder/-/react-querybuilder-5.4.1.tgz#7bd4cd73d54ad659128bc76f58ef40cf566173a3"
+  integrity sha512-bKHGpLRaGDDGOXr0KnmBNr2Jl1ZdN9HfV+6PSHoeQJnxdgneh7Em/V3PIESNyEak6+j0Sfmha2lKmfI/Dn2p+w==
+  dependencies:
+    "@react-querybuilder/ctx" "^5.4.1"
+    "@react-querybuilder/ts" "^5.4.1"
+    clsx "^1.2.1"
+    immer "^9.0.17"
 
 react-redux@^8.1.2:
   version "8.1.3"

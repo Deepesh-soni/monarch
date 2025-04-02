@@ -173,9 +173,10 @@ const WatchList = () => {
                     <AiOutlineDelete
                       size={20}
                       style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        handleDelete(watchlist.fqn, watchlist.name)
-                      }
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleDelete(watchlist.fqn, watchlist.name);
+                      }}
                     />
                   </FlexBox>
                 </FlexBox>

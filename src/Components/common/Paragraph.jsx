@@ -26,22 +26,41 @@ export const Large = styled.p`
   font-size: 18px;
   line-height: 145%;
   letter-spacing: -4%;
+
+  @media ${device.mobileL} {
+    font-size: 14px;
+  }
 `;
+
 export const Medium = styled.p`
   ${commonStyles}
   font-size: 16px;
   line-height: 145%;
   letter-spacing: -4%;
+
+  @media ${device.mobileL} {
+    font-size: 12px;
+  }
 `;
+
 export const Small = styled.p`
   ${commonStyles}
   font-size: 14px;
   line-height: 145%;
   letter-spacing: -4%;
+
+  @media ${device.mobileL} {
+    font-size: 10px;
+  }
 `;
+
 export const XSmall = styled.p`
   ${commonStyles}
   font-size: 12px;
   line-height: 145%;
   letter-spacing: -4%;
+
+  @media ${device.mobileL} {
+    font-size: 8px;
+  }
 `;
