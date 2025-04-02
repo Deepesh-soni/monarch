@@ -4,7 +4,7 @@ import { ACCENT_800 } from "@common/UI/colors";
 import { device } from "@common/UI/Responsive";
 
 const commonStyles = css`
-  font-family: "Montserrat";
+  font-family: "Montserrat", sans-serif;
   display: ${({ display }) => display || "initial"};
   opacity: ${({ opacity }) => opacity || 1};
   font-weight: ${({ bold }) => (bold ? 700 : 400)};
