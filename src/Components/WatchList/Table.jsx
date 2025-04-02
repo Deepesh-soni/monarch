@@ -59,9 +59,7 @@ export default function StockTable() {
 
   return (
     <Wrapper>
-      <Wrapper>
-        <StockTableView data={data} watchlist={watchlist} />
-      </Wrapper>
+      <StockTableView data={data} watchlist={watchlist} />
     </Wrapper>
   );
 
