@@ -67,21 +67,17 @@ class ErrorBoundary extends Component {
     if (this.state.hasError) {
       return (
         <Container column rowGap="2rem" align="center" justify="center">
-          <Body1 bold fontSize="1.5rem">
-            Something went wrong
+          <Body1 bold fontSize="2.5rem">
+            Uh, oh. Something Went wrong!
           </Body1>
           <Buttons>
             <Button
               color={PRIMARY_800}
               outline
               block
-              onClick={() => (window.location.href = "/dashboard/general")}
+              onClick={() => (window.location.href = "/")}
             >
               Go to Home
-            </Button>
-
-            <Button block onClick={() => this.props.logout()}>
-              Re login
             </Button>
           </Buttons>
         </Container>
