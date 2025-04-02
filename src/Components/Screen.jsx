@@ -7,8 +7,8 @@ import { device } from "@common/UI/Responsive";
 import { IoMdSearch } from "react-icons/io";
 import { H5 } from "../Components/common/Typography";
 import { Medium } from "../Components/common/Paragraph";
-
 import { client } from "@axiosClient";
+import { useRouter } from "next/router";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -103,28 +103,31 @@ const Subtitle = styled.p`
   margin-bottom: 1rem;
 `;
 
-const SearchContainer = styled.div`
-  position: relative;
+const SearchContainer = styled(FlexBox)`
   width: 100%;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  margin-bottom: 1rem;
 `;
 
 const SearchIcon = styled(IoMdSearch)`
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
   color: #687792;
   font-size: 1.2rem;
 `;
 
 const SearchInput = styled.input`
   width: 100%;
-  padding: 0.5rem 0.5rem 0.5rem 2.5rem; /* Extra padding on the left for the icon */
+
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 1rem;
   outline: none;
-  margin-bottom: 1rem;
+  border: none;
 `;
 
 const List = styled.ul`
@@ -166,41 +169,31 @@ const Button = styled.button`
     background: ${({ primary }) => (primary ? "#002080" : "#f0f0f0")};
   }
 `;
-const sectors = [
-  "Aerospace & Defence",
-  "Air Transport Service",
-  "Agro Chemicals",
-  "Alcohol Beverages",
-  "Automobile",
-  "Auto Ancillaries",
-  "Banks",
-  "Bearings",
-  "Cables",
-];
 
 const Screen = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const filteredSectors = sectors.filter(sector =>
-    sector.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const fetchWatchlists = async () => {
-    setLoading(true);
-    try {
-      const response = await client.get("/screener");
-      debugger;
-    } catch (error) {
-      console.error("Failed to fetch watchlists", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [sectorData, setSectorData] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
-    fetchWatchlists();
+    const fetchStockData = async () => {
+      setLoading(true);
+      try {
+        const response = await client.get("/default/category");
+        setSectorData(response?.data?.results || []);
+      } catch (error) {
+        console.error("Failed to load sectors", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStockData();
   }, []);
+
+  const filteredSectors = sectorData.filter(sector =>
+    sector?.sectorname?.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <Wrapper>
@@ -213,16 +206,6 @@ const Screen = () => {
             </Medium>
           </FlexBox>
           <Button>New Screens</Button>
-          {/* <FlexBox
-            align="center"
-            padding="0.5rem"
-            columnGap="0.5rem"
-            borderRadius="0.4rem"
-            backgroundColor="#142C8E"
-          >
-            <IoMdAdd color="#FFFFFF" />
-            <Support color="#FFFFFF">New Screen</Support>
-          </FlexBox> */}
         </HeadingContainer>
         <Section>
           <LeftSection>
@@ -231,30 +214,6 @@ const Screen = () => {
               <Support>Screens created by you</Support>
               <CardGridContainer>
                 {[...Array(4)].map((_, index) => (
-                  <Card key={index}>
-                    <Icon>
-                      <H1 bold>G</H1>
-                    </Icon>
-                    <FlexBox column columnGap="0.5px">
-                      <FlexBox align="center" columnGap="0.75rem">
-                        <Body1>Growth Stocks</Body1>
-                        <SlArrowRight size={12} />
-                      </FlexBox>
-                      <Support color="#687792">
-                        High growth companies with strong momentum
-                      </Support>
-                    </FlexBox>
-                  </Card>
-                ))}
-              </CardGridContainer>
-            </Container>
-            <Container column>
-              <Body1 bold>Popular Stock Screens</Body1>
-              <Support color="#687792">
-                Screens that are mostly used by investors
-              </Support>
-              <CardGridContainer>
-                {[...Array(1)].map((_, index) => (
                   <Card key={index}>
                     <Icon>
                       <H1 bold>G</H1>
@@ -285,14 +244,20 @@ const Screen = () => {
                 onChange={e => setSearch(e.target.value)}
               />
             </SearchContainer>
-
-            <List>
-              {filteredSectors.map((sector, index) => (
-                <ListItem key={index}>
-                  {sector} <SlArrowRight />
-                </ListItem>
-              ))}
-            </List>
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              <List>
+                {filteredSectors.map(sector => (
+                  <ListItem
+                    key={sector?.sectorcode}
+                    onClick={() => router.push(`/query/${sector?.sectorcode}`)}
+                  >
+                    {sector?.sectorname} <SlArrowRight />
+                  </ListItem>
+                ))}
+              </List>
+            )}
           </RightSection>
         </Section>
       </FlexBox>
