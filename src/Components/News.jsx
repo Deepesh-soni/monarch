@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { IoFilter } from "react-icons/io5";
 import { CiClock2 } from "react-icons/ci";
 
 import FlexBox from "@common/UI/FlexBox";
-import { Body1, Support } from "@common/UI/Headings";
+import { Support } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
 import { H6 } from "../Components/common/Typography";
 import { Small, Medium } from "../Components/common/Paragraph";
@@ -57,39 +56,6 @@ const HoverSmall = styled(Small)`
   }
 `;
 
-const FilterButton = styled(FlexBox)`
-  border: 1.5px solid #142c8e;
-  align-items: center;
-  padding: 0.5rem;
-  column-gap: 0.5rem;
-  border-radius: 1.5px;
-  cursor: pointer;
-
-  svg {
-    color: #142c8e;
-  }
-
-  &:hover {
-    background-color: #f5f5f5;
-  }
-`;
-
-const Image = styled.img`
-  width: 20px;
-  height: 20px;
-  @media ${device.laptop} {
-    width: 100%;
-    height: 100%;
-  }
-`;
-
-const CopyRightBox = styled(FlexBox)`
-  background-color: black;
-  width: 100%;
-  height: 3rem;
-  justify-content: center;
-  align-items: center;
-`;
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -231,11 +197,6 @@ const News = () => {
           </ModalContent>
         </ModalOverlay>
       )}
-      <CopyRightBox>
-        <Small color="white">
-          Copyright © 2024 Self Care Simplified-Pamprazzi. All rights reserved.
-        </Small>
-      </CopyRightBox>
     </>
   );
 };

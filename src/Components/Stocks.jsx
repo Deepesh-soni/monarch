@@ -9,7 +9,7 @@ import { FaArrowsRotate } from "react-icons/fa6";
 import { client } from "@axiosClient";
 import { BiLinkExternal } from "react-icons/bi";
 import { H5, H4 } from "../Components/common/Typography";
-import { Medium, Large, Small } from "../Components/common/Paragraph";
+import { Medium, Large } from "../Components/common/Paragraph";
 import { Modal, Select, Button, Spin } from "antd";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
@@ -380,13 +380,6 @@ const Row = styled.div`
   margin: 8px 0;
   font-size: 14px;
 `;
-const CopyRightBox = styled(FlexBox)`
-  background-color: black;
-  width: 100%;
-  height: 3rem;
-  justify-content: center;
-  align-items: center;
-`;
 // Dummy financial data (for display purposes)
 
 const slugify = text =>
@@ -603,297 +596,278 @@ const Stock = () => {
   const changeColor = changeValue >= 0 ? "green" : "red";
 
   return (
-    <>
-      <Wrapper>
-        {/* Top Navigation (no stock image as requested) */}
+    <Wrapper>
+      {/* Top Navigation (no stock image as requested) */}
 
-        <HeaderRow>
-          <LeftContainer>
-            <H5 bold>{stock.companyName}</H5>
-            <ExchangeLinksRow>
-              {stock.bseListed && stock.bseCode && (
-                <ExchangeLink
-                  href={`https://www.bseindia.com/stock-share-price/${slugify(
-                    stock.companyName
-                  )}/${stock.companyShortName}/${stock.bseCode}/`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span>BSE: {stock.bseCode}</span>
-                  <BiLinkExternal size={14} />
-                </ExchangeLink>
-              )}
-              {stock.nseListed && stock.nseSymbol && (
-                <ExchangeLink
-                  href={`https://www.nseindia.com/get-quotes/equity?symbol=${stock.nseSymbol}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span>NSE: {stock.nseSymbol}</span>
-                  <BiLinkExternal size={14} />
-                </ExchangeLink>
-              )}
-            </ExchangeLinksRow>
-          </LeftContainer>
-          <RightContainer>
-            <H4 bold style={{ fontSize: "1.25rem" }}>
-              ₹ {stock.price}
-            </H4>
-            <Medium style={{ color: changeColor }}>{stock.change}</Medium>
-          </RightContainer>
-        </HeaderRow>
-        <Hr />
-
-        {/* Anchored Navigation */}
-        <NavLinks>
-          <NavLink href="#security">Security Information</NavLink>
-          <NavLink href="#business">Business Description</NavLink>
-          <NavLink href="#insights">APART Insights</NavLink>
-          <NavLink href="#fundamentals">Financial Fundamentals</NavLink>
-          <NavLink href="#cash">Cash Counter</NavLink>
-          <NavLink href="#peers">Peer Comparison</NavLink>
-        </NavLinks>
-
-        {/* Security Section */}
-        <SecuritySection id="security">
-          <FlexBox width="100%" align="center" justify="space-between">
-            <H5 bold>Security Information</H5>
-            <FlexBox columnGap="16px">
-              {isLoggedIn && (
-                <Button outline onClick={() => setShowWatchlistPopup(true)}>
-                  <FaArrowsRotate size={18} />
-                  <Body1>Add to Watchlist</Body1>
-                </Button>
-              )}
-              <Button outline onClick={handleCompareClick}>
-                <CiExport />
-                <Body1>Compare</Body1>
-              </Button>
-            </FlexBox>
-          </FlexBox>
-
-          <GridContainer>
-            <GridItem>
-              <Body1 bold>ISIN</Body1>
-              <Body1>{stock.isin}</Body1>
-            </GridItem>
-            <GridItem>
-              <Body1 bold>Today's High</Body1>
-              <Body1>₹ {stock.high}</Body1>
-            </GridItem>
-            <GridItem>
-              <Body1 bold>Open Price</Body1>
-              <Body1>₹ {stock.open}</Body1>
-            </GridItem>
-            <GridItem>
-              <Body1 bold>Today's Low</Body1>
-              <Body1>₹ {stock.low}</Body1>
-            </GridItem>
-            <GridItem>
-              <Body1 bold>Market Cap</Body1>
-              <Body1>₹ {stock.mcap}</Body1>
-            </GridItem>
-            <GridItem>
-              <Body1 bold>Volume</Body1>
-              <Body1>{stock.volume}</Body1>
-            </GridItem>
-            <GridItem>
-              <Body1 bold>Sector</Body1>
-              <Body1>{stock.sectorName}</Body1>
-            </GridItem>
-            <GridItem>
-              <Body1 bold>Trade Category</Body1>
-              <Body1>{stock.bseGroup}</Body1>
-            </GridItem>
-            <GridItem>
-              <Body1 bold>Industry</Body1>
-              <Body1>{stock.industryName}</Body1>
-            </GridItem>
-          </GridContainer>
-        </SecuritySection>
-
-        {/* Business & Insights Sections */}
-        <Section>
-          <BusinessSectionLeft id="business">
-            <Body1 bold>Business Description</Body1>
-            <Body1>
-              {/* Replace with actual business description if available */}
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </Body1>
-            <FlexBox padding="0 0 0 1.5rem" width="100%">
-              <ul>
-                <li>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </li>
-                <li>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </li>
-              </ul>
-            </FlexBox>
-            <Body1>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam,
-              quis optio minus sunt dignissimos hic laborum.
-            </Body1>
-          </BusinessSectionLeft>
-          <BusinessSectionRight id="insights">
-            <Body1 bold>APART Insights</Body1>
-            <Body1>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam,
-              quis optio minus sunt dignissimos hic laborum.
-            </Body1>
-            <Body1 bold>Strengths &amp; Moat:</Body1>
-            <FlexBox padding="0 0 0 1.5rem" width="100%">
-              <ul>
-                <li>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </li>
-                <li>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </li>
-              </ul>
-            </FlexBox>
-            <Body1 bold>Risks &amp; Threats</Body1>
-            <FlexBox padding="0 0 0 1.5rem" width="100%">
-              <ul>
-                <li>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </li>
-                <li>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </li>
-              </ul>
-            </FlexBox>
-          </BusinessSectionRight>
-        </Section>
-
-        {/* Financial Fundamentals Section */}
-
-        <FlexBox column width="100%" id="fundamentals">
-          <H1 bold>Financial Fundamentals</H1>
-          <TableContainer>
-            {Object.entries(financialData).map(([section, data]) => (
-              <div key={section} style={{ width: "48%" }}>
-                <Body1 bold>{section}</Body1>
-                <Table>
-                  <StyledTable>
-                    <thead>
-                      <tr>
-                        <TableHeader>Evaluation Metrics</TableHeader>
-                        <TableHeader>Mar 2022</TableHeader>
-                        <TableHeader>Mar 2023</TableHeader>
-                        <TableHeader>Mar 2024</TableHeader>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.map(row => (
-                        <TableRow key={row.metric}>
-                          <TableCell>{row.metric}</TableCell>
-                          {row.values.map((value, index) => (
-                            <TableCell key={index}>
-                              {value !== undefined ? value?.toFixed(2) : "N/A"}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      ))}
-                    </tbody>
-                  </StyledTable>
-                </Table>
-              </div>
-            ))}
-          </TableContainer>
-        </FlexBox>
-        {/* Cash Counter Section */}
-        <FlexBox width="100%" column id="cash">
-          <H1 bold>Cash Counter</H1>
-          <CashContainer>
-            <Support bold>Cash Flow from Investing</Support>
-            <Support bold>Cash Flow from Financing</Support>
-            <Support bold>Cash Flow from Operating</Support>
-            <Support bold>Cash Flow from Equivalents</Support>
-          </CashContainer>
-        </FlexBox>
-
-        {/* Peer Comparison Section */}
-        <FlexBox width="100%" column id="peers" rowGap="2rem">
-          <FlexBox column>
-            <H1 bold>Peer Comparison</H1>
-            <Large bold>Similarity by APART</Large>
-          </FlexBox>
-          <FlexBox width="100%" justify="center" column>
-            <Large>
-              Conventional industrial classifications and peer determinations
-              are cursory, biased & often inaccurate. APART's Similarity Score
-              peeps through deep data to find securities & businesses that are
-              more similar to each other than the rest. This ensure that you are
-              comparing like to like and not apples to oranges! Phew!
-            </Large>
-          </FlexBox>
-          {peers && peers.length > 0 ? (
-            <PeerComparisonTable peer={peers[0]} currentStock={stock} />
-          ) : (
-            <Body1>No peer data available.</Body1>
-          )}
-        </FlexBox>
-
-        <Section>
-          <ShareholdingLeft width="100%" column id="peers">
-            <H1 bold>Shareholding Analysis</H1>
-            {stockHoldingChart && (
-              <StackedBarChart data={stockHoldingChart?.chartData} />
+      <HeaderRow>
+        <LeftContainer>
+          <H5 bold>{stock.companyName}</H5>
+          <ExchangeLinksRow>
+            {stock.bseListed && stock.bseCode && (
+              <ExchangeLink
+                href={`https://www.bseindia.com/stock-share-price/${slugify(
+                  stock.companyName
+                )}/${stock.companyShortName}/${stock.bseCode}/`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>BSE: {stock.bseCode}</span>
+                <BiLinkExternal size={14} />
+              </ExchangeLink>
             )}
-          </ShareholdingLeft>
-          <ShareholdingRight>
-            <H1 bold>Valuation</H1>
-            <Row>
-              <Large bold>52 Week High</Large>
-              <Large>{stock?.high52WeekPrice}</Large>
-            </Row>
-            <Row>
-              <Large bold>52 Week Low</Large>
-              <Large>{stock?.low52WeekPrice}</Large>
-            </Row>
-            <Row>
-              <Large bold>P/E Ratio</Large>
-              <Large>{stock?.pegRatio}</Large>
-            </Row>
-            <Row>
-              <Large bold>PBV</Large>
-              <Large>{stock?.pbv}</Large>
-            </Row>
-            <Row>
-              <Large bold>EV to EBITDA</Large>
-              <Large>{stock?.evToEbitda}</Large>
-            </Row>
-            <Row>
-              <Large bold>EV to Capital Employed</Large>
-              <Large>₹ 1,234</Large>
-            </Row>
-            <Row>
-              <Large bold>EV to Sales</Large>
-              <Large>{stock?.evToSales}</Large>
-            </Row>
-            <Row>
-              <Large bold>PEG</Large>
-              <Large>{stock?.pegRatio}</Large>
-            </Row>
-          </ShareholdingRight>
-        </Section>
+            {stock.nseListed && stock.nseSymbol && (
+              <ExchangeLink
+                href={`https://www.nseindia.com/get-quotes/equity?symbol=${stock.nseSymbol}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>NSE: {stock.nseSymbol}</span>
+                <BiLinkExternal size={14} />
+              </ExchangeLink>
+            )}
+          </ExchangeLinksRow>
+        </LeftContainer>
+        <RightContainer>
+          <H4 bold style={{ fontSize: "1.25rem" }}>
+            ₹ {stock.price}
+          </H4>
+          <Medium style={{ color: changeColor }}>{stock.change}</Medium>
+        </RightContainer>
+      </HeaderRow>
+      <Hr />
 
-        {isLoggedIn && (
-          <AddToWatchlistPopup
-            visible={showWatchlistPopup}
-            onClose={() => setShowWatchlistPopup(false)}
-            stockFqn={stock.fqn}
-          />
+      {/* Anchored Navigation */}
+      <NavLinks>
+        <NavLink href="#security">Security Information</NavLink>
+        <NavLink href="#business">Business Description</NavLink>
+        <NavLink href="#insights">APART Insights</NavLink>
+        <NavLink href="#fundamentals">Financial Fundamentals</NavLink>
+        <NavLink href="#cash">Cash Counter</NavLink>
+        <NavLink href="#peers">Peer Comparison</NavLink>
+      </NavLinks>
+
+      {/* Security Section */}
+      <SecuritySection id="security">
+        <FlexBox width="100%" align="center" justify="space-between">
+          <H5 bold>Security Information</H5>
+          <FlexBox columnGap="16px">
+            {isLoggedIn && (
+              <Button outline onClick={() => setShowWatchlistPopup(true)}>
+                <FaArrowsRotate size={18} />
+                <Body1>Add to Watchlist</Body1>
+              </Button>
+            )}
+            <Button outline onClick={handleCompareClick}>
+              <CiExport />
+              <Body1>Compare</Body1>
+            </Button>
+          </FlexBox>
+        </FlexBox>
+
+        <GridContainer>
+          <GridItem>
+            <Body1 bold>ISIN</Body1>
+            <Body1>{stock.isin}</Body1>
+          </GridItem>
+          <GridItem>
+            <Body1 bold>Today's High</Body1>
+            <Body1>₹ {stock.high}</Body1>
+          </GridItem>
+          <GridItem>
+            <Body1 bold>Open Price</Body1>
+            <Body1>₹ {stock.open}</Body1>
+          </GridItem>
+          <GridItem>
+            <Body1 bold>Today's Low</Body1>
+            <Body1>₹ {stock.low}</Body1>
+          </GridItem>
+          <GridItem>
+            <Body1 bold>Market Cap</Body1>
+            <Body1>₹ {stock.mcap}</Body1>
+          </GridItem>
+          <GridItem>
+            <Body1 bold>Volume</Body1>
+            <Body1>{stock.volume}</Body1>
+          </GridItem>
+          <GridItem>
+            <Body1 bold>Sector</Body1>
+            <Body1>{stock.sectorName}</Body1>
+          </GridItem>
+          <GridItem>
+            <Body1 bold>Trade Category</Body1>
+            <Body1>{stock.bseGroup}</Body1>
+          </GridItem>
+          <GridItem>
+            <Body1 bold>Industry</Body1>
+            <Body1>{stock.industryName}</Body1>
+          </GridItem>
+        </GridContainer>
+      </SecuritySection>
+
+      {/* Business & Insights Sections */}
+      <Section>
+        <BusinessSectionLeft id="business">
+          <Body1 bold>Business Description</Body1>
+          <Body1>
+            {/* Replace with actual business description if available */}
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </Body1>
+          <FlexBox padding="0 0 0 1.5rem" width="100%">
+            <ul>
+              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+            </ul>
+          </FlexBox>
+          <Body1>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, quis
+            optio minus sunt dignissimos hic laborum.
+          </Body1>
+        </BusinessSectionLeft>
+        <BusinessSectionRight id="insights">
+          <Body1 bold>APART Insights</Body1>
+          <Body1>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, quis
+            optio minus sunt dignissimos hic laborum.
+          </Body1>
+          <Body1 bold>Strengths &amp; Moat:</Body1>
+          <FlexBox padding="0 0 0 1.5rem" width="100%">
+            <ul>
+              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+            </ul>
+          </FlexBox>
+          <Body1 bold>Risks &amp; Threats</Body1>
+          <FlexBox padding="0 0 0 1.5rem" width="100%">
+            <ul>
+              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+            </ul>
+          </FlexBox>
+        </BusinessSectionRight>
+      </Section>
+
+      {/* Financial Fundamentals Section */}
+
+      <FlexBox column width="100%" id="fundamentals">
+        <H1 bold>Financial Fundamentals</H1>
+        <TableContainer>
+          {Object.entries(financialData).map(([section, data]) => (
+            <div key={section} style={{ width: "48%" }}>
+              <Body1 bold>{section}</Body1>
+              <Table>
+                <StyledTable>
+                  <thead>
+                    <tr>
+                      <TableHeader>Evaluation Metrics</TableHeader>
+                      <TableHeader>Mar 2022</TableHeader>
+                      <TableHeader>Mar 2023</TableHeader>
+                      <TableHeader>Mar 2024</TableHeader>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.map(row => (
+                      <TableRow key={row.metric}>
+                        <TableCell>{row.metric}</TableCell>
+                        {row.values.map((value, index) => (
+                          <TableCell key={index}>
+                            {value !== undefined ? value?.toFixed(2) : "N/A"}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </tbody>
+                </StyledTable>
+              </Table>
+            </div>
+          ))}
+        </TableContainer>
+      </FlexBox>
+      {/* Cash Counter Section */}
+      <FlexBox width="100%" column id="cash">
+        <H1 bold>Cash Counter</H1>
+        <CashContainer>
+          <Support bold>Cash Flow from Investing</Support>
+          <Support bold>Cash Flow from Financing</Support>
+          <Support bold>Cash Flow from Operating</Support>
+          <Support bold>Cash Flow from Equivalents</Support>
+        </CashContainer>
+      </FlexBox>
+
+      {/* Peer Comparison Section */}
+      <FlexBox width="100%" column id="peers" rowGap="2rem">
+        <FlexBox column>
+          <H1 bold>Peer Comparison</H1>
+          <Large bold>Similarity by APART</Large>
+        </FlexBox>
+        <FlexBox width="100%" justify="center" column>
+          <Large>
+            Conventional industrial classifications and peer determinations are
+            cursory, biased & often inaccurate. APART's Similarity Score peeps
+            through deep data to find securities & businesses that are more
+            similar to each other than the rest. This ensure that you are
+            comparing like to like and not apples to oranges! Phew!
+          </Large>
+        </FlexBox>
+        {peers && peers.length > 0 ? (
+          <PeerComparisonTable peer={peers[0]} currentStock={stock} />
+        ) : (
+          <Body1>No peer data available.</Body1>
         )}
-      </Wrapper>
-      <CopyRightBox>
-        <Small color="white">
-          Copyright © 2024 Self Care Simplified-Pamprazzi. All rights reserved.
-        </Small>
-      </CopyRightBox>
-    </>
+      </FlexBox>
+
+      <Section>
+        <ShareholdingLeft width="100%" column id="peers">
+          <H1 bold>Shareholding Analysis</H1>
+          {stockHoldingChart && (
+            <StackedBarChart data={stockHoldingChart?.chartData} />
+          )}
+        </ShareholdingLeft>
+        <ShareholdingRight>
+          <H1 bold>Valuation</H1>
+          <Row>
+            <Large bold>52 Week High</Large>
+            <Large>{stock?.high52WeekPrice}</Large>
+          </Row>
+          <Row>
+            <Large bold>52 Week Low</Large>
+            <Large>{stock?.low52WeekPrice}</Large>
+          </Row>
+          <Row>
+            <Large bold>P/E Ratio</Large>
+            <Large>{stock?.pegRatio}</Large>
+          </Row>
+          <Row>
+            <Large bold>PBV</Large>
+            <Large>{stock?.pbv}</Large>
+          </Row>
+          <Row>
+            <Large bold>EV to EBITDA</Large>
+            <Large>{stock?.evToEbitda}</Large>
+          </Row>
+          <Row>
+            <Large bold>EV to Capital Employed</Large>
+            <Large>₹ 1,234</Large>
+          </Row>
+          <Row>
+            <Large bold>EV to Sales</Large>
+            <Large>{stock?.evToSales}</Large>
+          </Row>
+          <Row>
+            <Large bold>PEG</Large>
+            <Large>{stock?.pegRatio}</Large>
+          </Row>
+        </ShareholdingRight>
+      </Section>
+
+      {isLoggedIn && (
+        <AddToWatchlistPopup
+          visible={showWatchlistPopup}
+          onClose={() => setShowWatchlistPopup(false)}
+          stockFqn={stock.fqn}
+        />
+      )}
+    </Wrapper>
   );
 };
 
