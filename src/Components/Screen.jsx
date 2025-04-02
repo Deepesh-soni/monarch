@@ -169,13 +169,7 @@ const Button = styled.button`
     background: ${({ primary }) => (primary ? "#002080" : "#f0f0f0")};
   }
 `;
-const CopyRightBox = styled(FlexBox)`
-  background-color: black;
-  width: 100%;
-  height: 3rem;
-  justify-content: center;
-  align-items: center;
-`;
+
 const Screen = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
@@ -315,11 +309,6 @@ const Screen = () => {
           </Section>
         </FlexBox>
       </Wrapper>
-      <CopyRightBox>
-        <Small color="white">
-          Copyright © 2024 Self Care Simplified-Pamprazzi. All rights reserved.
-        </Small>
-      </CopyRightBox>
     </>
   );
 };
