@@ -1,14 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import { FaSearch } from "react-icons/fa";
+import { useRouter } from "next/router";
 
 import FlexBox from "@common/UI/FlexBox";
 import Navbar from "@common/NavBar";
 import StocksGrid from "./StockGrid";
-import { Display, Body1, H1 } from "@common/UI/Headings";
+import { Display } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
 import SearchableDropdown from "@Components/common/UI/Search/SearchDropdownCmp";
-import { useRouter } from "next/router";
 import { H6, H2 } from "../common/Typography";
 import { Medium } from "../common/Paragraph";
 
@@ -57,15 +56,6 @@ const Heading = styled(Display)`
   }
 `;
 
-const SearchBar = styled(FlexBox)`
-  width: 90%;
-  max-width: 806px;
-  gap: 16px;
-  border-radius: 18px;
-  border: 1px solid #687792;
-  padding: 12px 16px;
-`;
-
 const TextWrapper = styled(FlexBox)`
   max-width: 90%;
   text-align: center;
@@ -77,17 +67,17 @@ const TextWrapper = styled(FlexBox)`
 `;
 
 const Image = styled.img`
-  width: auto;
-  max-width: 120px;
-  height: auto;
+  width: 100px;
+  height: 20px;
 
   @media ${device.tablet} {
     max-width: 80px;
   }
 
   @media ${device.laptop} {
-    max-width: 304px;
-    height: 108px;
+    width: 236px;
+    height: 126px;
+    max-width: unset;
   }
 `;
 

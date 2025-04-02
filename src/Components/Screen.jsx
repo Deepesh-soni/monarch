@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { SlArrowRight } from "react-icons/sl";
 import FlexBox from "@common/UI/FlexBox";
@@ -7,6 +7,8 @@ import { device } from "@common/UI/Responsive";
 import { IoMdSearch } from "react-icons/io";
 import { H5 } from "../Components/common/Typography";
 import { Medium } from "../Components/common/Paragraph";
+
+import { client } from "@axiosClient";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -178,9 +180,27 @@ const sectors = [
 
 const Screen = () => {
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const filteredSectors = sectors.filter(sector =>
     sector.toLowerCase().includes(search.toLowerCase())
   );
+
+  const fetchWatchlists = async () => {
+    setLoading(true);
+    try {
+      const response = await client.get("/screener");
+      debugger;
+    } catch (error) {
+      console.error("Failed to fetch watchlists", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWatchlists();
+  }, []);
 
   return (
     <Wrapper>
@@ -234,7 +254,7 @@ const Screen = () => {
                 Screens that are mostly used by investors
               </Support>
               <CardGridContainer>
-                {[...Array(13)].map((_, index) => (
+                {[...Array(1)].map((_, index) => (
                   <Card key={index}>
                     <Icon>
                       <H1 bold>G</H1>
