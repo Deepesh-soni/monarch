@@ -195,14 +195,14 @@ const Screen = () => {
     sector?.sectorname?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleSectorClick = sectorCode => {
+  const handleSectorClick = sectorName => {
     const query = {
       combinator: "and",
       rules: [
         {
-          field: "sectorCode",
+          field: "sectorName",
           operator: "=",
-          value: sectorCode,
+          value: sectorName,
         },
       ],
     };
@@ -291,7 +291,7 @@ const Screen = () => {
                 {filteredSectors.map(sector => (
                   <ListItem
                     key={sector?.sectorcode}
-                    onClick={() => handleSectorClick(sector?.sectorcode)}
+                    onClick={() => handleSectorClick(sector?.sectorname)}
                   >
                     {sector?.sectorname} <SlArrowRight />
                   </ListItem>
