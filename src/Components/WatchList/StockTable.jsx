@@ -24,7 +24,7 @@ const allColumns = {
     bseCode: "BSE Code",
     price: "Price",
     change: "Change",
-    mcap: "Market Cap",
+    mcap: "Market Cap (Cr.)",
     sectorName: "Sector",
     industryName: "Industry",
     high52WeekPrice: "52W High",
@@ -35,7 +35,7 @@ const allColumns = {
 
 const inrKeys = ["price", "mcap", "high52WeekPrice", "low52WeekPrice"];
 
-const StockTableView = ({ data, watchlist }) => {
+const StockTableView = ({ data }) => {
     const [visibleColumns, setVisibleColumns] = useState(columnKeysToShow);
     const [searchText, setSearchText] = useState("");
 
@@ -90,11 +90,6 @@ const StockTableView = ({ data, watchlist }) => {
 
     return (
         <>
-            <div style={{ width: "100%", marginBottom: "1rem" }}>
-                <h2>{watchlist?.name ?? ""}</h2>
-                <p>{watchlist?.description ?? ""}</p>
-            </div>
-
             <div
                 style={{
                     width: "100%",
@@ -102,6 +97,7 @@ const StockTableView = ({ data, watchlist }) => {
                     justifyContent: "flex-end",
                     gap: 8,
                     marginBottom: "1.5rem",
+                    paddingTop: '1em'
                 }}
             >
                 <Input

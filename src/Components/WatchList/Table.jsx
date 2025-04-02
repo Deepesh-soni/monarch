@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { Table, Input, Button, Checkbox, Dropdown, Menu, Skeleton } from "antd";
+import { Table, Input, Button, Checkbox, Dropdown, Menu, Skeleton, Typography } from "antd";
 import { SearchOutlined, SettingOutlined } from "@ant-design/icons";
 import { client } from "@axiosClient";
 import styled from "styled-components";
@@ -59,7 +59,11 @@ export default function StockTable() {
 
   return (
     <Wrapper>
-      <StockTableView data={data} watchlist={watchlist} />
+      <div style={{ width: "100%", marginBottom: "1rem" }}>
+        <Typography.H2>{watchlist?.details?.name ?? ''}</Typography.H2>
+        <Typography.Text>{watchlist?.details?.description ?? ''}</Typography.Text>
+      </div>
+      <StockTableView data={data} />
     </Wrapper>
   );
 
