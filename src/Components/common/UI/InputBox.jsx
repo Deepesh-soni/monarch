@@ -32,7 +32,7 @@ export const InputBox = styled.input`
   border: none;
   height: ${({ height }) => height};
   outline: none;
-  font-family: "Poppins";
+  font-family: "Montserrat", sans-serif;
   font-size: 1rem;
   line-height: 2rem;
   font-weight: ${({ fontWeight }) => fontWeight || 500};
@@ -84,7 +84,7 @@ const Input = ({
   opacity,
   max,
   min,
-  height
+  height,
 }) => {
   const handleKeyDown = e => {
     if (e.keyCode === 13) {

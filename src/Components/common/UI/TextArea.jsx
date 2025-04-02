@@ -31,7 +31,7 @@ const TextAreaInput = styled.textarea`
   border: 1px solid ${SECONDARY_200};
   font-size: 0.875rem;
   line-height: 1rem;
-  font-family: "Poppins";
+  font-family: "Montserrat", sans-serif;
   padding: 0.875rem;
   outline-color: transparent;
   border-radius: 0.5rem;

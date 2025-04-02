@@ -1,5 +1,5 @@
 :root {
-  --font-family-main: "Poppins", sans-serif;
+  --font-family-main: "Montserrat", sans-serif;
   --font-size-base: 16px;
   --font-color: #333;
 }
@@ -11,6 +11,7 @@
 }
 
 * {
+  font-family: "Montserrat", sans-serif;
   outline: none !important;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -tap-highlight-color: rgba(0, 0, 0, 0);
@@ -34,7 +35,7 @@
 }
 
 body {
-  font-family: var(--font-family-main);
+  font-family: "Montserrat", sans-serif;
   font-size: var(--font-size-base);
   color: var(--font-color);
   margin: 0;
@@ -439,43 +440,55 @@ progress {
   /* 
   CSS Gradient - complete browser support from http://www.colorzilla.com/gradient-editor/ 
   */
-  background: -moz-linear-gradient(left,
-      rgba(255, 255, 255, 0) 0%,
-      rgb(168, 190, 141, 0.8) 50%,
-      rgba(128, 186, 232, 0) 99%,
-      rgba(125, 185, 232, 0) 100%);
+  background: -moz-linear-gradient(
+    left,
+    rgba(255, 255, 255, 0) 0%,
+    rgb(168, 190, 141, 0.8) 50%,
+    rgba(128, 186, 232, 0) 99%,
+    rgba(125, 185, 232, 0) 100%
+  );
   /* FF3.6+ */
-  background: -webkit-gradient(linear,
-      left top,
-      right top,
-      color-stop(0%, rgb(168, 190, 141, 0)),
-      color-stop(50%, rgb(168, 190, 141, 0.8)),
-      color-stop(99%, rgba(128, 186, 232, 0)),
-      color-stop(100%, rgba(125, 185, 232, 0)));
+  background: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    color-stop(0%, rgb(168, 190, 141, 0)),
+    color-stop(50%, rgb(168, 190, 141, 0.8)),
+    color-stop(99%, rgba(128, 186, 232, 0)),
+    color-stop(100%, rgba(125, 185, 232, 0))
+  );
   /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(left,
-      rgb(168, 190, 141, 0) 0%,
-      rgb(168, 190, 141, 0.8) 50%,
-      rgba(128, 186, 232, 0) 99%,
-      rgba(125, 185, 232, 0) 100%);
+  background: -webkit-linear-gradient(
+    left,
+    rgb(168, 190, 141, 0) 0%,
+    rgb(168, 190, 141, 0.8) 50%,
+    rgba(128, 186, 232, 0) 99%,
+    rgba(125, 185, 232, 0) 100%
+  );
   /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(left,
-      rgb(168, 190, 141, 0) 0%,
-      rgb(168, 190, 141, 0.8) 50%,
-      rgba(128, 186, 232, 0) 99%,
-      rgba(125, 185, 232, 0) 100%);
+  background: -o-linear-gradient(
+    left,
+    rgb(168, 190, 141, 0) 0%,
+    rgb(168, 190, 141, 0.8) 50%,
+    rgba(128, 186, 232, 0) 99%,
+    rgba(125, 185, 232, 0) 100%
+  );
   /* Opera 11.10+ */
-  background: -ms-linear-gradient(left,
-      rgb(168, 190, 141, 0) 0%,
-      rgb(168, 190, 141, 0.8) 50%,
-      rgba(128, 186, 232, 0) 99%,
-      rgba(125, 185, 232, 0) 100%);
+  background: -ms-linear-gradient(
+    left,
+    rgb(168, 190, 141, 0) 0%,
+    rgb(168, 190, 141, 0.8) 50%,
+    rgba(128, 186, 232, 0) 99%,
+    rgba(125, 185, 232, 0) 100%
+  );
   /* IE10+ */
-  background: linear-gradient(to right,
-      rgb(168, 190, 141, 0) 0%,
-      rgb(168, 190, 141, 0.8) 50%,
-      rgba(128, 186, 232, 0) 99%,
-      rgba(125, 185, 232, 0) 100%);
+  background: linear-gradient(
+    to right,
+    rgb(168, 190, 141, 0) 0%,
+    rgb(168, 190, 141, 0.8) 50%,
+    rgba(128, 186, 232, 0) 99%,
+    rgba(125, 185, 232, 0) 100%
+  );
   /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ffffff', endColorstr='#007db9e8', GradientType=1);
   /* IE6-9 */
@@ -538,8 +551,7 @@ input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
 
-
 a {
   text-decoration: underline;
-  color: #533A71;
+  color: #533a71;
 }
