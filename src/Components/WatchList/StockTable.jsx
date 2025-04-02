@@ -161,7 +161,10 @@ const StockTableView = ({ data }) => {
                     />
                     <div style={{ display: "flex", gap: 8 }}>
                         <Button type="primary" onClick={() => confirm()} size="small">Search</Button>
-                        <Button onClick={clearFilters} size="small">Reset</Button>
+                        <Button onClick={() => {
+                            clearFilters()
+                            confirm()
+                        }} size="small">Reset</Button>
                     </div>
                 </div>
             ),
@@ -193,21 +196,24 @@ const StockTableView = ({ data }) => {
                     <Button icon={<SettingOutlined />}>Columns</Button>
                 </Dropdown>
             </div>
-
-            <Table
-                dataSource={filteredData}
-                columns={columns}
-                rowKey="stockId"
-                pagination={{
-                    pageSize,
-                    showSizeChanger: true,
-                    onShowSizeChange: (_, size) => {
-                        setPageSize(size);
-                        saveToLocalStorage({ pageSize: size });
-                    }
-                }}
-                components={{ header: { cell: ResizableTitle } }} // 👈 this is key
-            />
+            <div style={{ width: "100%", overflowX: "auto" }}>
+                <Table
+                    dataSource={filteredData}
+                    columns={columns}
+                    rowKey="stockId"
+                    scroll={{ x: 2000, y: 500 }}
+                    virtual
+                    pagination={{
+                        pageSize,
+                        showSizeChanger: true,
+                        onShowSizeChange: (_, size) => {
+                            setPageSize(size);
+                            saveToLocalStorage({ pageSize: size });
+                        }
+                    }}
+                    components={{ header: { cell: ResizableTitle } }} // 👈 this is key
+                />
+            </div>
         </>
     );
 };

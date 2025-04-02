@@ -57,10 +57,12 @@ export default function StockTable() {
     );
   }
 
+  console.log(data);
+
   return (
     <Wrapper>
       <div style={{ width: "100%", marginBottom: "1rem" }}>
-        <Typography.H2>{watchlist?.details?.name ?? ''}</Typography.H2>
+        <Typography.Title level={2}>{watchlist?.details?.name ?? ''}</Typography.Title>
         <Typography.Text>{watchlist?.details?.description ?? ''}</Typography.Text>
       </div>
       <StockTableView data={data} />
