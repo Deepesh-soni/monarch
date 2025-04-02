@@ -4,11 +4,13 @@ import { CiClock2 } from "react-icons/ci";
 
 import FlexBox from "@common/UI/FlexBox";
 import { Support } from "@common/UI/Headings";
+import Input from "@common/UI/InputBox";
 import { device } from "@common/UI/Responsive";
 import { H6 } from "../Components/common/Typography";
 import { Small, Medium } from "../Components/common/Paragraph";
 import { Button } from "../Components/common/UI/Buttons";
 import { IoFilterOutline } from "react-icons/io5";
+import CheckBox from "../Components/common/UI/CheckBox";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -72,7 +74,7 @@ const ModalContent = styled.div`
   background: white;
   padding: 0.75rem;
   border-radius: 10px;
-  min-width: 300px;
+  min-width: fit-content;
   text-align: center;
   position: relative;
 `;
@@ -86,6 +88,18 @@ const CloseButton = styled.button`
   font-size: 1.5rem;
   cursor: pointer;
   color: #142c8e;
+`;
+
+const ButtonDay = styled(FlexBox)`
+  width: 213px;
+  height: 54px;
+  border-radius: 13.55px;
+  padding-right: 5.65px;
+  padding-left: 5.65px;
+  border-width: 1.13px;
+  border: 1.13px solid #ecedf0;
+  align-items: center;
+  justify-content: center;
 `;
 
 const News = () => {
@@ -186,14 +200,100 @@ const News = () => {
             <CloseButton onClick={() => setIsModalOpen(false)}>
               &times;
             </CloseButton>
-            <FlexBox column>
+            <FlexBox column rowGap="27px">
               <Small>Filter by:</Small>
-              <FlexBox>
+              <FlexBox justify="space-between">
                 <Medium bold>Date Range</Medium>
                 <Medium>Reset</Medium>
               </FlexBox>
+              <FlexBox columnGap="18px">
+                <FlexBox column width="100%">
+                  <Small bold color="#687792">
+                    From
+                  </Small>
+                  <Input
+                    type="date"
+                    placeholder="Enter watchlist name"
+                    maxLength={256}
+                  />
+                </FlexBox>
+                <FlexBox column width="100%">
+                  <Small bold color="#687792">
+                    To
+                  </Small>
+                  <Input
+                    type="date"
+                    placeholder="Enter watchlist name"
+                    maxLength={256}
+                  />
+                </FlexBox>
+              </FlexBox>
+              <FlexBox columnGap="11px" justify="space-between">
+                <ButtonDay>
+                  <Small>Toady</Small>
+                </ButtonDay>
+                <ButtonDay>
+                  <Small>This Week</Small>
+                </ButtonDay>
+                <ButtonDay>
+                  <Small>Month</Small>
+                </ButtonDay>
+              </FlexBox>
+              <Hr />
+              <Medium>News Type</Medium>
+              <FlexBox justify="space-between">
+                <FlexBox align="center" columnGap="2px">
+                  <CheckBox />
+                  <Medium color="#687792">Expert Analysis</Medium>
+                </FlexBox>
+                <FlexBox align="center" columnGap="2px">
+                  <CheckBox />
+                  <Medium color="#687792">Expert Analysis</Medium>
+                </FlexBox>
+                <FlexBox align="center" columnGap="2px">
+                  <CheckBox />
+                  <Medium color="#687792">Expert Analysis</Medium>
+                </FlexBox>
+                <FlexBox align="center" columnGap="2px">
+                  <CheckBox />
+                  <Medium color="#687792">Expert Analysis</Medium>
+                </FlexBox>
+              </FlexBox>
+              <Hr />
+              <Medium>Source</Medium>
+              <FlexBox justify="space-between">
+                <FlexBox align="center" columnGap="2px">
+                  <CheckBox />
+                  <Medium color="#687792">Expert Analysis</Medium>
+                </FlexBox>
+                <FlexBox align="center" columnGap="2px">
+                  <CheckBox />
+                  <Medium color="#687792">Expert Analysis</Medium>
+                </FlexBox>
+                <FlexBox align="center" columnGap="2px">
+                  <CheckBox />
+                  <Medium color="#687792">Expert Analysis</Medium>
+                </FlexBox>
+                <FlexBox align="center" columnGap="2px">
+                  <CheckBox />
+                  <Medium color="#687792">Expert Analysis</Medium>
+                </FlexBox>
+              </FlexBox>
+              <Hr />
+              <FlexBox columnGap="18px">
+                <Button
+                  outline
+                  width="100%"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Reset
+                </Button>
+
+                <Button width="100%" onClick={() => setIsModalOpen(false)}>
+                  Apply Filter
+                </Button>
+              </FlexBox>
             </FlexBox>
-            <Button onClick={() => setIsModalOpen(false)}>Apply Filter</Button>
           </ModalContent>
         </ModalOverlay>
       )}
