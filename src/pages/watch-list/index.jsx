@@ -6,7 +6,7 @@ import Meta from "@layout/Meta";
 const WatchListPage = () => {
   return (
     <>
-      <Meta title="My WatchList" />
+      <Meta title="Stock Watchlist" />
       <Layout>
         <WatchList />
       </Layout>

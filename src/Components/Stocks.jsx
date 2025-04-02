@@ -76,7 +76,7 @@ function StackedBarChart({ data }) {
             <LabelList
               dataKey={key}
               position="center"
-              formatter={val => `${val.toFixed(1)}%`}
+              formatter={val => `${val.toFixed(2)}%`}
               style={{ fill: "#fff", fontSize: 10 }}
             />
           </Bar>
@@ -771,7 +771,7 @@ const Stock = () => {
                         <TableCell>{row.metric}</TableCell>
                         {row.values.map((value, index) => (
                           <TableCell key={index}>
-                            {value !== undefined ? value?.toFixed(3) : "N/A"}
+                            {value !== undefined ? value?.toFixed(2) : "N/A"}
                           </TableCell>
                         ))}
                       </TableRow>
