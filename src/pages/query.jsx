@@ -18,6 +18,7 @@ const Wrapper = styled.div`
 
   @media ${device.laptop} {
     width: 86.67%;
+    max-width: 75rem;
     margin: auto;
   }
 `;

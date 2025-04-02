@@ -20,6 +20,7 @@ const Wrapper = styled.div`
   min-height: 100vh;
   @media ${device.laptop} {
     width: 86.67%;
+    max-width: 75rem;
     margin: auto;
   }
 `;
@@ -37,129 +38,138 @@ const ButtonRow = styled.div`
 `;
 
 const Query = () => {
-    const [fields, setFields] = useState([]);
-    const [query, setQuery] = useState({ combinator: "and", rules: [] });
-    const [loadingFields, setLoadingFields] = useState(true);
-    const [running, setRunning] = useState(false);
-    const [shouldRun, setShouldRun] = useState(false);
-    const [data, setData] = useState([]);
-    const [loadingData, setLoadingData] = useState(false);
-    const [screener, setScreener] = useState(null);
-    const router = useRouter();
+  const [fields, setFields] = useState([]);
+  const [query, setQuery] = useState({ combinator: "and", rules: [] });
+  const [loadingFields, setLoadingFields] = useState(true);
+  const [running, setRunning] = useState(false);
+  const [shouldRun, setShouldRun] = useState(false);
+  const [data, setData] = useState([]);
+  const [loadingData, setLoadingData] = useState(false);
+  const [screener, setScreener] = useState(null);
+  const router = useRouter();
 
-    const { doesSessionExist } = useSessionContext();
+  const { doesSessionExist } = useSessionContext();
 
-    const { preset } = router.query;
+  const { preset } = router.query;
 
+  useEffect(() => {
+    if (preset) {
+      try {
+        const decoded = JSON.parse(decode(preset));
+        setScreener(decoded);
+        setQuery(decoded?.query);
+        setShouldRun(true);
+      } catch (e) {
+        toast.error("Invalid preset query");
+        console.error("Invalid preset query", e);
+      }
+    }
+  }, [router.query]);
 
-    useEffect(() => {
-        if (preset) {
-            try {
-                const decoded = JSON.parse(decode(preset));
-                setScreener(decoded);
-                setQuery(decoded?.query);
-                setShouldRun(true);
-            } catch (e) {
-                toast.error("Invalid preset query");
-                console.error("Invalid preset query", e);
-            }
-        }
-    }, [router.query]);
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const response = await client.get("/stock/query-config");
+        const parsedFields = response?.data?.fields.map(f => {
+          const isSelect = f.type === "select" && Array.isArray(f.options);
 
-    useEffect(() => {
-        const fetchConfig = async () => {
-            try {
-                const response = await client.get("/stock/query-config");
-                const parsedFields = response?.data?.fields.map(f => {
-                    const isSelect = f.type === "select" && Array.isArray(f.options);
+          return {
+            field: f.name,
+            name: f.name,
+            label: f.label,
+            inputType: isSelect ? "select" : f.type,
+            valueEditorType: isSelect ? "select" : undefined,
+            ...(isSelect
+              ? {
+                  values: f.options.map(opt => ({ name: opt, label: opt })),
+                }
+              : {}),
+          };
+        });
 
-                    return {
-                        field: f.name,
-                        name: f.name,
-                        label: f.label,
-                        inputType: isSelect ? "select" : f.type,
-                        valueEditorType: isSelect ? "select" : undefined,
-                        ...(isSelect
-                            ? {
-                                values: f.options.map(opt => ({ name: opt, label: opt }))
-                            }
-                            : {})
-                    };
-                });
-
-                setFields(parsedFields);
-            } catch (err) {
-                toast.error("Failed to load query config");
-                console.error("Error loading query config", err);
-            } finally {
-                setLoadingFields(false);
-            }
-        };
-        fetchConfig();
-    }, []);
-
-    const handleRun = async () => {
-        setRunning(true);
-        setLoadingData(true);
-        try {
-            const response = await client.post("/stock/query", { query });
-            setData(response.data);
-        } catch (err) {
-            toast.error("Query failed");
-            console.error("Query failed", err);
-        } finally {
-            setRunning(false);
-            setLoadingData(false);
-        }
+        setFields(parsedFields);
+      } catch (err) {
+        toast.error("Failed to load query config");
+        console.error("Error loading query config", err);
+      } finally {
+        setLoadingFields(false);
+      }
     };
+    fetchConfig();
+  }, []);
 
-    useEffect(() => {
-        if (!loadingFields && shouldRun) {
-            handleRun();
-            setShouldRun(false);
-        }
-    }, [loadingFields, shouldRun]);
+  const handleRun = async () => {
+    setRunning(true);
+    setLoadingData(true);
+    try {
+      const response = await client.post("/stock/query", { query });
+      setData(response.data);
+    } catch (err) {
+      toast.error("Query failed");
+      console.error("Query failed", err);
+    } finally {
+      setRunning(false);
+      setLoadingData(false);
+    }
+  };
 
-    return (
-        <Layout>
-            <Wrapper>
-                <div style={{ width: "100%", marginBottom: "1rem" }}>
-                    <Title level={2}>{screener?.details?.name ?? 'Stock Screener Query'}</Title>
-                    <Typography.Text>{screener?.details?.description ?? ''}</Typography.Text>
-                </div>
+  useEffect(() => {
+    if (!loadingFields && shouldRun) {
+      handleRun();
+      setShouldRun(false);
+    }
+  }, [loadingFields, shouldRun]);
 
-                {doesSessionExist && !preset && <StyledCard>
-                    <Title level={5}>Query Builder</Title>
-                    {loadingFields ? (
-                        <Skeleton active paragraph={{ rows: 2 }} />
-                    ) : (
-                        <QueryBuilderAntD>
-                            <QueryBuilder
-                                fields={fields}
-                                query={query}
-                                onQueryChange={setQuery}
-                                controlElements={{ addGroupAction: () => null }}
-                                showCombinatorsBetweenRules={false}
-                                enableDragAndDrop={false}
-                            />
-                        </QueryBuilderAntD>
-                    )}
+  return (
+    <Layout>
+      <Wrapper>
+        <div style={{ width: "100%", marginBottom: "1rem" }}>
+          <Title level={2}>
+            {screener?.details?.name ?? "Stock Screener Query"}
+          </Title>
+          <Typography.Text>
+            {screener?.details?.description ?? ""}
+          </Typography.Text>
+        </div>
 
-                    <ButtonRow>
-                        <Button type="primary" loading={running} onClick={handleRun}>
-                            Run Screen
-                        </Button>
-                    </ButtonRow>
-                </StyledCard>}
+        {doesSessionExist && !preset && (
+          <StyledCard>
+            <Title level={5}>Query Builder</Title>
+            {loadingFields ? (
+              <Skeleton active paragraph={{ rows: 2 }} />
+            ) : (
+              <QueryBuilderAntD>
+                <QueryBuilder
+                  fields={fields}
+                  query={query}
+                  onQueryChange={setQuery}
+                  controlElements={{ addGroupAction: () => null }}
+                  showCombinatorsBetweenRules={false}
+                  enableDragAndDrop={false}
+                />
+              </QueryBuilderAntD>
+            )}
 
-                {loadingData ? (
-                    <Skeleton active paragraph={{ rows: 8 }} style={{ marginTop: "2rem" }} />
-                ) : (
-                    data?.length > 0 && <StockTableView data={data} />
-                )}
-            </Wrapper>
-        </Layout>
-    );
+            <ButtonRow>
+              <Button type="primary" loading={running} onClick={handleRun}>
+                Run Screen
+              </Button>
+            </ButtonRow>
+          </StyledCard>
+        )}
+
+        {loadingData ? (
+          <Skeleton
+            active
+            paragraph={{ rows: 8 }}
+            style={{ marginTop: "2rem" }}
+          />
+        ) : (
+          data?.length > 0 && <StockTableView data={data} />
+        )}
+      </Wrapper>
+    </Layout>
+  );
 };
 
 export default Query;
