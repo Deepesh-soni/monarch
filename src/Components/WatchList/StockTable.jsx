@@ -8,9 +8,15 @@ const STORAGE_KEY = "stock_table_preferences";
 
 const columnKeysToShow = [
     "companyName", "nseSymbol", "bseCode", "price", "change", "volume",
-    "mcap", "sectorName", "industryName", "high52WeekPrice",
-    "low52WeekPrice", "roeTtm", "debtToEquity"
+    "mcap", "sectorName", "industryName", "high52WeekPrice", "low52WeekPrice",
+    "roeTtm", "debtToEquity",
+    "cashcc", "cash_op", "eps", "grossprofitmargin", "netprofit",
+    "netprofitmargin", "netcashflow", "profitgrowth", "roa", "revenue",
+    "salesgrowth", "bookvalue", "networth", "totalassets", "totalliabilities",
+    "qtr_sales", "opm", "qtr_pat", "qtr_yoygrowth", "pts", "enterpricevalue",
+    "cash_investing", "cash_financing", "currentratio"
 ];
+
 
 const allColumns = {
     companyName: "Company",
@@ -25,10 +31,53 @@ const allColumns = {
     high52WeekPrice: "52W High",
     low52WeekPrice: "52W Low",
     roeTtm: "ROE TTM",
-    debtToEquity: "Debt/Equity"
+    debtToEquity: "Debt/Equity",
+    cashcc: "Cash from Core",
+    cash_op: "Cash from Ops",
+    eps: "EPS",
+    grossprofitmargin: "Gross Profit Margin",
+    netprofit: "Net Profit",
+    netprofitmargin: "Net Profit Margin",
+    netcashflow: "Net Cash Flow",
+    profitgrowth: "Profit Growth",
+    roa: "ROA",
+    revenue: "Revenue",
+    salesgrowth: "Sales Growth",
+    bookvalue: "Book Value",
+    networth: "Net Worth",
+    totalassets: "Total Assets",
+    totalliabilities: "Total Liabilities",
+    qtr_sales: "Quarterly Sales",
+    opm: "Operating Profit Margin",
+    qtr_pat: "Quarterly PAT",
+    qtr_yoygrowth: "Qtr YoY Growth",
+    pts: "Price to Sales",
+    enterpricevalue: "Enterprise Value",
+    cash_investing: "Cash from Investing",
+    cash_financing: "Cash from Financing",
+    currentratio: "Current Ratio"
 };
 
-const inrKeys = ["price", "mcap", "high52WeekPrice", "low52WeekPrice"];
+const inrKeys = [
+    "price",
+    "mcap",
+    "high52WeekPrice",
+    "low52WeekPrice",
+    "bookvalue",
+    "networth",
+    "netprofit",
+    "revenue",
+    "totalassets",
+    "cashcc",             // Cash from Core
+    "cash_op",            // Cash from Operations
+    "netcashflow",        // Net Cash Flow
+    "qtr_sales",          // Quarterly Sales
+    "qtr_pat",            // Quarterly Profit After Tax
+    "enterpricevalue",    // Enterprise Value
+    "cash_investing",     // Cash from Investing Activities
+    "cash_financing"      // Cash from Financing Activities
+];
+
 const NON_REMOVABLE_COLUMNS = ["companyName", "price"];
 
 

@@ -7,7 +7,7 @@ import Meta from "@layout/Meta";
 const StockPage = () => {
   return (
     <>
-      <Meta title="Stocks" />
+      <Meta title="Stock Details" />
       <Layout>
         <Stock />
       </Layout>

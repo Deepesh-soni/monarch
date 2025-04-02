@@ -42,7 +42,13 @@ const Card = styled(FlexBox)`
   border-radius: 12px;
   cursor: pointer;
 `;
-
+const CopyRightBox = styled(FlexBox)`
+  background-color: black;
+  width: 100%;
+  height: 3rem;
+  justify-content: center;
+  align-items: center;
+`;
 const WatchList = () => {
   const [watchlists, setWatchlists] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -198,6 +204,11 @@ const WatchList = () => {
           )}
         </FlexBox>
       </Wrapper>
+      <CopyRightBox>
+        <Small color="white">
+          Copyright © 2024 Self Care Simplified-Pamprazzi. All rights reserved.
+        </Small>
+      </CopyRightBox>
     </SessionAuth>
   );
 };

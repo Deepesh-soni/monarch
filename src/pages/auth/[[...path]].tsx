@@ -43,7 +43,7 @@ export default function Auth() {
 
   return (
     <>
-      <Meta title="Stocks" />
+      <Meta title="My Account" />
       <Layout>
         <Container>
           <div style={{ marginTop: "40px", width: "100%", maxWidth: "480px" }}>

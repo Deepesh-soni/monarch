@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import styled from "styled-components";
 import { IoFilter } from "react-icons/io5";
 import { CiClock2 } from "react-icons/ci";
@@ -82,89 +83,160 @@ const Image = styled.img`
   }
 `;
 
-const News = () => {
-  return (
-    <Wrapper>
-      <FlexBox width="100%" height="100%" column columnGap="1rem" rowGap="1rem">
-        <FlexBox
-          align="center"
-          justify="space-between"
-          width="100%"
-          padding="1rem 0"
-        >
-          <FlexBox columnGap="16px">
-            <HoverSmall bold>Popular</HoverSmall>
-            <HoverSmall bold>My news</HoverSmall>
-          </FlexBox>
-          <FlexBox
-            border="1.5px solid #142C8E"
-            align="center"
-            padding="0.5rem 1rem"
-            columnGap="0.75rem"
-            borderRadius="0.4rem"
-            cursor="pointer"
-          >
-            <IoFilterOutline color="#142C8E" size={20} />
-            <Small color="#142C8E">Filter</Small>
-          </FlexBox>
-        </FlexBox>
+const CopyRightBox = styled(FlexBox)`
+  background-color: black;
+  width: 100%;
+  height: 3rem;
+  justify-content: center;
+  align-items: center;
+`;
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
-        <Card>
-          <FlexBox>
-            <img
-              src="/imagesecond.svg"
-              alt="Market Insights"
-              style={{ objectFit: "cover" }}
-            />
-          </FlexBox>
-          <FlexBox column rowGap="15px" padding="1rem">
-            <Support color="#142C8E">Market Insights</Support>
-            <H6 bold>
-              Market Analysis: Tech Stocks Rally Amid Strong Earnings Reports
-            </H6>
-            <Medium>
-              Major technology companies exceeded quarterly expectations,
-              driving a significant upturn in market performance. Analysts
-              predict continued growth through Q4, citing innovation and market
-              demand as key factors.
-            </Medium>
-            <Hr />
-            <FlexBox width="100%" justify="space-between">
-              <FlexBox columnGap="4px" align="center">
-                <CiClock2 color="#687792" />
-                <Small color="#687792">2 hours ago</Small>
-              </FlexBox>
-              <Small>Read More</Small>
+const ModalContent = styled.div`
+  background: white;
+  padding: 0.75rem;
+  border-radius: 10px;
+  min-width: 300px;
+  text-align: center;
+  position: relative;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  border: none;
+  background: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #142c8e;
+`;
+
+const News = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  return (
+    <>
+      <Wrapper>
+        <FlexBox
+          width="100%"
+          height="100%"
+          column
+          columnGap="1rem"
+          rowGap="1rem"
+        >
+          <FlexBox
+            align="center"
+            justify="space-between"
+            width="100%"
+            padding="1rem 0"
+          >
+            <FlexBox columnGap="16px">
+              <HoverSmall bold>Popular</HoverSmall>
+              <HoverSmall bold>My news</HoverSmall>
+            </FlexBox>
+            <FlexBox
+              border="1.5px solid #142C8E"
+              align="center"
+              padding="0.5rem 1rem"
+              columnGap="0.75rem"
+              borderRadius="0.4rem"
+              cursor="pointer"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <IoFilterOutline color="#142C8E" size={20} />
+              <Small color="#142C8E">Filter</Small>
             </FlexBox>
           </FlexBox>
-        </Card>
-        <Card>
-          <FlexBox>
-            <img src="/imagesecond.svg" alt="Market Insights" />
-          </FlexBox>
-          <FlexBox column rowGap="15px" padding="1rem">
-            <Support color="#142C8E">Market Insights</Support>
-            <H6 bold>
-              Market Analysis: Tech Stocks Rally Amid Strong Earnings Reports
-            </H6>
-            <Medium>
-              Major technology companies exceeded quarterly expectations,
-              driving a significant upturn in market performance. Analysts
-              predict continued growth through Q4, citing innovation and market
-              demand as key factors.
-            </Medium>
-            <Hr />
-            <FlexBox width="100%" justify="space-between">
-              <FlexBox columnGap="4px" align="center">
-                <CiClock2 color="#687792" />
-                <Small color="#687792">2 hours ago</Small>
-              </FlexBox>
-              <Small>Read More</Small>
+
+          <Card>
+            <FlexBox>
+              <img
+                src="/imagesecond.svg"
+                alt="Market Insights"
+                style={{ objectFit: "cover" }}
+              />
             </FlexBox>
-          </FlexBox>
-        </Card>
-      </FlexBox>
-    </Wrapper>
+            <FlexBox column rowGap="15px" padding="1rem">
+              <Support color="#142C8E">Market Insights</Support>
+              <H6 bold>
+                Market Analysis: Tech Stocks Rally Amid Strong Earnings Reports
+              </H6>
+              <Medium>
+                Major technology companies exceeded quarterly expectations,
+                driving a significant upturn in market performance. Analysts
+                predict continued growth through Q4, citing innovation and
+                market demand as key factors.
+              </Medium>
+              <Hr />
+              <FlexBox width="100%" justify="space-between">
+                <FlexBox columnGap="4px" align="center">
+                  <CiClock2 color="#687792" />
+                  <Small color="#687792">2 hours ago</Small>
+                </FlexBox>
+                <Small>Read More</Small>
+              </FlexBox>
+            </FlexBox>
+          </Card>
+          <Card>
+            <FlexBox>
+              <img src="/imagesecond.svg" alt="Market Insights" />
+            </FlexBox>
+            <FlexBox column rowGap="15px" padding="1rem">
+              <Support color="#142C8E">Market Insights</Support>
+              <H6 bold>
+                Market Analysis: Tech Stocks Rally Amid Strong Earnings Reports
+              </H6>
+              <Medium>
+                Major technology companies exceeded quarterly expectations,
+                driving a significant upturn in market performance. Analysts
+                predict continued growth through Q4, citing innovation and
+                market demand as key factors.
+              </Medium>
+              <Hr />
+              <FlexBox width="100%" justify="space-between">
+                <FlexBox columnGap="4px" align="center">
+                  <CiClock2 color="#687792" />
+                  <Small color="#687792">2 hours ago</Small>
+                </FlexBox>
+                <Small>Read More</Small>
+              </FlexBox>
+            </FlexBox>
+          </Card>
+        </FlexBox>
+      </Wrapper>
+      {isModalOpen && (
+        <ModalOverlay onClick={() => setIsModalOpen(false)}>
+          <ModalContent onClick={e => e.stopPropagation()}>
+            <CloseButton onClick={() => setIsModalOpen(false)}>
+              &times;
+            </CloseButton>
+            <FlexBox column>
+              <Small>Filter by:</Small>
+              <FlexBox>
+                <Medium bold>Date Range</Medium>
+                <Medium>Reset</Medium>
+              </FlexBox>
+            </FlexBox>
+            <Button onClick={() => setIsModalOpen(false)}>Apply Filter</Button>
+          </ModalContent>
+        </ModalOverlay>
+      )}
+      <CopyRightBox>
+        <Small color="white">
+          Copyright © 2024 Self Care Simplified-Pamprazzi. All rights reserved.
+        </Small>
+      </CopyRightBox>
+    </>
   );
 };
 
