@@ -9,6 +9,7 @@ import { H5 } from "../Components/common/Typography";
 import { Medium } from "../Components/common/Paragraph";
 import { client } from "@axiosClient";
 import { useRouter } from "next/router";
+import { encode } from "js-base64";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -122,7 +123,6 @@ const SearchIcon = styled(IoMdSearch)`
 
 const SearchInput = styled.input`
   width: 100%;
-
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 1rem;
@@ -195,6 +195,22 @@ const Screen = () => {
     sector?.sectorname?.toLowerCase().includes(search.toLowerCase())
   );
 
+  const handleSectorClick = sectorCode => {
+    const query = {
+      combinator: "and",
+      rules: [
+        {
+          field: "sectorCode",
+          operator: "=",
+          value: sectorCode,
+        },
+      ],
+    };
+
+    const encoded = encode(JSON.stringify(query));
+    router.push(`/query?preset=${encoded}`);
+  };
+
   return (
     <Wrapper>
       <FlexBox width="100%" height="100%" column rowGap="1.5rem">
@@ -231,6 +247,30 @@ const Screen = () => {
                 ))}
               </CardGridContainer>
             </Container>
+            <Container column>
+              <Body1 bold>Popular Stock Screens</Body1>
+              <Support color="#687792">
+                Screens that are mostly used by investors
+              </Support>
+              <CardGridContainer>
+                {[...Array(1)].map((_, index) => (
+                  <Card key={index}>
+                    <Icon>
+                      <H1 bold>G</H1>
+                    </Icon>
+                    <FlexBox column columnGap="0.5px">
+                      <FlexBox align="center" columnGap="0.75rem">
+                        <Body1>Growth Stocks</Body1>
+                        <SlArrowRight size={12} />
+                      </FlexBox>
+                      <Support color="#687792">
+                        High growth companies with strong momentum
+                      </Support>
+                    </FlexBox>
+                  </Card>
+                ))}
+              </CardGridContainer>
+            </Container>
           </LeftSection>
           <RightSection>
             <Title>Browse Sectors</Title>
@@ -247,11 +287,11 @@ const Screen = () => {
             {loading ? (
               <p>Loading...</p>
             ) : (
-              <List>
+              <List className="custom-scrollbar">
                 {filteredSectors.map(sector => (
                   <ListItem
                     key={sector?.sectorcode}
-                    onClick={() => router.push(`/query/${sector?.sectorcode}`)}
+                    onClick={() => handleSectorClick(sector?.sectorcode)}
                   >
                     {sector?.sectorname} <SlArrowRight />
                   </ListItem>
