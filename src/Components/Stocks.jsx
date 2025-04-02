@@ -8,19 +8,11 @@ import { CiExport } from "react-icons/ci";
 import { FaArrowsRotate } from "react-icons/fa6";
 import { client } from "@axiosClient";
 import { BiLinkExternal } from "react-icons/bi";
-import { H5, H2, H6, H4 } from "../Components/common/Typography";
+import { H5, H4 } from "../Components/common/Typography";
 import { Medium, Large } from "../Components/common/Paragraph";
 import { Modal, Select, Button, Spin } from "antd";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { blue } from "@ant-design/colors";
 import _ from "lodash";
 import { LabelList } from "recharts";
@@ -186,12 +178,6 @@ const Wrapper = styled(FlexBox)`
   margin: 0 auto;
 `;
 
-const NavContainer = styled(FlexBox)`
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-`;
-
 const Hr = styled.hr`
   width: 100%;
   border: 1px solid #ebf0f4;
@@ -238,19 +224,6 @@ const CashContainer = styled(FlexBox)`
     padding: 1rem 2rem;
   }
 `;
-const ActionButton = styled(FlexBox)`
-  border: 1.5px solid #142c8e;
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 12px;
-  gap: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s;
-  &:hover {
-    background: #f0f0f0;
-  }
-`;
 
 const GridContainer = styled.div`
   display: grid;
@@ -267,14 +240,6 @@ const GridItem = styled.div`
   display: flex;
   justify-content: space-between;
 `;
-
-// const Section = styled(FlexBox)`
-//   width: 100%;
-//   justify-content: space-between;
-//   column-gap: 1rem;
-//   flex-wrap: wrap;
-//   margin-top: 1rem;
-// `;
 
 const Section = styled(FlexBox)`
   width: 100%;
@@ -344,7 +309,6 @@ const Table = styled.div`
   width: 100%;
   border: 1px solid #ebf0f4;
   border-radius: 12px;
-  padding: 20px;
   background: #fff;
 `;
 
@@ -389,11 +353,6 @@ const HeaderRow = styled.div`
 `;
 
 // Company title styled component
-const CompanyTitle = styled(H1)`
-  margin: 0;
-  font-size: 1.75rem;
-  color: #111111;
-`;
 
 // Exchange links row
 const ExchangeLinksRow = styled.div`
@@ -415,40 +374,13 @@ const ExchangeLink = styled.a`
   }
 `;
 
-const ScoreCard = styled(FlexBox)`
-  justify-content: center;
-  width: fit-content;
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: 1px solid #888888;
-`;
-
-const TableCard = styled.div`
+const Row = styled.div`
   display: flex;
-  width: 100%;
-  row-gap: 1rem;
-  flex-direction: column;
-  @media ${device.laptop} {
-    width: 50%;
-  }
+  justify-content: space-between;
+  margin: 8px 0;
+  font-size: 14px;
 `;
 // Dummy financial data (for display purposes)
-const financialData = {
-  "Profit & Loss": [
-    { metric: "Book Value", values: [1287, 1287, 1287] },
-    { metric: "EPS", values: [1287, 1287, 1287] },
-    { metric: "Net Profit", values: [1287, 1287, 1287] },
-    { metric: "Operating Profit", values: [1287, 1287, 1287] },
-    { metric: "Revenue", values: [1287, 1287, 1287] },
-  ],
-  "Balance Sheet": [
-    { metric: "Cash & Equivalents", values: [1287, 1287, 1287] },
-    { metric: "Debt", values: [1287, 1287, 1287] },
-    { metric: "Net Worth", values: [1287, 1287, 1287] },
-    { metric: "Total Assets", values: [1287, 1287, 1287] },
-    { metric: "Total Liabilities", values: [1287, 1287, 1287] },
-  ],
-};
 
 const slugify = text =>
   text
@@ -566,6 +498,59 @@ const Stock = () => {
 
   const [showWatchlistPopup, setShowWatchlistPopup] = useState(false);
 
+  const financialData = stock
+    ? {
+        "Profit & Loss": [
+          {
+            metric: "Book Value",
+            values: [stock.bookvalue, stock.bookvalue, stock.bookvalue],
+          },
+          { metric: "EPS", values: [stock.eps, stock.eps, stock.eps] },
+          {
+            metric: "Net Profit",
+            values: [stock.netprofit, stock.netprofit, stock.netprofit],
+          },
+          {
+            metric: "Operating Profit",
+            values: [stock.opm, stock.opm, stock.opm],
+          },
+          {
+            metric: "Revenue",
+            values: [stock.revenue, stock.revenue, stock.revenue],
+          },
+        ],
+        "Balance Sheet": [
+          {
+            metric: "Cash & Equivalents",
+            values: [stock.cash_op, stock.cash_investing, stock.cash_financing],
+          },
+          {
+            metric: "Debt",
+            values: [
+              stock.debtToEquity,
+              stock.debtToEquity,
+              stock.debtToEquity,
+            ],
+          },
+          {
+            metric: "Net Worth",
+            values: [stock.networth, stock.networth, stock.networth],
+          },
+          {
+            metric: "Total Assets",
+            values: [stock.totalassets, stock.totalassets, stock.totalassets],
+          },
+          {
+            metric: "Total Liabilities",
+            values: [
+              stock.totalliabilities,
+              stock.totalliabilities,
+              stock.totalliabilities,
+            ],
+          },
+        ],
+      }
+    : {};
   // API integration: Fetch stock details using the fqn parameter
   useEffect(() => {
     if (!fqn) return;
@@ -763,11 +748,12 @@ const Stock = () => {
       </Section>
 
       {/* Financial Fundamentals Section */}
+
       <FlexBox column width="100%" id="fundamentals">
         <H1 bold>Financial Fundamentals</H1>
         <TableContainer>
           {Object.entries(financialData).map(([section, data]) => (
-            <TableCard key={section}>
+            <div key={section} style={{ width: "48%" }}>
               <Body1 bold>{section}</Body1>
               <Table>
                 <StyledTable>
@@ -784,18 +770,19 @@ const Stock = () => {
                       <TableRow key={row.metric}>
                         <TableCell>{row.metric}</TableCell>
                         {row.values.map((value, index) => (
-                          <TableCell key={index}>{value}</TableCell>
+                          <TableCell key={index}>
+                            {value !== undefined ? value.toFixed(3) : "N/A"}
+                          </TableCell>
                         ))}
                       </TableRow>
                     ))}
                   </tbody>
                 </StyledTable>
               </Table>
-            </TableCard>
+            </div>
           ))}
         </TableContainer>
       </FlexBox>
-
       {/* Cash Counter Section */}
       <FlexBox width="100%" column id="cash">
         <H1 bold>Cash Counter</H1>
@@ -821,10 +808,6 @@ const Stock = () => {
             similar to each other than the rest. This ensure that you are
             comparing like to like and not apples to oranges! Phew!
           </Large>
-          <ScoreCard>
-            <Body1 color="#287897">Similarity Score: </Body1>
-            <Body1 color="#287897">62%</Body1>
-          </ScoreCard>
         </FlexBox>
         {peers && peers.length > 0 ? (
           <PeerComparisonTable peer={peers[0]} currentStock={stock} />
@@ -842,6 +825,38 @@ const Stock = () => {
         </ShareholdingLeft>
         <ShareholdingRight>
           <H1 bold>Valuation</H1>
+          <Row>
+            <Large bold>52 Week High</Large>
+            <Large>{stock?.high52WeekPrice}</Large>
+          </Row>
+          <Row>
+            <Large bold>52 Week Low</Large>
+            <Large>{stock?.low52WeekPrice}</Large>
+          </Row>
+          <Row>
+            <Large bold>P/E Ratio</Large>
+            <Large>{stock?.pegRatio}</Large>
+          </Row>
+          <Row>
+            <Large bold>PBV</Large>
+            <Large>{stock?.pbv}</Large>
+          </Row>
+          <Row>
+            <Large bold>EV to EBITDA</Large>
+            <Large>{stock?.evToEbitda}</Large>
+          </Row>
+          <Row>
+            <Large bold>EV to Capital Employed</Large>
+            <Large>₹ 1,234</Large>
+          </Row>
+          <Row>
+            <Large bold>EV to Sales</Large>
+            <Large>{stock?.evToSales}</Large>
+          </Row>
+          <Row>
+            <Large bold>PEG</Large>
+            <Large>{stock?.pegRatio}</Large>
+          </Row>
         </ShareholdingRight>
       </Section>
 
