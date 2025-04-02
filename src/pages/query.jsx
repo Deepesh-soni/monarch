@@ -15,7 +15,6 @@ const { Title } = Typography;
 const Wrapper = styled.div`
   padding: 2rem 1rem;
   min-height: 100vh;
-  background: #f6f7fb;
 
   @media ${device.laptop} {
     width: 86.67%;
