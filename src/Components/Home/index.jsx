@@ -77,6 +77,7 @@ const Image = styled.img`
   @media ${device.laptop} {
     width: 236px;
     height: 126px;
+    max-width: unset;
   }
 `;
 

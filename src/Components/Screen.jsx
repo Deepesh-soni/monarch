@@ -254,7 +254,7 @@ const Screen = () => {
                 Screens that are mostly used by investors
               </Support>
               <CardGridContainer>
-                {[...Array(13)].map((_, index) => (
+                {[...Array(1)].map((_, index) => (
                   <Card key={index}>
                     <Icon>
                       <H1 bold>G</H1>
