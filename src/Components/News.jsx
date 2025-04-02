@@ -136,6 +136,46 @@ const ButtonDay = styled(FlexBox)`
   justify-content: center;
 `;
 
+const FilterSection = ({ title, children, resettable }) => (
+  <>
+    <FlexBox justify="space-between">
+      <Medium bold>{title}</Medium>
+      {resettable && <Medium>Reset</Medium>}
+    </FlexBox>
+    {children}
+    <Hr />
+  </>
+);
+
+const DateInput = ({ label }) => (
+  <FlexBox column width="100%">
+    <Small bold color="#687792">
+      {label}
+    </Small>
+    <Input type="date" />
+  </FlexBox>
+);
+
+const DateQuickOptions = () => (
+  <FlexBox columnGap="11px" justify="space-between">
+    {["Today", "This Week", "Month"].map(option => (
+      <ButtonDay key={option}>
+        <Small>{option}</Small>
+      </ButtonDay>
+    ))}
+  </FlexBox>
+);
+
+const CheckboxGroup = ({ options }) => (
+  <FlexBox justify="space-between" wrap>
+    {options.map(option => (
+      <FlexBox key={option} align="center" columnGap="2px">
+        <CheckBox />
+        <Medium color="#687792">{option}</Medium>
+      </FlexBox>
+    ))}
+  </FlexBox>
+);
 const News = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   return (
@@ -236,84 +276,28 @@ const News = () => {
             </CloseButton>
             <FlexBox column rowGap="27px">
               <Small>Filter by:</Small>
-              <FlexBox justify="space-between">
-                <Medium bold>Date Range</Medium>
-                <Medium>Reset</Medium>
-              </FlexBox>
-              <FlexBox columnGap="18px">
-                <FlexBox column width="100%">
-                  <Small bold color="#687792">
-                    From
-                  </Small>
-                  <Input
-                    type="date"
-                    placeholder="Enter watchlist name"
-                    maxLength={256}
-                  />
+              <FilterSection title="Date Range" resettable>
+                <FlexBox columnGap="18px">
+                  <DateInput label="From" />
+                  <DateInput label="To" />
                 </FlexBox>
-                <FlexBox column width="100%">
-                  <Small bold color="#687792">
-                    To
-                  </Small>
-                  <Input
-                    type="date"
-                    placeholder="Enter watchlist name"
-                    maxLength={256}
-                  />
-                </FlexBox>
-              </FlexBox>
-              <FlexBox columnGap="11px" justify="space-between">
-                <ButtonDay>
-                  <Small>Toady</Small>
-                </ButtonDay>
-                <ButtonDay>
-                  <Small>This Week</Small>
-                </ButtonDay>
-                <ButtonDay>
-                  <Small>Month</Small>
-                </ButtonDay>
-              </FlexBox>
-              <Hr />
-              <Medium>News Type</Medium>
-              <FlexBox justify="space-between">
-                <FlexBox align="center" columnGap="2px">
-                  <CheckBox />
-                  <Medium color="#687792">Expert Analysis</Medium>
-                </FlexBox>
-                <FlexBox align="center" columnGap="2px">
-                  <CheckBox />
-                  <Medium color="#687792">Expert Analysis</Medium>
-                </FlexBox>
-                <FlexBox align="center" columnGap="2px">
-                  <CheckBox />
-                  <Medium color="#687792">Expert Analysis</Medium>
-                </FlexBox>
-                <FlexBox align="center" columnGap="2px">
-                  <CheckBox />
-                  <Medium color="#687792">Expert Analysis</Medium>
-                </FlexBox>
-              </FlexBox>
-              <Hr />
-              <Medium>Source</Medium>
-              <FlexBox justify="space-between">
-                <FlexBox align="center" columnGap="2px">
-                  <CheckBox />
-                  <Medium color="#687792">Expert Analysis</Medium>
-                </FlexBox>
-                <FlexBox align="center" columnGap="2px">
-                  <CheckBox />
-                  <Medium color="#687792">Expert Analysis</Medium>
-                </FlexBox>
-                <FlexBox align="center" columnGap="2px">
-                  <CheckBox />
-                  <Medium color="#687792">Expert Analysis</Medium>
-                </FlexBox>
-                <FlexBox align="center" columnGap="2px">
-                  <CheckBox />
-                  <Medium color="#687792">Expert Analysis</Medium>
-                </FlexBox>
-              </FlexBox>
-              <Hr />
+                <DateQuickOptions />
+              </FilterSection>
+              <FilterSection title="News Type">
+                <CheckboxGroup
+                  options={[
+                    "Expert Analysis",
+                    "Market Trends",
+                    "Breaking News",
+                    "Opinions",
+                  ]}
+                />
+              </FilterSection>
+              <FilterSection title="Source">
+                <CheckboxGroup
+                  options={["BBC", "CNN", "Reuters", "Bloomberg"]}
+                />
+              </FilterSection>
               <FlexBox columnGap="18px">
                 <Button
                   outline
@@ -322,7 +306,6 @@ const News = () => {
                 >
                   Reset
                 </Button>
-
                 <Button width="100%" onClick={() => setIsModalOpen(false)}>
                   Apply Filter
                 </Button>
