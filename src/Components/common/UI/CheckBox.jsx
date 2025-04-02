@@ -15,15 +15,15 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 18px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   border-radius: 0.25rem;
   border: 1px solid ${PRIMARY_800};
-  background-color: ${(props) => (props.check ? PRIMARY_800 : "none")};
+  background-color: ${props => (props.check ? EBF0F4 : "none")};
 
   ${({ disabled }) =>
     disabled &&
@@ -31,7 +31,7 @@ const Wrapper = styled.div`
       pointer-events: none;
       border: 1px solid ${ACCENT_400};
       cursor: not-allowed;
-      background-color: ${(props) => (props.check ? ACCENT_500 : "none")};
+      background-color: ${props => (props.check ? ACCENT_500 : "none")};
     `}
 `;
 
