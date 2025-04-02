@@ -196,19 +196,25 @@ const Screen = () => {
   );
 
   const handleSectorClick = sectorName => {
-    const query = {
-      combinator: "and",
-      rules: [
-        {
-          field: "sectorName",
-          operator: "=",
-          value: sectorName,
-        },
-      ],
+    const payload = {
+      details: {
+        name: `Screener: ${sectorName}`,
+        description: '',
+      },
+      query: {
+        combinator: "and",
+        rules: [
+          {
+            field: "sectorName",
+            operator: "=",
+            value: sectorName,
+          },
+        ],
+      }
     };
 
-    const encoded = encode(JSON.stringify(query));
-    router.push(`/query?preset=${encoded}`);
+    const encoded = encode(JSON.stringify(payload));
+    router.push(`/screener/query/?preset=${encoded}`);
   };
 
   return (

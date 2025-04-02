@@ -85,7 +85,7 @@ const NavBar = () => {
       <FlexBox columnGap="20px" align="center">
         {[
           { path: "/news", label: "News" },
-          { path: "/screens", label: "Screens" },
+          { path: "/screener", label: "Screens" },
           { path: "/watch-list", label: "Watchlist" },
         ].map(({ path, label }) => (
           <NavLink key={path} href={path} active={pathname?.includes(path)}>

@@ -10,6 +10,8 @@ import { decode } from "js-base64";
 import { useRouter } from "next/router";
 import StockTableView from "../../../Components/WatchList/StockTable";
 import { toast } from "react-toastify";
+import Layout from "../../../layout/HomePageLayout";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
 
 const { Title } = Typography;
 
@@ -43,17 +45,20 @@ const Query = () => {
     const [data, setData] = useState([]);
     const [loadingData, setLoadingData] = useState(false);
     const [screener, setScreener] = useState(null);
-
     const router = useRouter();
 
+    const { doesSessionExist } = useSessionContext();
+
+    const { preset } = router.query;
+
+
     useEffect(() => {
-        const { preset, name, description } = router.query;
         if (preset) {
             try {
                 const decoded = JSON.parse(decode(preset));
-                setQuery(decoded);
+                setScreener(decoded);
+                setQuery(decoded?.query);
                 setShouldRun(true);
-                setScreener({ details: { name, description } });
             } catch (e) {
                 toast.error("Invalid preset query");
                 console.error("Invalid preset query", e);
@@ -106,44 +111,45 @@ const Query = () => {
     }, [loadingFields, shouldRun]);
 
     return (
-        <Wrapper>
-            <div style={{ width: "100%", marginBottom: "1rem" }}>
-                <Title level={2}>{screener?.details?.name ?? 'Stock Screener Query'}</Title>
-                <Typography.Text>{screener?.details?.description ?? ''}</Typography.Text>
-            </div>
+        <Layout>
+            <Wrapper>
+                <div style={{ width: "100%", marginBottom: "1rem" }}>
+                    <Title level={2}>{screener?.details?.name ?? 'Stock Screener Query'}</Title>
+                    <Typography.Text>{screener?.details?.description ?? ''}</Typography.Text>
+                </div>
 
+                {doesSessionExist || preset && <StyledCard>
+                    <Title level={5}>Query Builder</Title>
 
-            <StyledCard>
-                <Title level={5}>Query Builder</Title>
+                    {loadingFields ? (
+                        <Skeleton active paragraph={{ rows: 2 }} />
+                    ) : (
+                        <QueryBuilderAntD>
+                            <QueryBuilder
+                                fields={fields}
+                                query={query}
+                                onQueryChange={setQuery}
+                                controlElements={{ addGroupAction: () => null }}
+                                showCombinatorsBetweenRules={false}
+                                enableDragAndDrop={false}
+                            />
+                        </QueryBuilderAntD>
+                    )}
 
-                {loadingFields ? (
-                    <Skeleton active paragraph={{ rows: 2 }} />
+                    <ButtonRow>
+                        <Button type="primary" loading={running} onClick={handleRun}>
+                            Run Screen
+                        </Button>
+                    </ButtonRow>
+                </StyledCard>}
+
+                {loadingData ? (
+                    <Skeleton active paragraph={{ rows: 8 }} style={{ marginTop: "2rem" }} />
                 ) : (
-                    <QueryBuilderAntD>
-                        <QueryBuilder
-                            fields={fields}
-                            query={query}
-                            onQueryChange={setQuery}
-                            controlElements={{ addGroupAction: () => null }}
-                            showCombinatorsBetweenRules={false}
-                            enableDragAndDrop={false}
-                        />
-                    </QueryBuilderAntD>
+                    <StockTableView data={data} />
                 )}
-
-                <ButtonRow>
-                    <Button type="primary" loading={running} onClick={handleRun}>
-                        Run Screen
-                    </Button>
-                </ButtonRow>
-            </StyledCard>
-
-            {loadingData ? (
-                <Skeleton active paragraph={{ rows: 8 }} style={{ marginTop: "2rem" }} />
-            ) : (
-                <StockTableView data={data} />
-            )}
-        </Wrapper>
+            </Wrapper>
+        </Layout>
     );
 };
 

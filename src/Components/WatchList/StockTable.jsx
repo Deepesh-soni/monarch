@@ -77,16 +77,25 @@ const StockTableView = ({ data }) => {
             title: allColumns[key],
             dataIndex: key,
             key,
-            render: (value) => {
+            render: value => {
                 if (inrKeys.includes(key) && typeof value === "number") {
                     return `₹ ${new Intl.NumberFormat("en-IN").format(value)}`;
                 }
                 return value;
             },
-            sorter: (a, b) =>
-                (a[key] ?? "").toString().localeCompare((b[key] ?? "").toString()),
+            sorter: (a, b) => {
+                const valA = a[key];
+                const valB = b[key];
+
+                if (typeof valA === 'number' && typeof valB === 'number') {
+                    return valA - valB;
+                }
+
+                return String(valA ?? '').localeCompare(String(valB ?? ''));
+            }
         }));
     }, [visibleColumns]);
+
 
     return (
         <>
