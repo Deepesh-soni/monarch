@@ -70,13 +70,23 @@ const Query = () => {
         const fetchConfig = async () => {
             try {
                 const response = await client.get("/stock/query-config");
-                const parsedFields = response?.data?.fields.map((f) => ({
-                    field: f.name,
-                    name: f.name,
-                    label: f.label,
-                    inputType: f.type === "select" ? "select" : f.type,
-                    ...(f.type === "select" && f.options ? { values: f.options } : {}),
-                }));
+                const parsedFields = response?.data?.fields.map(f => {
+                    const isSelect = f.type === "select" && Array.isArray(f.options);
+
+                    return {
+                        field: f.name,
+                        name: f.name,
+                        label: f.label,
+                        inputType: isSelect ? "select" : f.type,
+                        valueEditorType: isSelect ? "select" : undefined,
+                        ...(isSelect
+                            ? {
+                                values: f.options.map(opt => ({ name: opt, label: opt }))
+                            }
+                            : {})
+                    };
+                });
+
                 setFields(parsedFields);
             } catch (err) {
                 toast.error("Failed to load query config");
@@ -118,9 +128,8 @@ const Query = () => {
                     <Typography.Text>{screener?.details?.description ?? ''}</Typography.Text>
                 </div>
 
-                {doesSessionExist || preset && <StyledCard>
+                {doesSessionExist && !preset && <StyledCard>
                     <Title level={5}>Query Builder</Title>
-
                     {loadingFields ? (
                         <Skeleton active paragraph={{ rows: 2 }} />
                     ) : (
@@ -146,7 +155,7 @@ const Query = () => {
                 {loadingData ? (
                     <Skeleton active paragraph={{ rows: 8 }} style={{ marginTop: "2rem" }} />
                 ) : (
-                    <StockTableView data={data} />
+                    data?.length > 0 && <StockTableView data={data} />
                 )}
             </Wrapper>
         </Layout>
