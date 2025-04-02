@@ -25,7 +25,7 @@ const Layout = ({ children }) => (
     <ChildrenWrapper>{children}</ChildrenWrapper>
     <CopyRightBox>
       <Small color="white">
-        Copyright © 2024 Self Care Simplified-Pamprazzi. All rights reserved.
+        Copyright © 2025 FinEase Pvt. Ltd. All rights reserved.
       </Small>
     </CopyRightBox>
   </>
