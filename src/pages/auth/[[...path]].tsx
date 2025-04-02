@@ -9,12 +9,9 @@ import { device } from "@Components/common/UI/Responsive";
 import Layout from "../../layout/HomePageLayout";
 import Meta from "@layout/Meta";
 
-const Wrapper = styled.div`
+const Container = styled(FlexBox)`
   background: url("/assets/home/page-bg.png");
   background-position: center;
-`;
-
-const Container = styled(FlexBox)`
   flex-direction: column;
   padding: 0 1rem;
   align-items: center;
