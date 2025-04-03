@@ -27,6 +27,6 @@ export const client = createAxiosClient({
     headers: {
       "Content-Type": "application/json",
     },
-  }
+  },
 });
 
