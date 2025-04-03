@@ -10,7 +10,7 @@ import SearchableDropdown from "@Components/common/UI/Search/SearchDropdownCmp";
 import { H6, H2 } from "../common/Typography";
 import { Medium, Small } from "../common/Paragraph";
 import Layout from "@layout/HomePageLayout";
-import StockImage from "./stockImage";
+import StockImage from "./StockImage";
 
 const Wrapper = styled.div`
   background: url("/assets/home/page-bg.png");
