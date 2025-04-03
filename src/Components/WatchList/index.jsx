@@ -1,19 +1,17 @@
 import styled from "styled-components";
 import FlexBox from "@common/UI/FlexBox";
-import { Body1, Support } from "@common/UI/Headings";
+import { Support } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
 import { IoMdAdd } from "react-icons/io";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
-import { Modal } from "antd"; // for delete confirmation
+import { Modal, Pagination } from "antd";
 import { toast } from "react-toastify";
 import { H5 } from "../../Components/common/Typography";
 import { Medium, Small, Large } from "../../Components/common/Paragraph";
-
 import { client } from "@axiosClient";
 import NewUpdatePopup from "../common/NewUpdatePopup";
-
 import { useRouter } from "next/router";
 
 const Wrapper = styled(FlexBox)`
@@ -21,7 +19,7 @@ const Wrapper = styled(FlexBox)`
   padding: 0 1rem;
   align-items: center;
   gap: 0.5rem;
-  min-height: 100vh; /* Full screen minimum height */
+  min-height: 100vh;
 
   @media ${device.laptop} {
     margin: auto;
@@ -38,7 +36,7 @@ const Card = styled(FlexBox)`
   background: #ffffff;
   border: 1px solid #ebf0f4;
   box-shadow: 0px 3px 3px 0px #00000040;
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 12px;
   cursor: pointer;
 `;
@@ -47,11 +45,10 @@ const WatchList = () => {
   const [watchlists, setWatchlists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
-
-  // For edit mode
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5;
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-
   const router = useRouter();
 
   const fetchWatchlists = async () => {
@@ -90,19 +87,53 @@ const WatchList = () => {
     setIsEditModalOpen(true);
   };
 
+  const Row = ({ index, style }) => (
+    <div style={style}>
+      <Card
+        key={watchlists[index].id}
+        onClick={() => router.push(`/watch-list/${watchlists[index]?.fqn}`)}
+      >
+        <FlexBox align="center" justify="space-between">
+          <FlexBox column rowGap="0.25rem">
+            <H5 bold>{watchlists[index].name}</H5>
+            <Large color="#687792">
+              {watchlists[index].stocks?.length || 0} Stocks
+            </Large>
+            <Medium color="#687792">{watchlists[index].description}</Medium>
+          </FlexBox>
+          <FlexBox columnGap="1rem">
+            <AiOutlineEdit
+              size={20}
+              style={{ cursor: "pointer" }}
+              onClick={e => {
+                e.stopPropagation();
+                handleEdit(watchlists[index]);
+              }}
+            />
+            <AiOutlineDelete
+              size={20}
+              style={{ cursor: "pointer" }}
+              onClick={e => {
+                e.stopPropagation();
+                handleDelete(watchlists[index].fqn, watchlists[index].name);
+              }}
+            />
+          </FlexBox>
+        </FlexBox>
+      </Card>
+    </div>
+  );
+
   return (
     <SessionAuth>
       <Wrapper>
-        {/* Modal for creating new watchlist */}
         <NewUpdatePopup
           visible={isNewModalOpen}
           toggleModal={() => setIsNewModalOpen(false)}
           itemType="watchlist"
           mode="new"
-          onConfirm={fetchWatchlists}
+          onConfirm={() => fetchWatchlists(currentPage)}
         />
-
-        {/* Modal for updating existing watchlist */}
         <NewUpdatePopup
           visible={isEditModalOpen}
           toggleModal={() => setIsEditModalOpen(false)}
@@ -120,7 +151,6 @@ const WatchList = () => {
         />
 
         <FlexBox width="100%" column rowGap="2rem">
-          {/* Header */}
           <FlexBox align="center" justify="space-between">
             <FlexBox column>
               <H5 bold>My Watchlists</H5>
@@ -142,7 +172,6 @@ const WatchList = () => {
             </FlexBox>
           </FlexBox>
 
-          {/* Cards */}
           {loading ? (
             <Support color="#687792">Loading watchlists...</Support>
           ) : watchlists.length > 0 ? (
@@ -197,6 +226,14 @@ const WatchList = () => {
             </FlexBox>
           )}
         </FlexBox>
+
+        <Pagination
+          current={currentPage}
+          pageSize={pageSize}
+          total={watchlists?.length}
+          onChange={page => setCurrentPage(page)}
+          style={{ marginTop: "1rem", alignSelf: "center" }}
+        />
       </Wrapper>
     </SessionAuth>
   );

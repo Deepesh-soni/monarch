@@ -6,7 +6,7 @@ import { Body1, Support, H1 } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
 import { IoMdSearch } from "react-icons/io";
 import { H5 } from "../Components/common/Typography";
-import { Medium } from "../Components/common/Paragraph";
+import { Medium, Small } from "../Components/common/Paragraph";
 import { client } from "@axiosClient";
 import { useRouter } from "next/router";
 import { encode } from "js-base64";
@@ -199,7 +199,7 @@ const Screen = () => {
     const payload = {
       details: {
         name: `Screener: ${sectorName}`,
-        description: '',
+        description: "",
       },
       query: {
         combinator: "and",
@@ -210,7 +210,7 @@ const Screen = () => {
             value: sectorName,
           },
         ],
-      }
+      },
     };
 
     const encoded = encode(JSON.stringify(payload));
@@ -218,96 +218,98 @@ const Screen = () => {
   };
 
   return (
-    <Wrapper>
-      <FlexBox width="100%" height="100%" column rowGap="1.5rem">
-        <HeadingContainer>
-          <FlexBox column>
-            <H5 bold>Stock Screens</H5>
-            <Medium color="#687792">
-              Create your own custom screening criteria
-            </Medium>
-          </FlexBox>
-          <Button>New Screens</Button>
-        </HeadingContainer>
-        <Section>
-          <LeftSection>
-            <Container column>
-              <Medium bold>Your Custom Screens</Medium>
-              <Support>Screens created by you</Support>
-              <CardGridContainer>
-                {[...Array(4)].map((_, index) => (
-                  <Card key={index}>
-                    <Icon>
-                      <H1 bold>G</H1>
-                    </Icon>
-                    <FlexBox column columnGap="0.5px">
-                      <FlexBox align="center" columnGap="0.75rem">
-                        <Body1>Growth Stocks</Body1>
-                        <SlArrowRight size={12} />
+    <>
+      <Wrapper>
+        <FlexBox width="100%" height="100%" column rowGap="1.5rem">
+          <HeadingContainer>
+            <FlexBox column>
+              <H5 bold>Stock Screens</H5>
+              <Medium color="#687792">
+                Create your own custom screening criteria
+              </Medium>
+            </FlexBox>
+            <Button>New Screens</Button>
+          </HeadingContainer>
+          <Section>
+            <LeftSection>
+              <Container column>
+                <Medium bold>Your Custom Screens</Medium>
+                <Support>Screens created by you</Support>
+                <CardGridContainer>
+                  {[...Array(4)].map((_, index) => (
+                    <Card key={index}>
+                      <Icon>
+                        <H1 bold>G</H1>
+                      </Icon>
+                      <FlexBox column columnGap="0.5px">
+                        <FlexBox align="center" columnGap="0.75rem">
+                          <Body1>Growth Stocks</Body1>
+                          <SlArrowRight size={12} />
+                        </FlexBox>
+                        <Support color="#687792">
+                          High growth companies with strong momentum
+                        </Support>
                       </FlexBox>
-                      <Support color="#687792">
-                        High growth companies with strong momentum
-                      </Support>
-                    </FlexBox>
-                  </Card>
-                ))}
-              </CardGridContainer>
-            </Container>
-            <Container column>
-              <Body1 bold>Popular Stock Screens</Body1>
-              <Support color="#687792">
-                Screens that are mostly used by investors
-              </Support>
-              <CardGridContainer>
-                {[...Array(1)].map((_, index) => (
-                  <Card key={index}>
-                    <Icon>
-                      <H1 bold>G</H1>
-                    </Icon>
-                    <FlexBox column columnGap="0.5px">
-                      <FlexBox align="center" columnGap="0.75rem">
-                        <Body1>Growth Stocks</Body1>
-                        <SlArrowRight size={12} />
+                    </Card>
+                  ))}
+                </CardGridContainer>
+              </Container>
+              <Container column>
+                <Body1 bold>Popular Stock Screens</Body1>
+                <Support color="#687792">
+                  Screens that are mostly used by investors
+                </Support>
+                <CardGridContainer>
+                  {[...Array(1)].map((_, index) => (
+                    <Card key={index}>
+                      <Icon>
+                        <H1 bold>G</H1>
+                      </Icon>
+                      <FlexBox column columnGap="0.5px">
+                        <FlexBox align="center" columnGap="0.75rem">
+                          <Body1>Growth Stocks</Body1>
+                          <SlArrowRight size={12} />
+                        </FlexBox>
+                        <Support color="#687792">
+                          High growth companies with strong momentum
+                        </Support>
                       </FlexBox>
-                      <Support color="#687792">
-                        High growth companies with strong momentum
-                      </Support>
-                    </FlexBox>
-                  </Card>
-                ))}
-              </CardGridContainer>
-            </Container>
-          </LeftSection>
-          <RightSection>
-            <Title>Browse Sectors</Title>
-            <Subtitle>Explore stocks by industry sectors</Subtitle>
-            <SearchContainer>
-              <SearchIcon />
-              <SearchInput
-                type="text"
-                placeholder="Search sectors..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-              />
-            </SearchContainer>
-            {loading ? (
-              <p>Loading...</p>
-            ) : (
-              <List className="custom-scrollbar">
-                {filteredSectors.map(sector => (
-                  <ListItem
-                    key={sector?.sectorcode}
-                    onClick={() => handleSectorClick(sector?.sectorname)}
-                  >
-                    {sector?.sectorname} <SlArrowRight />
-                  </ListItem>
-                ))}
-              </List>
-            )}
-          </RightSection>
-        </Section>
-      </FlexBox>
-    </Wrapper>
+                    </Card>
+                  ))}
+                </CardGridContainer>
+              </Container>
+            </LeftSection>
+            <RightSection>
+              <Title>Browse Sectors</Title>
+              <Subtitle>Explore stocks by industry sectors</Subtitle>
+              <SearchContainer>
+                <SearchIcon />
+                <SearchInput
+                  type="text"
+                  placeholder="Search sectors..."
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                />
+              </SearchContainer>
+              {loading ? (
+                <p>Loading...</p>
+              ) : (
+                <List className="custom-scrollbar">
+                  {filteredSectors.map(sector => (
+                    <ListItem
+                      key={sector?.sectorcode}
+                      onClick={() => handleSectorClick(sector?.sectorname)}
+                    >
+                      {sector?.sectorname} <SlArrowRight />
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+            </RightSection>
+          </Section>
+        </FlexBox>
+      </Wrapper>
+    </>
   );
 };
 

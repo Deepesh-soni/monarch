@@ -500,56 +500,56 @@ const Stock = () => {
 
   const financialData = stock
     ? {
-      "Profit & Loss": [
-        {
-          metric: "Book Value",
-          values: [stock.bookvalue, stock.bookvalue, stock.bookvalue],
-        },
-        { metric: "EPS", values: [stock.eps, stock.eps, stock.eps] },
-        {
-          metric: "Net Profit",
-          values: [stock.netprofit, stock.netprofit, stock.netprofit],
-        },
-        {
-          metric: "Operating Profit",
-          values: [stock.opm, stock.opm, stock.opm],
-        },
-        {
-          metric: "Revenue",
-          values: [stock.revenue, stock.revenue, stock.revenue],
-        },
-      ],
-      "Balance Sheet": [
-        {
-          metric: "Cash & Equivalents",
-          values: [stock.cash_op, stock.cash_investing, stock.cash_financing],
-        },
-        {
-          metric: "Debt",
-          values: [
-            stock.debtToEquity,
-            stock.debtToEquity,
-            stock.debtToEquity,
-          ],
-        },
-        {
-          metric: "Net Worth",
-          values: [stock.networth, stock.networth, stock.networth],
-        },
-        {
-          metric: "Total Assets",
-          values: [stock.totalassets, stock.totalassets, stock.totalassets],
-        },
-        {
-          metric: "Total Liabilities",
-          values: [
-            stock.totalliabilities,
-            stock.totalliabilities,
-            stock.totalliabilities,
-          ],
-        },
-      ],
-    }
+        "Profit & Loss": [
+          {
+            metric: "Book Value",
+            values: [stock.bookvalue, stock.bookvalue, stock.bookvalue],
+          },
+          { metric: "EPS", values: [stock.eps, stock.eps, stock.eps] },
+          {
+            metric: "Net Profit",
+            values: [stock.netprofit, stock.netprofit, stock.netprofit],
+          },
+          {
+            metric: "Operating Profit",
+            values: [stock.opm, stock.opm, stock.opm],
+          },
+          {
+            metric: "Revenue",
+            values: [stock.revenue, stock.revenue, stock.revenue],
+          },
+        ],
+        "Balance Sheet": [
+          {
+            metric: "Cash & Equivalents",
+            values: [stock.cash_op, stock.cash_investing, stock.cash_financing],
+          },
+          {
+            metric: "Debt",
+            values: [
+              stock.debtToEquity,
+              stock.debtToEquity,
+              stock.debtToEquity,
+            ],
+          },
+          {
+            metric: "Net Worth",
+            values: [stock.networth, stock.networth, stock.networth],
+          },
+          {
+            metric: "Total Assets",
+            values: [stock.totalassets, stock.totalassets, stock.totalassets],
+          },
+          {
+            metric: "Total Liabilities",
+            values: [
+              stock.totalliabilities,
+              stock.totalliabilities,
+              stock.totalliabilities,
+            ],
+          },
+        ],
+      }
     : {};
   // API integration: Fetch stock details using the fqn parameter
   useEffect(() => {
