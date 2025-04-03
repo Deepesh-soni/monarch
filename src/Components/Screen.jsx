@@ -162,6 +162,96 @@ const HeadingContainer = styled(FlexBox)`
 `;
 
 
+const presetCustomScreens = [
+  {
+    details: {
+      name: "Dividend Stocks",
+      description: "Market cap > 2500 AND Dividend Yield > 5 AND ROCE > 15"
+    },
+    query: {
+      combinator: "and",
+      rules: [
+        { field: "mcap", operator: ">", value: 2500 },
+        { field: "dividendYield", operator: ">", value: 5 },
+        { field: "roceTtm", operator: ">", value: 15 }
+      ]
+    }
+  },
+  {
+    details: {
+      name: "Growth Stocks",
+      description: "Market Cap > 5000 AND PEG Ratio < 1"
+    },
+    query: {
+      combinator: "and",
+      rules: [
+        { field: "mcap", operator: ">", value: 5000 },
+        { field: "pegRatio", operator: "<", value: 1 }
+      ]
+    }
+  },
+  {
+    details: {
+      name: "Steady Growth Champs",
+      description:
+        "Market Cap > 5000 AND Dividend Yield > 3 AND ROCE > 15 AND Debt to equity < 1"
+    },
+    query: {
+      combinator: "and",
+      rules: [
+        { field: "mcap", operator: ">", value: 5000 },
+        { field: "dividendYield", operator: ">", value: 3 },
+        { field: "roceTtm", operator: ">", value: 15 },
+        { field: "debtToEquity", operator: "<", value: 1 }
+      ]
+    }
+  },
+  {
+    details: {
+      name: "High-Growth Titans",
+      description:
+        "Market Cap > 500 AND EBITDA growth 3Y > 20 AND ROE TTM > 10"
+    },
+    query: {
+      combinator: "and",
+      rules: [
+        { field: "mcap", operator: ">", value: 500 },
+        { field: "ebitdaGrowth", operator: ">", value: 20 },
+        { field: "roeTtm", operator: ">", value: 10 }
+      ]
+    }
+  },
+  {
+    details: {
+      name: "High Volume Stocks",
+      description: "Volume > 1M AND PEG Ratio < 1.5"
+    },
+    query: {
+      combinator: "and",
+      rules: [
+        { field: "volume", operator: ">", value: 1000000 },
+        { field: "pegRatio", operator: "<", value: 1.5 }
+      ]
+    }
+  },
+  {
+    details: {
+      name: "Financially Fit Companies",
+      description:
+        "Interest Coverage Ratio > 2 AND Market Cap > 500"
+    },
+    query: {
+      combinator: "and",
+      rules: [
+        { field: "interestCoverageRatios", operator: ">", value: 2 },
+        { field: "mcap", operator: ">", value: 500 }
+      ]
+    }
+  },
+];
+
+
+
 const Screen = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
@@ -223,8 +313,14 @@ const Screen = () => {
         ],
       },
     };
-
     const encoded = encode(JSON.stringify(payload));
+    router.push(`/screener/screen?preset=${encoded}`);
+  };
+
+  const handlePrebuilt = index => {
+    const payload = presetCustomScreens[index];
+    console.log(index, payload);
+    const encoded = encodeURIComponent(encode(JSON.stringify(payload)));
     router.push(`/screener/screen?preset=${encoded}`);
   };
 
@@ -250,9 +346,9 @@ const Screen = () => {
                 <Subtitle>Screens created by you</Subtitle>
                 <CardGridContainer>
                   {myScreens?.map(screen => (
-                    <Card key={screen.screenerId} onClick={() => router.push(`/screener/query/${screen.fqn}`)}>
+                    <Card key={screen.screenerId} onClick={() => router.push(`/screener/query/${screen.fqn}`)} style={{ cursor: 'pointer' }}>
                       <Icon>
-                        <H1 bold>{screen?.name?.charAt(0) ?? 'S'}</H1>
+                        <H1 bold>{screen?.name?.charAt(0)?.toUpperCase() ?? 'S'}</H1>
                       </Icon>
                       <FlexBox column columnGap="0.5px">
                         <FlexBox align="center" columnGap="0.75rem">
@@ -271,18 +367,18 @@ const Screen = () => {
                 <Title>Popular Stock Screens</Title>
                 <Subtitle>Screens that are mostly used by investors</Subtitle>
                 <CardGridContainer>
-                  {[...Array(1)].map((_, index) => (
-                    <Card key={index}>
+                  {presetCustomScreens?.map((screen, index) => (
+                    <Card key={index} onClick={() => handlePrebuilt(index)} style={{ cursor: 'pointer' }}>
                       <Icon>
-                        <H1 bold>G</H1>
+                        <H1 bold>{screen?.details?.name?.charAt(0)?.toUpperCase() ?? 'S'}</H1>
                       </Icon>
-                      <FlexBox column columnGap="0.5px">
+                        <FlexBox column columnGap="0.5px">
                         <FlexBox align="center" columnGap="0.75rem">
-                          <Body1>Growth Stocks</Body1>
+                          <Body1>{screen?.details?.name}</Body1>
                           <SlArrowRight size={12} />
                         </FlexBox>
                         <Support color="#687792">
-                          High growth companies with strong momentum
+                          {screen?.details?.description}
                         </Support>
                       </FlexBox>
                     </Card>

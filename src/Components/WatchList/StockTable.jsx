@@ -6,18 +6,16 @@ import "react-resizable/css/styles.css";
 import { isNumber } from "lodash";
 const { Title } = Typography;
 const STORAGE_KEY = "stock_table_preferences";
-
 const columnKeysToShow = [
     "companyName", "nseSymbol", "bseCode", "price", "change", "volume",
     "mcap", "sectorName", "industryName", "high52WeekPrice", "low52WeekPrice",
-    "roeTtm", "debtToEquity",
+    "roeTtm", "debtToEquity", "dividendYield",
     "cashcc", "cash_op", "eps", "grossprofitmargin", "netprofit",
     "netprofitmargin", "netcashflow", "profitgrowth", "roa", "revenue",
     "salesgrowth", "bookvalue", "networth", "totalassets", "totalliabilities",
     "qtr_sales", "opm", "qtr_pat", "qtr_yoygrowth", "pts", "enterpricevalue",
     "cash_investing", "cash_financing", "currentratio"
 ];
-
 
 const allColumns = {
     companyName: "Company",
@@ -33,6 +31,7 @@ const allColumns = {
     low52WeekPrice: "52W Low",
     roeTtm: "ROE TTM",
     debtToEquity: "Debt/Equity",
+    dividendYield: "Dividend Yield",
     cashcc: "Cash from Core",
     cash_op: "Cash from Ops",
     eps: "EPS",
@@ -69,15 +68,16 @@ const inrKeys = [
     "netprofit",
     "revenue",
     "totalassets",
-    "cashcc",             // Cash from Core
-    "cash_op",            // Cash from Operations
-    "netcashflow",        // Net Cash Flow
-    "qtr_sales",          // Quarterly Sales
-    "qtr_pat",            // Quarterly Profit After Tax
-    "enterpricevalue",    // Enterprise Value
-    "cash_investing",     // Cash from Investing Activities
-    "cash_financing"      // Cash from Financing Activities
+    "cashcc",
+    "cash_op",
+    "netcashflow",
+    "qtr_sales",
+    "qtr_pat",
+    "enterpricevalue",
+    "cash_investing",
+    "cash_financing"
 ];
+
 
 const NON_REMOVABLE_COLUMNS = ["companyName", "price"];
 
@@ -195,7 +195,7 @@ const StockTableView = ({ data, title = '', description = '' }) => {
                 if (inrKeys.includes(key) && typeof value === "number") {
                     return `₹ ${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}`;
                 }
-                if(isNumber(value)) return value?.toFixed(2);
+                if (isNumber(value)) return value?.toFixed(2);
                 return value;
             },
             sorter: (a, b) => {

@@ -51,7 +51,7 @@ const ScreenerDefault = () => {
     useEffect(() => {
         if (preset) {
             try {
-                const decoded = JSON.parse(decode(preset));
+                const decoded = JSON.parse(decode(decodeURIComponent(preset)));
                 setScreener(decoded);
                 setQuery(decoded?.query);
                 setShouldRun(true);
