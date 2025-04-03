@@ -87,43 +87,6 @@ const WatchList = () => {
     setIsEditModalOpen(true);
   };
 
-  const Row = ({ index, style }) => (
-    <div style={style}>
-      <Card
-        key={watchlists[index].id}
-        onClick={() => router.push(`/watch-list/${watchlists[index]?.fqn}`)}
-      >
-        <FlexBox align="center" justify="space-between">
-          <FlexBox column rowGap="0.25rem">
-            <H5 bold>{watchlists[index].name}</H5>
-            <Large color="#687792">
-              {watchlists[index].stocks?.length || 0} Stocks
-            </Large>
-            <Medium color="#687792">{watchlists[index].description}</Medium>
-          </FlexBox>
-          <FlexBox columnGap="1rem">
-            <AiOutlineEdit
-              size={20}
-              style={{ cursor: "pointer" }}
-              onClick={e => {
-                e.stopPropagation();
-                handleEdit(watchlists[index]);
-              }}
-            />
-            <AiOutlineDelete
-              size={20}
-              style={{ cursor: "pointer" }}
-              onClick={e => {
-                e.stopPropagation();
-                handleDelete(watchlists[index].fqn, watchlists[index].name);
-              }}
-            />
-          </FlexBox>
-        </FlexBox>
-      </Card>
-    </div>
-  );
-
   return (
     <SessionAuth>
       <Wrapper>

@@ -555,3 +555,36 @@ a {
   text-decoration: underline;
   color: #533a71;
 }
+
+/* Overrides */
+
+.ruleGroup {
+  border: unset !important;
+  background: unset !important;
+}
+
+.ruleGroup-header {
+  display: flex !important;
+  align-self: end !important;
+  padding-bottom: 10px;
+}
+
+.rule-fields {
+  width: 500px !important;
+}
+
+.rule-fields > .ant-select.ant-select-outlined.css-dev-only-do-not-override-1d4w9r2.ant-select-single.ant-select-show-arrow {
+  width: 100% !important;
+}
+
+.rule-operators {
+  width: 250px !important;
+}
+
+.rule-operators > .ant-select.ant-select-outlined.css-dev-only-do-not-override-1d4w9r2.ant-select-single.ant-select-show-arrow {
+  width: 100% !important;
+}
+
+.ruleGroup-addRule{
+  width: 125px !important;
+}

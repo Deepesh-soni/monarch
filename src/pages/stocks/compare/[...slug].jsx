@@ -174,20 +174,20 @@ export default function StockComparePage() {
             <Meta title="Compare Stock" />
             <Layout>
                 <Wrapper>
-                    {/* <Breadcrumb
+                    <Breadcrumb
                         style={{ marginBottom: '1rem' }}
                         items={[
                             {
-                                title: <Link href="/watch-list"> Home</Link>,
+                                title: <Link href="/"> Home</Link>,
                             },
                             {
-                                title: <Link href="/watch-list">Watchlists</Link>,
+                                title: dataA ? <Link href={`/stock/${dataA?.fqn}`}>{dataA?.companyName}</Link> : '',
                             },
                             {
-                                title: "Stock Screener",
+                                title: "Compare",
                             },
                         ]}
-                    /> */}
+                    />
                     <Title>Stock Comparison</Title>
                     <Subtitle>Compare key metrics between two stocks</Subtitle>
                     <Row>

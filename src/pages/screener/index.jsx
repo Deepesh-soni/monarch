@@ -6,7 +6,7 @@ import Meta from "@layout/Meta";
 const Screener = () => {
     return (
         <>
-            <Meta title="Stock Screener" />
+            <Meta title="Stock Screens" />
             <Layout>
                 <Screen />
             </Layout>

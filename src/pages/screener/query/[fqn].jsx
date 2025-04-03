@@ -15,6 +15,8 @@ import Link from "next/link";
 import NewUpdatePopup from "../../../Components/common/NewUpdatePopup";
 import { Modal } from "antd"; // for delete confirmation
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
+import { FaSave } from "react-icons/fa";
+import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 
 const { Title } = Typography;
 
@@ -56,25 +58,26 @@ const QueryPage = () => {
 
     const { fqn } = router.query;
 
-    useEffect(() => {
-        const fetchScreenerData = async () => {
-            if (fqn) {
-                try {
-                    const response = await client.get(`/screener/${fqn}`);
-                    if (response?.data) {
-                        // Use response.data instead of undefined "decoded"
-                        setScreener(response.data);
-                        setQuery(response.data.query);
-                        setShouldRun(true);
-                    } else {
-                        throw new Error("No data");
-                    }
-                } catch (e) {
-                    toast.error("Fetching details failed");
-                    router.push("/screener");
+    const fetchScreenerData = async () => {
+        if (fqn) {
+            try {
+                const response = await client.get(`/screener/${fqn}`);
+                if (response?.data) {
+                    // Use response.data instead of undefined "decoded"
+                    setScreener(response.data);
+                    setQuery(response.data.query);
+                    setShouldRun(true);
+                } else {
+                    throw new Error("No data");
                 }
+            } catch (e) {
+                toast.error("Fetching details failed");
+                router.push("/screener");
             }
-        };
+        }
+    };
+
+    useEffect(() => {
         fetchScreenerData();
     }, [fqn]);
 
@@ -175,7 +178,8 @@ const QueryPage = () => {
                     itemType="screener"
                     mode="update"
                     onConfirm={() => {
-                        fetchScreener();
+                        fetchScreenerData();
+                        setEditMode(false);
                     }}
                     initialValues={{
                         name: screener?.name,
@@ -220,16 +224,18 @@ const QueryPage = () => {
                             >
                                 <ButtonRow>
                                     {query && query?.rules?.length > 0 &&
-                                        <Button type={'primary'} onClick={handleSave}>{editMode ? 'Update Screener' : 'Edit Screener'}</Button>
+                                        <Button type="primary" onClick={handleSave}>
+                                            {editMode ? <><FaSave /> Update Screen</> : <><AiOutlineEdit /> Edit Screen</>}
+                                        </Button>
                                     }
-                                    <Button color="danger" variant="solid" onClick={() => handleDelete(screener.fqn, screener.name)}>Delete</Button>
+                                    <Button color="danger" variant="solid" onClick={() => handleDelete(screener.fqn, screener.name)}><AiOutlineDelete /> Delete Screen</Button>
                                 </ButtonRow>
                             </div>
                         </div>
 
                         {editMode && <div style={{ width: "100%", marginBottom: "1rem" }}>
                             <Title level={2}>
-                                {screener?.name ?? "Stock Screener Query"}
+                                {screener?.name ?? "Stock Screen Query"}
                             </Title>
                             <Typography.Text>
                                 {screener?.description ?? ""}
@@ -239,8 +245,8 @@ const QueryPage = () => {
 
 
                         {editMode && (
-                            <StyledCard>
-                                <Title level={5}>Query Builder</Title>
+                            <StyledCard style={{ background: 'rgba(0, 75, 183, 0.2)' }}>
+                                <Title level={5} style={{ position: 'absolute' }}>Query Builder</Title>
                                 {loadingFields ? (
                                     <Skeleton active paragraph={{ rows: 2 }} />
                                 ) : (
@@ -271,7 +277,7 @@ const QueryPage = () => {
                                 style={{ marginTop: "2rem" }}
                             />
                         ) : (
-                            data?.length > 0 && <StockTableView data={data} title={!editMode ? screener?.name ?? 'New Query' : ''} description={!editMode ? screener?.description ?? '' : ''} />
+                            <StockTableView data={data} title={!editMode ? screener?.name ?? 'New Query' : ''} description={!editMode ? screener?.description ?? '' : ''} />
                         )}
                     </Wrapper>
                 </Layout>

@@ -103,7 +103,7 @@ const Query = () => {
     <Layout>
       <Wrapper>
         <Title level={3} style={{ color: "#142C8E", marginBottom: "1rem" }}>
-          Stock Screener
+          Stock Screen
         </Title>
 
         <StyledCard>

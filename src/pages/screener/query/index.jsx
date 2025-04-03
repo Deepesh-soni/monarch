@@ -15,6 +15,7 @@ import { SessionAuth, useSessionContext } from "supertokens-auth-react/recipe/se
 import Meta from "@layout/Meta";
 import Link from "next/link";
 import NewUpdatePopup from "../../../Components/common/NewUpdatePopup";
+import { FaSave } from "react-icons/fa";
 
 const { Title } = Typography;
 
@@ -169,19 +170,46 @@ const StockQueryBuilderIndex = () => {
                 />
                 <Layout>
                     <Wrapper>
-                        <div style={{ display: 'flex', justifyContent: 'flex-start', width: '100%' }}>
-                            <Breadcrumb
-                                style={{ marginBottom: '1rem' }}
-                                items={[
-                                    {
-                                        title: <Link href="/screener">Screener</Link>,
-                                    },
-                                    {
-                                        title: screener?.details?.name ?? 'New Query',
-                                    },
-                                ]}
-                            />
+
+                        <div
+                            style={{
+                                paddingTop: '14px',
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "flex-start",
+                                width: "100%",
+                                gap: "1rem",
+                                flexWrap: "wrap",
+                                alignItems: "center",
+                            }}
+                        >
+                            <div style={{ flex: 1, minWidth: 300 }}>
+                                <Breadcrumb
+                                    style={{ marginBottom: '1rem' }}
+                                    items={[
+                                        {
+                                            title: <Link href="/screener">Screener</Link>,
+                                        },
+                                        {
+                                            title: screener?.details?.name ?? 'New Query',
+                                        },
+                                    ]}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    alignItems: "center",
+                                    gap: 8,
+                                }}
+                            >
+                                <ButtonRow>
+                                    {query && query?.rules?.length > 0 && <Button type={'primary'} onClick={handleSave}><FaSave/> Save Screen</Button>}
+                                </ButtonRow>
+                            </div>
                         </div>
+
                         <div style={{ width: "100%", marginBottom: "1rem" }}>
                             <Title level={2}>
                                 {screener?.details?.name ?? "Stock Screener Query"}
@@ -191,32 +219,31 @@ const StockQueryBuilderIndex = () => {
                             </Typography.Text>
                         </div>
 
-                        {query && query?.rules?.length > 0 && <Button type={'primary'} onClick={handleSave}>Save Screen</Button>}
+
 
                         {doesSessionExist && !pendingNavigation && (
-                            <StyledCard>
-                                <Title level={5}>Query Builder</Title>
-                                {loadingFields ? (
-                                    <Skeleton active paragraph={{ rows: 2 }} />
-                                ) : (
-                                    <QueryBuilderAntD>
-                                        <QueryBuilder
-                                            fields={fields}
-                                            query={query}
-                                            onQueryChange={setQuery}
-                                            controlElements={{ addGroupAction: () => null }}
-                                            showCombinatorsBetweenRules={false}
-                                            enableDragAndDrop={false}
-                                        />
-                                    </QueryBuilderAntD>
-                                )}
-
-                                {query && query?.rules?.length > 0 && <ButtonRow>
-                                    <Button type="primary" loading={running} onClick={handleRun}>
-                                        Run Screen
-                                    </Button>
-                                </ButtonRow>}
-                            </StyledCard>
+                            loadingFields ?
+                                <Skeleton active paragraph={{ rows: 2 }} />
+                                : (
+                                    <StyledCard style={{ background: 'rgba(0, 75, 183, 0.2)' }}>
+                                        <Title level={5} style={{ position: 'absolute' }}>Query Builder</Title>
+                                        <QueryBuilderAntD>
+                                            <QueryBuilder
+                                                fields={fields}
+                                                query={query}
+                                                onQueryChange={setQuery}
+                                                controlElements={{ addGroupAction: () => null }}
+                                                showCombinatorsBetweenRules={false}
+                                                enableDragAndDrop={false}
+                                            />
+                                        </QueryBuilderAntD>
+                                        {query && query?.rules?.length > 0 && <ButtonRow>
+                                            <Button type="primary" loading={running} onClick={handleRun}>
+                                                Run Screen
+                                            </Button>
+                                        </ButtonRow>}
+                                    </StyledCard>
+                                )
                         )}
 
                         {loadingData ? (

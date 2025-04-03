@@ -209,7 +209,7 @@ const Screen = () => {
   const handleSectorClick = sectorName => {
     const payload = {
       details: {
-        name: `Screener: ${sectorName}`,
+        name: `Screens: ${sectorName}`,
         description: "",
       },
       query: {

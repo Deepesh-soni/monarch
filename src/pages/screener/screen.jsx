@@ -98,7 +98,7 @@ const ScreenerDefault = () => {
                             style={{ marginBottom: '1rem' }}
                             items={[
                                 {
-                                    title: <Link href="/screener">Screener</Link>,
+                                    title: <Link href="/screener">Screens</Link>,
                                 },
                                 {
                                     title: screener?.details?.name ?? '',
@@ -114,7 +114,7 @@ const ScreenerDefault = () => {
                             style={{ marginTop: "2rem" }}
                         />
                     ) : (
-                        data?.length > 0 && <StockTableView title={screener?.details?.name ?? "Stock Screener Query"} description={screener?.details?.description ?? ""} data={data} />
+                        data?.length > 0 && <StockTableView title={screener?.details?.name ?? "Stock Screens Query"} description={screener?.details?.description ?? ""} data={data} />
                     )}
                 </Wrapper>
             </Layout>
