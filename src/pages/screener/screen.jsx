@@ -34,6 +34,7 @@ const ButtonRow = styled.div`
   justify-content: flex-end;
   margin-top: 1rem;
   gap: 0.75rem;
+  padding-bottom: 5px;
 `;
 
 const ScreenerDefault = () => {
