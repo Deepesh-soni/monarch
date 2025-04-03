@@ -225,7 +225,7 @@ const Screen = () => {
     };
 
     const encoded = encode(JSON.stringify(payload));
-    router.push(`/screener/query/?preset=${encoded}`);
+    router.push(`/screener/screen?preset=${encoded}`);
   };
 
   return (

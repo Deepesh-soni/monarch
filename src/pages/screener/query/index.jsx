@@ -15,7 +15,6 @@ import { SessionAuth, useSessionContext } from "supertokens-auth-react/recipe/se
 import Meta from "@layout/Meta";
 import Link from "next/link";
 import NewUpdatePopup from "../../../Components/common/NewUpdatePopup";
-import { SessionAuth } from "supertokens-auth-react/recipe/session";
 
 const { Title } = Typography;
 
