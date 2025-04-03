@@ -76,11 +76,8 @@ export default function StockTable() {
         />
       </div>
 
-      <div style={{ width: "100%", marginBottom: "1rem" }}>
-        <Typography.Title level={2}>{watchlist?.details?.name ?? ''}</Typography.Title>
-        <Typography.Text>{watchlist?.details?.description ?? ''}</Typography.Text>
-      </div>
-      <StockTableView data={data} />
+      <StockTableView data={data} title={watchlist?.details?.name ?? ''} description={watchlist?.details?.description ?? ''} />
+      
     </Wrapper>
   );
 

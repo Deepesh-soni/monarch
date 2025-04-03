@@ -40,18 +40,6 @@ const ButtonRow = styled.div`
   gap: 0.75rem;
 `;
 
-class DummyAddGroupAction extends React.Component {
-    render() {
-        return null;
-    }
-    destroy() {
-        // instance destroy: no-op
-    }
-    static destroy() {
-        // static destroy: no-op
-    }
-}
-
 const StockQueryBuilderIndex = () => {
     const [fields, setFields] = useState([]);
     const [query, setQuery] = useState({ combinator: "and", rules: [] });

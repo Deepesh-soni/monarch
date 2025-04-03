@@ -1,9 +1,10 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
-import { Table, Input, Dropdown, Checkbox, Button, Menu } from "antd";
+import { Table, Input, Dropdown, Checkbox, Button, Menu, Typography } from "antd";
 import { SearchOutlined, SettingOutlined } from "@ant-design/icons";
 import { Resizable } from "react-resizable";
 import "react-resizable/css/styles.css";
-
+import { isNumber } from "lodash";
+const { Title } = Typography;
 const STORAGE_KEY = "stock_table_preferences";
 
 const columnKeysToShow = [
@@ -97,7 +98,7 @@ const ResizableTitle = props => {
     );
 };
 
-const StockTableView = ({ data }) => {
+const StockTableView = ({ data, title = '', description = '' }) => {
     const [visibleColumns, setVisibleColumns] = useState(columnKeysToShow);
     const [columnWidths, setColumnWidths] = useState({});
     const [searchText, setSearchText] = useState("");
@@ -148,7 +149,13 @@ const StockTableView = ({ data }) => {
     };
 
     const columnSelectorMenu = (
-        <Menu>
+        <Menu
+            style={{
+                maxHeight: 350,
+                overflowY: "scroll", // always show scrollbar
+                scrollbarWidth: "auto", // Firefox
+            }}
+        >
             {Object.entries(allColumns).map(([key, label]) => (
                 <Menu.Item key={key}>
                     <Checkbox
@@ -162,7 +169,6 @@ const StockTableView = ({ data }) => {
             ))}
         </Menu>
     );
-
 
     const filteredData = useMemo(() => {
         return data?.filter(item =>
@@ -187,8 +193,9 @@ const StockTableView = ({ data }) => {
                     return <a href={`/stocks/${record.fqn}`} target="_blank" rel="noopener noreferrer">{value}</a>;
                 }
                 if (inrKeys.includes(key) && typeof value === "number") {
-                    return `₹ ${new Intl.NumberFormat("en-IN").format(value)}`;
+                    return `₹ ${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}`;
                 }
+                if(isNumber(value)) return value?.toFixed(2);
                 return value;
             },
             sorter: (a, b) => {
@@ -227,24 +234,50 @@ const StockTableView = ({ data }) => {
         <>
             <div
                 style={{
-                    width: "100%",
+                    paddingTop: '14px',
                     display: "flex",
-                    justifyContent: "flex-end",
-                    gap: 8,
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    width: "100%",
                     marginBottom: "1.5rem",
-                    paddingTop: "1em"
+                    gap: "1rem",
+                    flexWrap: "wrap", // Optional: wrap on small screens
+                    alignItems: "end",
                 }}
             >
-                <Input
-                    placeholder="Search..."
-                    prefix={<SearchOutlined />}
-                    onChange={handleSearch}
-                    style={{ width: 300 }}
-                />
-                <Dropdown overlay={columnSelectorMenu} trigger={["click"]}>
-                    <Button icon={<SettingOutlined />}>Columns</Button>
-                </Dropdown>
+                {/* Left: Title and Description */}
+                <div style={{ flex: 1, minWidth: 300 }}>
+                    {title && <>
+                        <Title level={2}>
+                            {title}
+                        </Title>
+                        <Typography.Text>
+                            {description}
+                        </Typography.Text>
+                    </>}
+                </div>
+
+                {/* Right: Search + Dropdown */}
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        gap: 8,
+                    }}
+                >
+                    <Input
+                        placeholder="Search..."
+                        prefix={<SearchOutlined />}
+                        onChange={handleSearch}
+                        style={{ width: 300 }}
+                    />
+                    <Dropdown overlay={columnSelectorMenu} trigger={["click"]}>
+                        <Button icon={<SettingOutlined />}>Columns</Button>
+                    </Dropdown>
+                </div>
             </div>
+
             <div style={{ width: "100%", overflowX: "auto" }}>
                 <Table
                     dataSource={filteredData}

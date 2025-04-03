@@ -18,6 +18,26 @@ export const frontendConfig = () => {
             EmailPasswordReact.init(),
             SessionReact.init(),
         ],
+        style: `
+            [data-supertokens~=container] {
+                font-family: "Montserrat", sans-serif;
+            }
+            [data-supertokens~=input] {
+                font-family: "Montserrat", sans-serif;
+            }
+            [data-supertokens~=link] {
+                font-family: "Montserrat", sans-serif;
+            }
+            [data-supertokens~=button] {
+                font-family: "Montserrat", sans-serif;
+                background-color: #0033a0;
+                border: 0px;
+                margin: 0 auto;
+            }
+            [data-supertokens~=superTokensBranding] {
+                display: none;
+            }
+        `,
         windowHandler: (oI) => {
             return {
                 ...oI,

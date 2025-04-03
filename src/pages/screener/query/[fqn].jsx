@@ -167,91 +167,114 @@ const QueryPage = () => {
 
     return (
         <>
-        <SessionAuth>
-            <Meta title="Stock Screener Builder" />
-            <NewUpdatePopup
-                visible={isNewModalOpen}
-                toggleModal={() => setIsNewModalOpen(false)}
-                itemType="screener"
-                mode="update"
-                onConfirm={() => {
-                    fetchScreener();
-                }}
-                initialValues={{
-                    name: screener?.name,
-                    description: screener?.description,
-                    query: query,
-                    fqn: screener?.fqn,
-                }}
-            />
-            <Layout>
-                <Wrapper>
-                    <div style={{ display: 'flex', justifyContent: 'flex-start', width: '100%' }}>
-                        <Breadcrumb
-                            style={{ marginBottom: '1rem' }}
-                            items={[
-                                {
-                                    title: <Link href="/screener">Screener</Link>,
-                                },
-                                {
-                                    title: screener?.name ?? 'New Query',
-                                },
-                            ]}
-                        />
-                    </div>
-                    <div style={{ width: "100%", marginBottom: "1rem" }}>
-                        <Title level={2}>
-                            {screener?.name ?? "Stock Screener Query"}
-                        </Title>
-                        <Typography.Text>
-                            {screener?.description ?? ""}
-                        </Typography.Text>
-                    </div>
+            <SessionAuth>
+                <Meta title="Stock Screener Builder" />
+                <NewUpdatePopup
+                    visible={isNewModalOpen}
+                    toggleModal={() => setIsNewModalOpen(false)}
+                    itemType="screener"
+                    mode="update"
+                    onConfirm={() => {
+                        fetchScreener();
+                    }}
+                    initialValues={{
+                        name: screener?.name,
+                        description: screener?.description,
+                        query: query,
+                        fqn: screener?.fqn,
+                    }}
+                />
+                <Layout>
+                    <Wrapper>
+                        <div
+                            style={{
+                                paddingTop: '14px',
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "flex-start",
+                                width: "100%",
+                                gap: "1rem",
+                                flexWrap: "wrap",
+                                alignItems: "center",
+                            }}
+                        >
+                            <div style={{ flex: 1, minWidth: 300 }}>
+                                <Breadcrumb
+                                    items={[
+                                        {
+                                            title: <Link href="/screener">Screener</Link>,
+                                        },
+                                        {
+                                            title: screener?.name ?? 'New Query',
+                                        },
+                                    ]}
+                                />
+                            </div>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    alignItems: "center",
+                                    gap: 8,
+                                }}
+                            >
+                                <ButtonRow>
+                                    {query && query?.rules?.length > 0 &&
+                                        <Button type={'primary'} onClick={handleSave}>{editMode ? 'Update Screener' : 'Edit Screener'}</Button>
+                                    }
+                                    <Button color="danger" variant="solid" onClick={() => handleDelete(screener.fqn, screener.name)}>Delete</Button>
+                                </ButtonRow>
+                            </div>
+                        </div>
 
-                    <ButtonRow>
-                        {query && query?.rules?.length > 0 &&
-                            <Button type={'primary'} onClick={handleSave}>{editMode ? 'Update Screener' : 'Edit Screener'}</Button>
-                        }
-                        <Button color="danger" variant="solid" onClick={() => handleDelete(screener.fqn, screener.name)}>Delete</Button>
-                    </ButtonRow>
+                        {editMode && <div style={{ width: "100%", marginBottom: "1rem" }}>
+                            <Title level={2}>
+                                {screener?.name ?? "Stock Screener Query"}
+                            </Title>
+                            <Typography.Text>
+                                {screener?.description ?? ""}
+                            </Typography.Text>
+                        </div>}
 
-                    {editMode && (
-                        <StyledCard>
-                            <Title level={5}>Query Builder</Title>
-                            {loadingFields ? (
-                                <Skeleton active paragraph={{ rows: 2 }} />
-                            ) : (
-                                <QueryBuilderAntD>
-                                    <QueryBuilder
-                                        fields={fields}
-                                        query={query}
-                                        onQueryChange={setQuery}
-                                        controlElements={{ addGroupAction: DummyAddGroupAction }}
-                                        showCombinatorsBetweenRules={false}
-                                        enableDragAndDrop={false}
-                                    />
-                                </QueryBuilderAntD>
-                            )}
 
-                            {query && query?.rules?.length > 0 && <ButtonRow>
-                                <Button type="primary" loading={running} onClick={handleRun}>
-                                    Run Screen
-                                </Button>
-                            </ButtonRow>}
-                        </StyledCard>
-                    )}
 
-                    {loadingData ? (
-                        <Skeleton
-                            active
-                            paragraph={{ rows: 8 }}
-                            style={{ marginTop: "2rem" }}
-                        />
-                    ) : (
-                        data?.length > 0 && <StockTableView data={data} />
-                    )}
-                </Wrapper>
-            </Layout>
+                        {editMode && (
+                            <StyledCard>
+                                <Title level={5}>Query Builder</Title>
+                                {loadingFields ? (
+                                    <Skeleton active paragraph={{ rows: 2 }} />
+                                ) : (
+                                    <QueryBuilderAntD>
+                                        <QueryBuilder
+                                            fields={fields}
+                                            query={query}
+                                            onQueryChange={setQuery}
+                                            controlElements={{ addGroupAction: DummyAddGroupAction }}
+                                            showCombinatorsBetweenRules={false}
+                                            enableDragAndDrop={false}
+                                        />
+                                    </QueryBuilderAntD>
+                                )}
+
+                                {query && query?.rules?.length > 0 && <ButtonRow>
+                                    <Button type="primary" loading={running} onClick={handleRun}>
+                                        Run Screen
+                                    </Button>
+                                </ButtonRow>}
+                            </StyledCard>
+                        )}
+
+                        {loadingData ? (
+                            <Skeleton
+                                active
+                                paragraph={{ rows: 8 }}
+                                style={{ marginTop: "2rem" }}
+                            />
+                        ) : (
+                            data?.length > 0 && <StockTableView data={data} title={!editMode ? screener?.name ?? 'New Query' : ''} description={!editMode ? screener?.description ?? '' : ''} />
+                        )}
+                    </Wrapper>
+                </Layout>
             </SessionAuth>
         </>
     );

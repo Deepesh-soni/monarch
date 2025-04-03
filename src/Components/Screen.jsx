@@ -173,7 +173,7 @@ const Screen = () => {
   const { doesSessionExist } = useSessionContext();
 
 
-  
+
   useEffect(() => {
     if (doesSessionExist) {
       const fetchMyList = async () => {
@@ -246,33 +246,30 @@ const Screen = () => {
           <Section>
             <LeftSection>
               {doesSessionExist && <Container column>
-                <Medium bold>Your Custom Screens</Medium>
-                <Support>Screens created by you</Support>
+                <Title>Your Custom Screens</Title>
+                <Subtitle>Screens created by you</Subtitle>
                 <CardGridContainer>
-                {myScreens?.map(screen => (
-                  <Card key={screen.screenerId} onClick={() => router.push(`/screener/query/${screen.fqn}`)}>
-                    <Icon>
-                      <H1 bold>G</H1>
-                    </Icon>
-                    <FlexBox column columnGap="0.5px">
-                      <FlexBox align="center" columnGap="0.75rem">
-                        <Body1>{screen.name}</Body1>
-                        <SlArrowRight size={12} />
+                  {myScreens?.map(screen => (
+                    <Card key={screen.screenerId} onClick={() => router.push(`/screener/query/${screen.fqn}`)}>
+                      <Icon>
+                        <H1 bold>{screen?.name?.charAt(0) ?? 'S'}</H1>
+                      </Icon>
+                      <FlexBox column columnGap="0.5px">
+                        <FlexBox align="center" columnGap="0.75rem">
+                          <Body1>{screen.name}</Body1>
+                          <SlArrowRight size={12} />
+                        </FlexBox>
+                        <Support color="#687792">
+                          {screen.description}
+                        </Support>
                       </FlexBox>
-                      <Support color="#687792">
-                        {screen.description}
-                      </Support>
-                    </FlexBox>
-                  </Card>
-                ))}
-
+                    </Card>
+                  ))}
                 </CardGridContainer>
               </Container>}
               <Container column>
-                <Body1 bold>Popular Stock Screens</Body1>
-                <Support color="#687792">
-                  Screens that are mostly used by investors
-                </Support>
+                <Title>Popular Stock Screens</Title>
+                <Subtitle>Screens that are mostly used by investors</Subtitle>
                 <CardGridContainer>
                   {[...Array(1)].map((_, index) => (
                     <Card key={index}>

@@ -107,15 +107,6 @@ const ScreenerDefault = () => {
                         />
                     </div>
 
-                    <div style={{ width: "100%", marginBottom: "1rem" }}>
-                        <Title level={2}>
-                            {screener?.details?.name ?? "Stock Screener Query"}
-                        </Title>
-                        <Typography.Text>
-                            {screener?.details?.description ?? ""}
-                        </Typography.Text>
-                    </div>
-
                     {loadingData ? (
                         <Skeleton
                             active
@@ -123,7 +114,7 @@ const ScreenerDefault = () => {
                             style={{ marginTop: "2rem" }}
                         />
                     ) : (
-                        data?.length > 0 && <StockTableView data={data} />
+                        data?.length > 0 && <StockTableView title={screener?.details?.name ?? "Stock Screener Query"} description={screener?.details?.description ?? ""} data={data} />
                     )}
                 </Wrapper>
             </Layout>
