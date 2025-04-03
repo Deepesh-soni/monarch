@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { Table, Input, Button, Checkbox, Dropdown, Menu, Skeleton, Typography } from "antd";
+import { Table, Input, Button, Checkbox, Dropdown, Menu, Skeleton, Typography, Breadcrumb } from "antd";
 import { SearchOutlined, SettingOutlined } from "@ant-design/icons";
 import { client } from "@axiosClient";
 import styled from "styled-components";
@@ -7,6 +7,7 @@ import FlexBox from "@common/UI/FlexBox";
 import { device } from "@common/UI/Responsive";
 import { useRouter } from "next/router";
 import StockTableView from "./StockTable";
+import Link from "next/link";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -61,6 +62,20 @@ export default function StockTable() {
 
   return (
     <Wrapper>
+      <div style={{ display: 'flex', justifyContent: 'flex-start', width: '100%' }}>
+        <Breadcrumb
+          style={{ marginBottom: '1rem' }}
+          items={[
+            {
+              title: <Link href="/watch-list">Watchlists</Link>,
+            },
+            {
+              title: watchlist?.details?.name ?? '',
+            },
+          ]}
+        />
+      </div>
+
       <div style={{ width: "100%", marginBottom: "1rem" }}>
         <Typography.Title level={2}>{watchlist?.details?.name ?? ''}</Typography.Title>
         <Typography.Text>{watchlist?.details?.description ?? ''}</Typography.Text>

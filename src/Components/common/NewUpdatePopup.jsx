@@ -9,16 +9,15 @@ const NewUpdatePopup = ({
     itemType = "watchlist", // "watchlist" or "screener"
     mode = "new", // "new" or "update"
     initialValues = {}, // For update: { name, description, query?, stocks?, fqn }
-    onConfirm = () => { }
+    onConfirm = () => { },
 }) => {
     const [form] = Form.useForm();
 
     useEffect(() => {
-        if (mode === "update") {
+        if (mode === "update" || itemType === "screener") {
             form.setFieldsValue({
                 name: initialValues.name,
                 description: initialValues.description,
-                query: initialValues.query || ""
             });
         } else {
             form.resetFields();
@@ -28,14 +27,15 @@ const NewUpdatePopup = ({
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
+            let response;
             if (mode === "new") {
                 if (itemType === "watchlist") {
                     values.stocks = []; // default empty stocks for new watchlist
                 }
-                if (itemType === "screener" && !values.query) {
-                    values.query = ""; // default empty query for new screener
+                if (itemType === "screener") {
+                    values.query = JSON.stringify(initialValues.query) || "";
                 }
-                await client.post(`/${itemType}`, values);
+                response = await client.post(`/${itemType}`, values);
                 toast.success(`${itemType} created successfully!`);
             } else {
                 if (!initialValues.fqn) {
@@ -47,12 +47,12 @@ const NewUpdatePopup = ({
                     values.stocks = initialValues.stocks || [];
                 }
                 if (itemType === "screener") {
-                    values.query = values.query || initialValues.query || "";
+                    values.query = JSON.stringify(initialValues.query) || "";
                 }
-                await client.put(`/${itemType}/${initialValues.fqn}`, values);
+                response = await client.put(`/${itemType}/${initialValues.fqn}`, values);
                 toast.success(`${itemType} updated successfully!`);
             }
-            onConfirm();
+            onConfirm(response);
             toggleModal();
         } catch (error) {
             toast.error(`Failed to ${mode === "new" ? "create" : "update"} ${itemType}.`);
@@ -61,7 +61,8 @@ const NewUpdatePopup = ({
 
     return (
         <Modal
-            visible={visible}
+            destroyOnClose={true}
+            open={visible}
             title={`${mode === "new" ? "Create New" : "Update"} ${itemType.charAt(0).toUpperCase() + itemType.slice(1)}`}
             onCancel={toggleModal}
             footer={[
@@ -100,11 +101,6 @@ const NewUpdatePopup = ({
                 >
                     <Input.TextArea placeholder="Enter description" rows={3} />
                 </Form.Item>
-                {itemType === "screener" && (
-                    <Form.Item label="Query" name="query">
-                        <Input.TextArea placeholder="Enter query" rows={3} />
-                    </Form.Item>
-                )}
             </Form>
         </Modal>
     );

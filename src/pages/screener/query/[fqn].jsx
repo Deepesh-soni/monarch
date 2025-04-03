@@ -6,15 +6,14 @@ import "react-querybuilder/dist/query-builder.css";
 import { client } from "@axiosClient";
 import { device } from "@common/UI/Responsive";
 import { QueryBuilderAntD } from "@react-querybuilder/antd";
-import { decode } from "js-base64";
 import { useRouter } from "next/router";
 import StockTableView from "../../../Components/WatchList/StockTable";
 import { toast } from "react-toastify";
 import Layout from "../../../layout/HomePageLayout";
-import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import Meta from "@layout/Meta";
 import Link from "next/link";
 import NewUpdatePopup from "../../../Components/common/NewUpdatePopup";
+import { Modal } from "antd"; // for delete confirmation
 
 const { Title } = Typography;
 
@@ -40,19 +39,7 @@ const ButtonRow = styled.div`
   gap: 0.75rem;
 `;
 
-class DummyAddGroupAction extends React.Component {
-    render() {
-        return null;
-    }
-    destroy() {
-        // instance destroy: no-op
-    }
-    static destroy() {
-        // static destroy: no-op
-    }
-}
-
-const StockQueryBuilderIndex = () => {
+const QueryPage = () => {
     const [fields, setFields] = useState([]);
     const [query, setQuery] = useState({ combinator: "and", rules: [] });
     const [loadingFields, setLoadingFields] = useState(true);
@@ -62,32 +49,33 @@ const StockQueryBuilderIndex = () => {
     const [loadingData, setLoadingData] = useState(false);
     const [screener, setScreener] = useState(null);
     const router = useRouter();
-    const [pendingNavigation, setPendingNavigation] = useState(null);
 
-    const { doesSessionExist } = useSessionContext();
+    const [editMode, setEditMode] = useState(false);
 
     const { fqn } = router.query;
 
-    const fetchDetails = async () => {
-        try {
-            const response = await client.get(`/screener/${fqn}`);
-            if (response?.data) {
-                setScreener(decoded);
-                setQuery(decoded?.query);
-                setShouldRun(true);
-            } else {
-                throw Error();
-            }
-        } catch (e) {
-            toast.error('Fetching details failed');
-        }
-    }
-
     useEffect(() => {
-        if (fqn) {
-            fetchDetails();
-        }
-    }, [router.query]);
+        const fetchScreenerData = async () => {
+            if (fqn) {
+                try {
+                    const response = await client.get(`/screener/${fqn}`);
+                    if (response?.data) {
+                        // Use response.data instead of undefined "decoded"
+                        setScreener(response.data);
+                        setQuery(response.data.query);
+                        setShouldRun(true);
+                    } else {
+                        throw new Error("No data");
+                    }
+                } catch (e) {
+                    toast.error("Fetching details failed");
+                    router.push("/screener");
+                }
+            }
+        };
+        fetchScreenerData();
+    }, [fqn]);
+
 
     useEffect(() => {
         const fetchConfig = async () => {
@@ -113,6 +101,7 @@ const StockQueryBuilderIndex = () => {
                 setFields(parsedFields);
             } catch (err) {
                 toast.error("Failed to load query config");
+
             } finally {
                 setLoadingFields(false);
             }
@@ -143,20 +132,36 @@ const StockQueryBuilderIndex = () => {
     }, [loadingFields, shouldRun]);
 
     const handleSave = () => {
-        setIsNewModalOpen(true);
+        if (!editMode) {
+            setEditMode(true);
+        } else {
+            setIsNewModalOpen(true);
+        }
     }
 
-    useEffect(() => {
-        if (pendingNavigation && !isNewModalOpen) {
-            router.push(pendingNavigation);
-            setPendingNavigation(null);
-        }
-    }, [pendingNavigation, router, isNewModalOpen]);
-
+    const handleDelete = (fqn, name) => {
+        Modal.confirm({
+            title: `Delete ${name}?`,
+            content: `Are you sure you want to delete "${name}"?`,
+            onOk: async () => {
+                try {
+                    await client.delete(`/screener/${fqn}`);
+                    toast.success(`${name} deleted successfully!`);
+                    setTimeout(() => {
+                        router.push('/screener');
+                    }, 200);
+                } catch (error) {
+                    toast.error(`Failed to delete "${name}".`);
+                }
+            },
+        });
+    };
 
 
     const [isNewModalOpen, setIsNewModalOpen] = useState(false);
 
+    const DummyAddGroupAction = () => null;
+    DummyAddGroupAction.destroy = () => { };
 
     return (
         <>
@@ -165,17 +170,15 @@ const StockQueryBuilderIndex = () => {
                 visible={isNewModalOpen}
                 toggleModal={() => setIsNewModalOpen(false)}
                 itemType="screener"
-                mode="new"
-                onConfirm={(response) => {
-                    if (response?.data) {
-                        setIsNewModalOpen(false); // Close the modal first
-                        setPendingNavigation(`/screener/query/${response?.data.fqn}`);
-                    }
+                mode="update"
+                onConfirm={() => {
+                    fetchScreener();
                 }}
                 initialValues={{
-                    name: '',
-                    description: '',
-                    query: query
+                    name: screener?.name,
+                    description: screener?.description,
+                    query: query,
+                    fqn: screener?.fqn,
                 }}
             />
             <Layout>
@@ -188,23 +191,26 @@ const StockQueryBuilderIndex = () => {
                                     title: <Link href="/screener">Screener</Link>,
                                 },
                                 {
-                                    title: screener?.details?.name ?? 'New Query',
+                                    title: screener?.name ?? 'New Query',
                                 },
                             ]}
                         />
                     </div>
                     <div style={{ width: "100%", marginBottom: "1rem" }}>
                         <Title level={2}>
-                            {screener?.details?.name ?? "Stock Screener Query"}
+                            {screener?.name ?? "Stock Screener Query"}
                         </Title>
                         <Typography.Text>
-                            {screener?.details?.description ?? ""}
+                            {screener?.description ?? ""}
                         </Typography.Text>
                     </div>
 
-                    {query && query?.rules?.length > 0 && <Button type={'primary'} onClick={handleSave}>Save Screen</Button>}
+                    {query && query?.rules?.length > 0 && <ButtonRow>
+                        <Button type={'primary'} onClick={handleSave}>{editMode ? 'Update Screener' : 'Edit Screener'}</Button>
+                        {editMode && <Button color="danger" variant="solid" onClick={() => handleDelete(screener.fqn, screener.name)}>Delete</Button>}
+                    </ButtonRow>}
 
-                    {doesSessionExist && !pendingNavigation && (
+                    {editMode && (
                         <StyledCard>
                             <Title level={5}>Query Builder</Title>
                             {loadingFields ? (
@@ -215,7 +221,7 @@ const StockQueryBuilderIndex = () => {
                                         fields={fields}
                                         query={query}
                                         onQueryChange={setQuery}
-                                        controlElements={{ addGroupAction: () => null }}
+                                        controlElements={{ addGroupAction: DummyAddGroupAction }}
                                         showCombinatorsBetweenRules={false}
                                         enableDragAndDrop={false}
                                     />
@@ -245,4 +251,4 @@ const StockQueryBuilderIndex = () => {
     );
 };
 
-export default StockQueryBuilderIndex;
+export default QueryPage;

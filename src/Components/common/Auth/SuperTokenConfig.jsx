@@ -6,7 +6,7 @@ const appInfo = {
     // learn more about this on https://supertokens.com/docs/thirdpartyemailpassword/appinfo
     appName: "StockApp",
     apiDomain: "https://api-test-monarq.pamprazzi.in",
-    websiteDomain: "http://fw0og84ok0wc40kg8cw8sk4k.188.165.196.11.sslip.io",
+    websiteDomain: "http://localhost:3000",
     apiBasePath: "/auth",
     websiteBasePath: "/auth"
 }
