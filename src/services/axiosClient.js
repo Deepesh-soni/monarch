@@ -27,11 +27,6 @@ export const client = createAxiosClient({
     headers: {
       "Content-Type": "application/json",
     },
-  },
-  getCurrentAccessToken,
-  getCurrentRefreshToken,
-  refreshTokenUrl: `${BASE_URL}${URL.refreshToken}`,
-  logout: terminateSession,
-  setRefreshTokens,
+  }
 });
 
