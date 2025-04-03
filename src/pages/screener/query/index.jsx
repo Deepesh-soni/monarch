@@ -11,10 +11,11 @@ import { useRouter } from "next/router";
 import StockTableView from "../../../Components/WatchList/StockTable";
 import { toast } from "react-toastify";
 import Layout from "../../../layout/HomePageLayout";
-import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { SessionAuth, useSessionContext } from "supertokens-auth-react/recipe/session";
 import Meta from "@layout/Meta";
 import Link from "next/link";
 import NewUpdatePopup from "../../../Components/common/NewUpdatePopup";
+import { SessionAuth } from "supertokens-auth-react/recipe/session";
 
 const { Title } = Typography;
 
@@ -160,87 +161,89 @@ const StockQueryBuilderIndex = () => {
 
     return (
         <>
-            <Meta title="Stock Screener Builder" />
-            <NewUpdatePopup
-                visible={isNewModalOpen}
-                toggleModal={() => setIsNewModalOpen(false)}
-                itemType="screener"
-                mode="new"
-                onConfirm={(response) => {
-                    if (response?.data) {
-                        setIsNewModalOpen(false); // Close the modal first
-                        setPendingNavigation(`/screener/query/${response?.data.fqn}`);
-                    }
-                }}
-                initialValues={{
-                    name: '',
-                    description: '',
-                    query: query
-                }}
-            />
-            <Layout>
-                <Wrapper>
-                    <div style={{ display: 'flex', justifyContent: 'flex-start', width: '100%' }}>
-                        <Breadcrumb
-                            style={{ marginBottom: '1rem' }}
-                            items={[
-                                {
-                                    title: <Link href="/screener">Screener</Link>,
-                                },
-                                {
-                                    title: screener?.details?.name ?? 'New Query',
-                                },
-                            ]}
-                        />
-                    </div>
-                    <div style={{ width: "100%", marginBottom: "1rem" }}>
-                        <Title level={2}>
-                            {screener?.details?.name ?? "Stock Screener Query"}
-                        </Title>
-                        <Typography.Text>
-                            {screener?.details?.description ?? ""}
-                        </Typography.Text>
-                    </div>
+            <SessionAuth>
+                <Meta title="Stock Screener Builder" />
+                <NewUpdatePopup
+                    visible={isNewModalOpen}
+                    toggleModal={() => setIsNewModalOpen(false)}
+                    itemType="screener"
+                    mode="new"
+                    onConfirm={(response) => {
+                        if (response?.data) {
+                            setIsNewModalOpen(false); // Close the modal first
+                            setPendingNavigation(`/screener/query/${response?.data.fqn}`);
+                        }
+                    }}
+                    initialValues={{
+                        name: '',
+                        description: '',
+                        query: query
+                    }}
+                />
+                <Layout>
+                    <Wrapper>
+                        <div style={{ display: 'flex', justifyContent: 'flex-start', width: '100%' }}>
+                            <Breadcrumb
+                                style={{ marginBottom: '1rem' }}
+                                items={[
+                                    {
+                                        title: <Link href="/screener">Screener</Link>,
+                                    },
+                                    {
+                                        title: screener?.details?.name ?? 'New Query',
+                                    },
+                                ]}
+                            />
+                        </div>
+                        <div style={{ width: "100%", marginBottom: "1rem" }}>
+                            <Title level={2}>
+                                {screener?.details?.name ?? "Stock Screener Query"}
+                            </Title>
+                            <Typography.Text>
+                                {screener?.details?.description ?? ""}
+                            </Typography.Text>
+                        </div>
 
-                    {query && query?.rules?.length > 0 && <Button type={'primary'} onClick={handleSave}>Save Screen</Button>}
+                        {query && query?.rules?.length > 0 && <Button type={'primary'} onClick={handleSave}>Save Screen</Button>}
 
-                    {doesSessionExist && !pendingNavigation && (
-                        <StyledCard>
-                            <Title level={5}>Query Builder</Title>
-                            {loadingFields ? (
-                                <Skeleton active paragraph={{ rows: 2 }} />
-                            ) : (
-                                <QueryBuilderAntD>
-                                    <QueryBuilder
-                                        fields={fields}
-                                        query={query}
-                                        onQueryChange={setQuery}
-                                        controlElements={{ addGroupAction: () => null }}
-                                        showCombinatorsBetweenRules={false}
-                                        enableDragAndDrop={false}
-                                    />
-                                </QueryBuilderAntD>
-                            )}
+                        {doesSessionExist && !pendingNavigation && (
+                            <StyledCard>
+                                <Title level={5}>Query Builder</Title>
+                                {loadingFields ? (
+                                    <Skeleton active paragraph={{ rows: 2 }} />
+                                ) : (
+                                    <QueryBuilderAntD>
+                                        <QueryBuilder
+                                            fields={fields}
+                                            query={query}
+                                            onQueryChange={setQuery}
+                                            controlElements={{ addGroupAction: () => null }}
+                                            showCombinatorsBetweenRules={false}
+                                            enableDragAndDrop={false}
+                                        />
+                                    </QueryBuilderAntD>
+                                )}
 
-                            {query && query?.rules?.length > 0 && <ButtonRow>
-                                <Button type="primary" loading={running} onClick={handleRun}>
-                                    Run Screen
-                                </Button>
-                            </ButtonRow>}
-                        </StyledCard>
-                    )}
+                                {query && query?.rules?.length > 0 && <ButtonRow>
+                                    <Button type="primary" loading={running} onClick={handleRun}>
+                                        Run Screen
+                                    </Button>
+                                </ButtonRow>}
+                            </StyledCard>
+                        )}
 
-                    {loadingData ? (
-                        <Skeleton
-                            active
-                            paragraph={{ rows: 8 }}
-                            style={{ marginTop: "2rem" }}
-                        />
-                    ) : (
-                        data?.length > 0 && <StockTableView data={data} />
-                    )}
-                </Wrapper>
-            </Layout>
+                        {loadingData ? (
+                            <Skeleton
+                                active
+                                paragraph={{ rows: 8 }}
+                                style={{ marginTop: "2rem" }}
+                            />
+                        ) : (
+                            data?.length > 0 && <StockTableView data={data} />
+                        )}
+                    </Wrapper>
+                </Layout>
+            </SessionAuth>
         </>
     );
 };

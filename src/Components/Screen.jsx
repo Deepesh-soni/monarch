@@ -6,10 +6,12 @@ import { Body1, Support, H1 } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
 import { IoMdSearch } from "react-icons/io";
 import { H5 } from "../Components/common/Typography";
-import { Medium, Small } from "../Components/common/Paragraph";
+import { Medium } from "../Components/common/Paragraph";
 import { client } from "@axiosClient";
 import { useRouter } from "next/router";
 import { encode } from "js-base64";
+import { Button } from "antd";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -159,22 +161,31 @@ const HeadingContainer = styled(FlexBox)`
   width: 100%;
 `;
 
-const Button = styled.button`
-  border-radius: 8px;
-  cursor: pointer;
-  border: ${({ primary }) => (primary ? "none" : "2px solid #0033a0")};
-  background: #0033a0;
-  color: white;
-  &:hover {
-    background: ${({ primary }) => (primary ? "#002080" : "#f0f0f0")};
-  }
-`;
 
 const Screen = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [sectorData, setSectorData] = useState([]);
+  const [myScreens, setMyScreens] = useState([]);
+
+
   const router = useRouter();
+  const { doesSessionExist } = useSessionContext();
+
+
+  
+  useEffect(() => {
+    if (doesSessionExist) {
+      const fetchMyList = async () => {
+        const response = await client.get('/screener');
+        if (response?.data) {
+          setMyScreens(response?.data);
+        }
+      }
+      fetchMyList();
+    }
+  }, [doesSessionExist])
+
 
   useEffect(() => {
     const fetchStockData = async () => {
@@ -228,32 +239,35 @@ const Screen = () => {
                 Create your own custom screening criteria
               </Medium>
             </FlexBox>
-            <Button>New Screens</Button>
+            {doesSessionExist && <Button type="primary" onClick={() => router.push('/screener/query')}>New Screen</Button>}
+
+
           </HeadingContainer>
           <Section>
             <LeftSection>
-              <Container column>
+              {doesSessionExist && <Container column>
                 <Medium bold>Your Custom Screens</Medium>
                 <Support>Screens created by you</Support>
                 <CardGridContainer>
-                  {[...Array(4)].map((_, index) => (
-                    <Card key={index}>
-                      <Icon>
-                        <H1 bold>G</H1>
-                      </Icon>
-                      <FlexBox column columnGap="0.5px">
-                        <FlexBox align="center" columnGap="0.75rem">
-                          <Body1>Growth Stocks</Body1>
-                          <SlArrowRight size={12} />
-                        </FlexBox>
-                        <Support color="#687792">
-                          High growth companies with strong momentum
-                        </Support>
+                {myScreens?.map(screen => (
+                  <Card key={screen.screenerId} onClick={() => router.push(`/screener/query/${screen.fqn}`)}>
+                    <Icon>
+                      <H1 bold>G</H1>
+                    </Icon>
+                    <FlexBox column columnGap="0.5px">
+                      <FlexBox align="center" columnGap="0.75rem">
+                        <Body1>{screen.name}</Body1>
+                        <SlArrowRight size={12} />
                       </FlexBox>
-                    </Card>
-                  ))}
+                      <Support color="#687792">
+                        {screen.description}
+                      </Support>
+                    </FlexBox>
+                  </Card>
+                ))}
+
                 </CardGridContainer>
-              </Container>
+              </Container>}
               <Container column>
                 <Body1 bold>Popular Stock Screens</Body1>
                 <Support color="#687792">

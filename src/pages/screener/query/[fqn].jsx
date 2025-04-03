@@ -14,6 +14,7 @@ import Meta from "@layout/Meta";
 import Link from "next/link";
 import NewUpdatePopup from "../../../Components/common/NewUpdatePopup";
 import { Modal } from "antd"; // for delete confirmation
+import { SessionAuth } from "supertokens-auth-react/recipe/session";
 
 const { Title } = Typography;
 
@@ -165,6 +166,7 @@ const QueryPage = () => {
 
     return (
         <>
+        <SessionAuth>
             <Meta title="Stock Screener Builder" />
             <NewUpdatePopup
                 visible={isNewModalOpen}
@@ -205,10 +207,12 @@ const QueryPage = () => {
                         </Typography.Text>
                     </div>
 
-                    {query && query?.rules?.length > 0 && <ButtonRow>
-                        <Button type={'primary'} onClick={handleSave}>{editMode ? 'Update Screener' : 'Edit Screener'}</Button>
-                        {editMode && <Button color="danger" variant="solid" onClick={() => handleDelete(screener.fqn, screener.name)}>Delete</Button>}
-                    </ButtonRow>}
+                    <ButtonRow>
+                        {query && query?.rules?.length > 0 &&
+                            <Button type={'primary'} onClick={handleSave}>{editMode ? 'Update Screener' : 'Edit Screener'}</Button>
+                        }
+                        <Button color="danger" variant="solid" onClick={() => handleDelete(screener.fqn, screener.name)}>Delete</Button>
+                    </ButtonRow>
 
                     {editMode && (
                         <StyledCard>
@@ -247,6 +251,7 @@ const QueryPage = () => {
                     )}
                 </Wrapper>
             </Layout>
+            </SessionAuth>
         </>
     );
 };
