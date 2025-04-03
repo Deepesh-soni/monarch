@@ -10,6 +10,7 @@ import SearchableDropdown from "@Components/common/UI/Search/SearchDropdownCmp";
 import { H6, H2 } from "../common/Typography";
 import { Medium, Small } from "../common/Paragraph";
 import Layout from "@layout/HomePageLayout";
+import StockImage from "./stockImage";
 
 const Wrapper = styled.div`
   background: url("/assets/home/page-bg.png");
@@ -95,7 +96,7 @@ const Home = () => {
           <FlexBox column align="center">
             <Heading>Discover & Analyze</Heading>
             <FlexBox>
-              <Image src="/assets/home/stocks.svg" alt="Stocks" />
+              <StockImage />
               <Heading>like never before</Heading>
             </FlexBox>
           </FlexBox>
