@@ -72,14 +72,16 @@ const NavBar = () => {
   return (
     <Navbar>
       <LogoContainer href="/" passHref>
-        <img src="/assets/logo.jpg" alt="Logo" width={120} height={40} />
+        <img src="/assets/Logo.svg" alt="Logo" width={120} height={40} />
       </LogoContainer>
 
       <SearchContainer>
-        {!pathname?.endsWith('/') && <SearchableDropdown
-          width="100%"
-          onChange={item => router.push(`/stocks/${item.fqn}`)}
-        />}
+        {!pathname?.endsWith("/") && (
+          <SearchableDropdown
+            width="100%"
+            onChange={item => router.push(`/stocks/${item.fqn}`)}
+          />
+        )}
       </SearchContainer>
 
       <FlexBox columnGap="20px" align="center">
