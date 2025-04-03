@@ -92,6 +92,8 @@ const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
   const [loadingWatchlists, setLoadingWatchlists] = useState(false);
   const [adding, setAdding] = useState(false);
 
+  const router = useRouter();
+
   useEffect(() => {
     if (visible) {
       setLoadingWatchlists(true);
@@ -159,7 +161,7 @@ const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
         <Button
           type="link"
           onClick={() => {
-            /* trigger create new popup */
+            router.push('/watch-list/')
           }}
         >
           Create New Watchlist

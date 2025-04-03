@@ -4,13 +4,13 @@ import { SlArrowRight } from "react-icons/sl";
 import FlexBox from "@common/UI/FlexBox";
 import { Body1, Support, H1 } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
-import { IoMdSearch } from "react-icons/io";
+import { IoMdAdd, IoMdSearch } from "react-icons/io";
 import { H5 } from "../Components/common/Typography";
 import { Medium } from "../Components/common/Paragraph";
 import { client } from "@axiosClient";
 import { useRouter } from "next/router";
 import { encode } from "js-base64";
-import { Button } from "antd";
+import { Button, Skeleton } from "antd";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 
 const Wrapper = styled(FlexBox)`
@@ -257,6 +257,7 @@ const Screen = () => {
   const [loading, setLoading] = useState(false);
   const [sectorData, setSectorData] = useState([]);
   const [myScreens, setMyScreens] = useState([]);
+  const [isLoadingScreens, setIsLoadingScreens] = useState(false);
 
 
   const router = useRouter();
@@ -267,11 +268,16 @@ const Screen = () => {
   useEffect(() => {
     if (doesSessionExist) {
       const fetchMyList = async () => {
-        const response = await client.get('/screener');
-        if (response?.data) {
-          setMyScreens(response?.data);
+        setIsLoadingScreens(true);
+        try {
+          const response = await client.get('/screener');
+          if (response?.data) {
+            setMyScreens(response?.data);
+          }
+        } finally {
+          setIsLoadingScreens(false);
         }
-      }
+      };
       fetchMyList();
     }
   }, [doesSessionExist])
@@ -335,7 +341,7 @@ const Screen = () => {
                 Create your own custom screening criteria
               </Medium>
             </FlexBox>
-            {doesSessionExist && <Button type="primary" onClick={() => router.push('/screener/query')}>New Screen</Button>}
+            {doesSessionExist && <Button type="primary" onClick={() => router.push('/screener/query')} icon={<IoMdAdd />}>New Screen</Button>}
 
 
           </HeadingContainer>
@@ -344,24 +350,40 @@ const Screen = () => {
               {doesSessionExist && <Container column>
                 <Title>Your Custom Screens</Title>
                 <Subtitle>Screens created by you</Subtitle>
-                <CardGridContainer>
-                  {myScreens?.map(screen => (
-                    <Card key={screen.screenerId} onClick={() => router.push(`/screener/query/${screen.fqn}`)} style={{ cursor: 'pointer' }}>
-                      <Icon>
-                        <H1 bold>{screen?.name?.charAt(0)?.toUpperCase() ?? 'S'}</H1>
-                      </Icon>
-                      <FlexBox column columnGap="0.5px">
-                        <FlexBox align="center" columnGap="0.75rem">
-                          <Body1>{screen.name}</Body1>
-                          <SlArrowRight size={12} />
-                        </FlexBox>
-                        <Support color="#687792">
-                          {screen.description}
-                        </Support>
-                      </FlexBox>
-                    </Card>
-                  ))}
-                </CardGridContainer>
+                  {isLoadingScreens ? (
+                    <CardGridContainer>
+                      {[...Array(2)].map((_, index) => (
+                        <Card key={index}>
+                          <Skeleton.Avatar active shape="square" size="large" />
+                          <Skeleton
+                            active
+                            title={false}
+                            paragraph={{ rows: 2, width: ["80%", "60%"] }}
+                            style={{ marginLeft: "0.75rem", flex: 1 }}
+                          />
+                        </Card>
+                      ))}
+                    </CardGridContainer>
+                  ) : (
+                    <CardGridContainer>
+                      {myScreens?.map(screen => (
+                        <Card key={screen.screenerId} onClick={() => router.push(`/screener/query/${screen.fqn}`)} style={{ cursor: 'pointer' }}>
+                          <Icon>
+                            <H1 bold>{screen?.name?.charAt(0)?.toUpperCase() ?? 'S'}</H1>
+                          </Icon>
+                          <FlexBox column columnGap="0.5px">
+                            <FlexBox align="center" columnGap="0.75rem">
+                              <Body1>{screen.name}</Body1>
+                              <SlArrowRight size={12} />
+                            </FlexBox>
+                            <Support color="#687792">
+                              {screen.description}
+                            </Support>
+                          </FlexBox>
+                        </Card>
+                      ))}
+                    </CardGridContainer>
+                  )}
               </Container>}
               <Container column>
                 <Title>Popular Stock Screens</Title>
@@ -372,7 +394,7 @@ const Screen = () => {
                       <Icon>
                         <H1 bold>{screen?.details?.name?.charAt(0)?.toUpperCase() ?? 'S'}</H1>
                       </Icon>
-                        <FlexBox column columnGap="0.5px">
+                      <FlexBox column columnGap="0.5px">
                         <FlexBox align="center" columnGap="0.75rem">
                           <Body1>{screen?.details?.name}</Body1>
                           <SlArrowRight size={12} />

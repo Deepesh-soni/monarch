@@ -76,10 +76,10 @@ const NavBar = () => {
       </LogoContainer>
 
       <SearchContainer>
-        <SearchableDropdown
+        {!pathname?.endsWith('/') && <SearchableDropdown
           width="100%"
           onChange={item => router.push(`/stocks/${item.fqn}`)}
-        />
+        />}
       </SearchContainer>
 
       <FlexBox columnGap="20px" align="center">

@@ -6,7 +6,7 @@ import { IoMdAdd } from "react-icons/io";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
-import { Modal, Pagination } from "antd";
+import { Button, Modal, Pagination, Skeleton } from "antd";
 import { toast } from "react-toastify";
 import { H5 } from "../../Components/common/Typography";
 import { Medium, Small, Large } from "../../Components/common/Paragraph";
@@ -121,22 +121,19 @@ const WatchList = () => {
                 Track and manage your favorite stocks
               </Medium>
             </FlexBox>
-            <FlexBox
-              border="1.5px solid #142C8E"
-              align="center"
-              padding="0.5rem"
-              columnGap="0.5rem"
-              borderRadius="0.8rem"
-              onClick={() => setIsNewModalOpen(true)}
-              cursor="pointer"
-            >
-              <IoMdAdd color="#142C8E" />
-              <Small color="#142C8E">New Watchlist</Small>
+            <FlexBox>
+              <Button type={'primary'} onClick={() => setIsNewModalOpen(true)} style={{ cursor: 'pointer' }} icon={<IoMdAdd />}> New Watchlist</Button>
             </FlexBox>
           </FlexBox>
 
           {loading ? (
-            <Support color="#687792">Loading watchlists...</Support>
+            <>
+              {[...Array(3)].map((_, index) => (
+                <Card key={index}>
+                  <Skeleton active title={false} paragraph={{ rows: 2 }} />
+                </Card>
+              ))}
+            </>
           ) : watchlists.length > 0 ? (
             watchlists.map(watchlist => (
               <Card
