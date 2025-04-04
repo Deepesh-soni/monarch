@@ -63,7 +63,7 @@ function StackedBarChart({ data }) {
     <ResponsiveContainer width="100%" height={400}>
       <BarChart data={chartData}>
         <XAxis dataKey="YRC" />
-        <Tooltip formatter={(value, name) => [value, _.startCase(name)]} />
+        <Tooltip formatter={(value, name) => [`${value.toFixed(2)}%`, _.startCase(name)]} />
         {keys.map(key => (
           <Bar key={key} dataKey={key} stackId="a" fill={keyColors[key]}>
             <LabelList
@@ -384,9 +384,9 @@ const slugify = text =>
 
 const PeerComparisonTable = ({ peer, currentStock }) => {
   const rows = [
-    { label: "Price", peer: peer.price, current: currentStock.price },
-    { label: "Market Cap", peer: peer.mcap, current: currentStock.mcap },
-    { label: "Volume", peer: peer.volume, current: currentStock.volume },
+    { label: "Price", peer: formatValue(peer.price, true), current: formatValue(currentStock.price, true) },
+    { label: "Market Cap", peer: `${formatValue(peer.mcap, true)} Cr.`, current: `${formatValue(currentStock.mcap, true)} Cr.` },
+    { label: "Volume", peer: formatValue(peer.volume), current: formatValue(currentStock.volume) },
     { label: "Change", peer: peer.change, current: currentStock.change },
     {
       label: "Dividend Yield",
@@ -441,6 +441,27 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
   );
 };
 
+
+function formatValue(value, show = false){
+  return show ? `₹ ${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}` : `${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}`;
+}
+
+
+function CashflowChart({ data }) {
+  return (
+    <ResponsiveContainer width="100%" height={400}>
+      <BarChart data={data}>
+        <XAxis dataKey="year" />
+        <Tooltip />
+        <Bar dataKey="cfo" stackId="a" fill={blue[2]} />
+        <Bar dataKey="cfi" stackId="a" fill={blue[4]} />
+        <Bar dataKey="cff" stackId="a" fill={blue[6]} />
+        <Bar dataKey="netcashflow" stackId="a" fill={blue[8]} />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
 const Stock = () => {
   const router = useRouter();
   const { fqn } = router.query;
@@ -452,6 +473,8 @@ const Stock = () => {
   const { doesSessionExist } = useSessionContext();
   const isLoggedIn = doesSessionExist;
   const [showWatchlistPopup, setShowWatchlistPopup] = useState(false);
+  const [cashflowChartData, setCashflowChartData] = useState(null);
+
 
   const financialData = stock
     ? {
@@ -483,14 +506,16 @@ const Stock = () => {
 
     const fetchStockDetails = async () => {
       try {
-        const [stockRes, peersRes, chartRes] = await Promise.all([
+        const [stockRes, peersRes, chartRes, cashflowRes] = await Promise.all([
           client.get(`/stock/details/${fqn}`),
           client.get(`/stock/peers/${fqn}`),
-          client.get(`/stock/chart/shareholding/${fqn}`)
+          client.get(`/stock/chart/shareholding/${fqn}`),
+          client.get(`/stock/chart/cashflow/${fqn}`),
         ]);
         setStock(stockRes.data);
         setPeers(peersRes.data);
         setStockHoldingChart(chartRes.data);
+        setCashflowChartData(cashflowRes.data?.chartData || []);
       } catch (err) {
         setError("Failed to fetch stock details.");
       } finally {
@@ -599,23 +624,23 @@ const Stock = () => {
           </GridItem>
           <GridItem>
             <Body1 bold>Today's High</Body1>
-            <Body1>₹ {stock.high}</Body1>
+            <Body1>{formatValue(stock.high, true)}</Body1>
           </GridItem>
           <GridItem>
             <Body1 bold>Open Price</Body1>
-            <Body1>₹ {stock.open}</Body1>
+            <Body1>{formatValue(stock.open, true)}</Body1>
           </GridItem>
           <GridItem>
             <Body1 bold>Today's Low</Body1>
-            <Body1>₹ {stock.low}</Body1>
+            <Body1>{formatValue(stock.low, true)}</Body1>
           </GridItem>
           <GridItem>
             <Body1 bold>Market Cap</Body1>
-            <Body1>₹ {stock.mcap}</Body1>
+            <Body1>{formatValue(stock.mcap, true)} Cr.</Body1>
           </GridItem>
           <GridItem>
             <Body1 bold>Volume</Body1>
-            <Body1>{stock.volume}</Body1>
+            <Body1>{formatValue(stock.volume)}</Body1>
           </GridItem>
           <GridItem>
             <Body1 bold>Sector</Body1>
@@ -702,6 +727,8 @@ const Stock = () => {
           <Support bold>Cash Flow from Operating</Support>
           <Support bold>Cash Flow from Equivalents</Support>
         </CashContainer>
+        {cashflowChartData && <CashflowChart data={cashflowChartData} />}
+
       </FlexBox>
       <FlexBox width="100%" column id="peers" rowGap="2rem">
         <FlexBox column>
@@ -730,11 +757,11 @@ const Stock = () => {
           <H1 bold>Valuation</H1>
           <Row>
             <Large bold>52 Week High</Large>
-            <Large>{stock?.high52WeekPrice}</Large>
+            <Large>{formatValue(stock?.high52WeekPrice, true)}</Large>
           </Row>
           <Row>
             <Large bold>52 Week Low</Large>
-            <Large>{stock?.low52WeekPrice}</Large>
+            <Large>{formatValue(stock?.low52WeekPrice, true)}</Large>
           </Row>
           <Row>
             <Large bold>P/E Ratio</Large>
