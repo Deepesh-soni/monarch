@@ -37,19 +37,15 @@ const keyColors = {
 
 function prepareChartData(raw) {
   const yearMap = new Map();
-
   raw.forEach(item => {
     const year = Math.floor(item.YRC / 100);
     if (!yearMap.has(year)) {
       yearMap.set(year, item); // take only first entry per year
     }
   });
-
-  // Get only the last 5 years
   const filtered = Array.from(yearMap.values())
     .sort((a, b) => a.YRC - b.YRC)
     .slice(-5);
-
   return filtered.map(item => ({
     ...item,
     YRC: formatYRC(item.YRC),
@@ -63,14 +59,11 @@ function formatYRC(yrc) {
 
 function StackedBarChart({ data }) {
   const chartData = prepareChartData(data);
-
   return (
     <ResponsiveContainer width="100%" height={400}>
       <BarChart data={chartData}>
         <XAxis dataKey="YRC" />
-        {/* <YAxis /> */}
         <Tooltip formatter={(value, name) => [value, _.startCase(name)]} />
-        {/* <Legend formatter={value => _.startCase(value)} /> */}
         {keys.map(key => (
           <Bar key={key} dataKey={key} stackId="a" fill={keyColors[key]}>
             <LabelList
@@ -86,12 +79,12 @@ function StackedBarChart({ data }) {
   );
 }
 
+// Updated AddToWatchlistPopup with multi-select and looping over API calls.
 const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
   const [watchlists, setWatchlists] = useState([]);
-  const [selectedWatchlist, setSelectedWatchlist] = useState(null);
+  const [selectedWatchlists, setSelectedWatchlists] = useState([]); // Now an array
   const [loadingWatchlists, setLoadingWatchlists] = useState(false);
   const [adding, setAdding] = useState(false);
-
   const router = useRouter();
 
   useEffect(() => {
@@ -106,24 +99,25 @@ const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
   }, [visible]);
 
   const handleAdd = async () => {
-    if (!selectedWatchlist) return;
+    if (!selectedWatchlists.length) return;
     setAdding(true);
     try {
-      // Find the selected watchlist details
-      const watchlist = watchlists.find(w => w.fqn === selectedWatchlist);
-      let updatedStocks = Array.isArray(watchlist.stocks)
-        ? [...watchlist.stocks]
-        : [];
-      if (!updatedStocks.includes(stockFqn)) {
-        updatedStocks.push(stockFqn);
+      // Loop through each selected watchlist and update
+      for (const watchlistFqn of selectedWatchlists) {
+        const watchlist = watchlists.find(w => w.fqn === watchlistFqn);
+        let updatedStocks = Array.isArray(watchlist.stocks)
+          ? [...watchlist.stocks]
+          : [];
+        if (!updatedStocks.includes(stockFqn)) {
+          updatedStocks.push(stockFqn);
+        }
+        const payload = {
+          name: watchlist.name,
+          description: watchlist.description,
+          stocks: updatedStocks,
+        };
+        await client.put(`/watchlist/${watchlist.fqn}`, payload);
       }
-      const payload = {
-        name: watchlist.name,
-        description: watchlist.description,
-        stocks: updatedStocks,
-      };
-      await client.put(`/watchlist/${watchlist.fqn}`, payload);
-      // Optionally show success message...
       onClose();
     } catch (error) {
       console.error("Failed to add stock to watchlist", error);
@@ -140,10 +134,11 @@ const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
       footer={null}
     >
       <Select
+        mode="multiple"
         style={{ width: "100%" }}
-        placeholder="Select a watchlist"
+        placeholder="Select one or more watchlists"
         loading={loadingWatchlists}
-        onChange={value => setSelectedWatchlist(value)}
+        onChange={setSelectedWatchlists}
       >
         {watchlists.map(watchlist => (
           <Select.Option key={watchlist.fqn} value={watchlist.fqn}>
@@ -161,7 +156,7 @@ const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
         <Button
           type="link"
           onClick={() => {
-            router.push('/watch-list/')
+            router.push('/watch-list/');
           }}
         >
           Create New Watchlist
@@ -185,7 +180,6 @@ const Hr = styled.hr`
   border: 1px solid #ebf0f4;
 `;
 
-/* Navigation links with a bottom highlight on hover */
 const NavLinks = styled(FlexBox)`
   width: 100%;
   justify-content: space-between;
@@ -253,6 +247,7 @@ const Section = styled(FlexBox)`
     column-gap: 1rem;
   }
 `;
+
 const BusinessSectionLeft = styled(FlexBox)`
   border: 1px solid #3c3c3c;
   width: 100%;
@@ -288,6 +283,7 @@ const ShareholdingLeft = styled(FlexBox)`
     width: 55%;
   }
 `;
+
 const ShareholdingRight = styled(FlexBox)`
   border: 1px solid #3c3c3c;
   width: 100%;
@@ -299,6 +295,7 @@ const ShareholdingRight = styled(FlexBox)`
     width: 45%;
   }
 `;
+
 const TableContainer = styled.div`
   width: 100%;
   display: flex;
@@ -345,7 +342,6 @@ const RightContainer = styled.div`
   align-items: flex-end;
 `;
 
-// Header row container
 const HeaderRow = styled.div`
   width: 100%;
   display: flex;
@@ -354,16 +350,12 @@ const HeaderRow = styled.div`
   margin-bottom: 1rem;
 `;
 
-// Company title styled component
-
-// Exchange links row
 const ExchangeLinksRow = styled.div`
   margin-top: 4px;
   display: flex;
   gap: 16px;
 `;
 
-// Each exchange link
 const ExchangeLink = styled.a`
   display: inline-flex;
   align-items: center;
@@ -382,7 +374,6 @@ const Row = styled.div`
   margin: 8px 0;
   font-size: 14px;
 `;
-// Dummy financial data (for display purposes)
 
 const slugify = text =>
   text
@@ -418,31 +409,13 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
     >
       <thead>
         <tr>
-          <th
-            style={{
-              textAlign: "left", // Align "Metric" column to the left
-              borderBottom: "2px solid #ccc",
-              padding: "0.75rem",
-            }}
-          >
+          <th style={{ textAlign: "left", borderBottom: "2px solid #ccc", padding: "0.75rem" }}>
             Metric
           </th>
-          <th
-            style={{
-              textAlign: "center", // Center-align the Reliance Industries Ltd column
-              borderBottom: "2px solid #ccc",
-              padding: "8px",
-            }}
-          >
+          <th style={{ textAlign: "center", borderBottom: "2px solid #ccc", padding: "8px" }}>
             <strong>{currentStock.companyName}</strong>
           </th>
-          <th
-            style={{
-              textAlign: "right", // Right-align the Indian Oil Corporation Ltd column
-              borderBottom: "2px solid #ccc",
-              padding: "8px",
-            }}
-          >
+          <th style={{ textAlign: "right", borderBottom: "2px solid #ccc", padding: "8px" }}>
             <strong>
               <a href={`/stocks/${peer.fqn}`}>{peer.companyName}</a>
             </strong>
@@ -452,31 +425,13 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
       <tbody>
         {rows.map(row => (
           <tr key={row.label}>
-            <td
-              style={{
-                textAlign: "left", // Left-align the "Metric" column content
-                padding: "8px",
-                borderBottom: "1px solid #eee",
-              }}
-            >
+            <td style={{ textAlign: "left", padding: "8px", borderBottom: "1px solid #eee" }}>
               {row.label}
             </td>
-            <td
-              style={{
-                textAlign: "center", // Center-align the value for Reliance Industries Ltd
-                padding: "8px",
-                borderBottom: "1px solid #eee",
-              }}
-            >
+            <td style={{ textAlign: "center", padding: "8px", borderBottom: "1px solid #eee" }}>
               {row.current !== undefined ? row.current : "N/A"}
             </td>
-            <td
-              style={{
-                textAlign: "right", // Right-align the value for Indian Oil Corporation Ltd
-                padding: "8px",
-                borderBottom: "1px solid #eee",
-              }}
-            >
+            <td style={{ textAlign: "right", padding: "8px", borderBottom: "1px solid #eee" }}>
               {row.peer !== undefined ? row.peer : "N/A"}
             </td>
           </tr>
@@ -494,74 +449,44 @@ const Stock = () => {
   const [error, setError] = useState(null);
   const [peers, setPeers] = useState(null);
   const [stockHoldingChart, setStockHoldingChart] = useState(null);
-
   const { doesSessionExist } = useSessionContext();
   const isLoggedIn = doesSessionExist;
-
   const [showWatchlistPopup, setShowWatchlistPopup] = useState(false);
 
   const financialData = stock
     ? {
-        "Profit & Loss": [
-          {
-            metric: "Book Value",
-            values: [stock.bookvalue, stock.bookvalue, stock.bookvalue],
-          },
-          { metric: "EPS", values: [stock.eps, stock.eps, stock.eps] },
-          {
-            metric: "Net Profit",
-            values: [stock.netprofit, stock.netprofit, stock.netprofit],
-          },
-          {
-            metric: "Operating Profit",
-            values: [stock.opm, stock.opm, stock.opm],
-          },
-          {
-            metric: "Revenue",
-            values: [stock.revenue, stock.revenue, stock.revenue],
-          },
-        ],
-        "Balance Sheet": [
-          {
-            metric: "Cash & Equivalents",
-            values: [stock.cash_op, stock.cash_investing, stock.cash_financing],
-          },
-          {
-            metric: "Debt",
-            values: [
-              stock.debtToEquity,
-              stock.debtToEquity,
-              stock.debtToEquity,
-            ],
-          },
-          {
-            metric: "Net Worth",
-            values: [stock.networth, stock.networth, stock.networth],
-          },
-          {
-            metric: "Total Assets",
-            values: [stock.totalassets, stock.totalassets, stock.totalassets],
-          },
-          {
-            metric: "Total Liabilities",
-            values: [
-              stock.totalliabilities,
-              stock.totalliabilities,
-              stock.totalliabilities,
-            ],
-          },
-        ],
-      }
+      "Profit & Loss": [
+        { metric: "Book Value", values: [stock.bookvalue, stock.bookvalue, stock.bookvalue] },
+        { metric: "EPS", values: [stock.eps, stock.eps, stock.eps] },
+        { metric: "Net Profit", values: [stock.netprofit, stock.netprofit, stock.netprofit] },
+        { metric: "Operating Profit", values: [stock.opm, stock.opm, stock.opm] },
+        { metric: "Revenue", values: [stock.revenue, stock.revenue, stock.revenue] },
+      ],
+      "Balance Sheet": [
+        { metric: "Cash & Equivalents", values: [stock.cash_op, stock.cash_investing, stock.cash_financing] },
+        { metric: "Debt", values: [stock.debtToEquity, stock.debtToEquity, stock.debtToEquity] },
+        { metric: "Net Worth", values: [stock.networth, stock.networth, stock.networth] },
+        { metric: "Total Assets", values: [stock.totalassets, stock.totalassets, stock.totalassets] },
+        { metric: "Total Liabilities", values: [stock.totalliabilities, stock.totalliabilities, stock.totalliabilities] },
+      ],
+    }
     : {};
-  // API integration: Fetch stock details using the fqn parameter
+
   useEffect(() => {
     if (!fqn) return;
+    // Reset state before fetching new data
+    setLoading(true);
+    setError(null);
+    setStock(null);
+    setPeers(null);
+    setStockHoldingChart(null);
+
     const fetchStockDetails = async () => {
       try {
         const [stockRes, peersRes, chartRes] = await Promise.all([
           client.get(`/stock/details/${fqn}`),
           client.get(`/stock/peers/${fqn}`),
-          client.get(`/stock/chart/shareholding/${fqn}`),
+          client.get(`/stock/chart/shareholding/${fqn}`)
         ]);
         setStock(stockRes.data);
         setPeers(peersRes.data);
@@ -572,6 +497,7 @@ const Stock = () => {
         setLoading(false);
       }
     };
+
     fetchStockDetails();
   }, [fqn]);
 
@@ -593,23 +519,28 @@ const Stock = () => {
   }
   if (!stock) return null;
 
-  // Calculate change color based on the change value
   const changeValue = parseFloat(stock.change || "0");
   const changeColor = changeValue >= 0 ? "green" : "red";
 
   return (
     <Wrapper>
-      {/* Top Navigation (no stock image as requested) */}
-
       <HeaderRow>
         <LeftContainer>
           <H5 bold>{stock.companyName}</H5>
           <ExchangeLinksRow>
+            {stock.web_url && stock.web_url && (
+              <ExchangeLink
+                href={stock.web_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>{stock.web_url}</span>
+                <BiLinkExternal size={14} />
+              </ExchangeLink>
+            )}
             {stock.bseListed && stock.bseCode && (
               <ExchangeLink
-                href={`https://www.bseindia.com/stock-share-price/${slugify(
-                  stock.companyName
-                )}/${stock.companyShortName}/${stock.bseCode}/`}
+                href={`https://www.bseindia.com/stock-share-price/${slugify(stock.companyName)}/${stock.companyShortName}/${stock.bseCode}/`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -637,8 +568,6 @@ const Stock = () => {
         </RightContainer>
       </HeaderRow>
       <Hr />
-
-      {/* Anchored Navigation */}
       <NavLinks>
         <NavLink href="#security">Security Information</NavLink>
         <NavLink href="#business">Business Description</NavLink>
@@ -647,8 +576,6 @@ const Stock = () => {
         <NavLink href="#cash">Cash Counter</NavLink>
         <NavLink href="#peers">Peer Comparison</NavLink>
       </NavLinks>
-
-      {/* Security Section */}
       <SecuritySection id="security">
         <FlexBox width="100%" align="center" justify="space-between">
           <H5 bold>Security Information</H5>
@@ -665,7 +592,6 @@ const Stock = () => {
             </Button>
           </FlexBox>
         </FlexBox>
-
         <GridContainer>
           <GridItem>
             <Body1 bold>ISIN</Body1>
@@ -705,32 +631,18 @@ const Stock = () => {
           </GridItem>
         </GridContainer>
       </SecuritySection>
-
-      {/* Business & Insights Sections */}
       <Section>
         <BusinessSectionLeft id="business">
           <Body1 bold>Business Description</Body1>
           <Body1>
-            {/* Replace with actual business description if available */}
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </Body1>
-          <FlexBox padding="0 0 0 1.5rem" width="100%">
-            <ul>
-              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-            </ul>
-          </FlexBox>
-          <Body1>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, quis
-            optio minus sunt dignissimos hic laborum.
+            {<>{stock.details?.slice(0, 1024)} <a href={`https://www.bseindia.com/stock-share-price/${slugify(stock.companyName)}/${stock.companyShortName}/${stock.bseCode}/corp-information/`} target="_blank"
+              rel="noopener noreferrer">...(read more)</a></> ?? 'Company Information Unavailable'}
           </Body1>
         </BusinessSectionLeft>
         <BusinessSectionRight id="insights">
           <Body1 bold>APART Insights</Body1>
           <Body1>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, quis
-            optio minus sunt dignissimos hic laborum.
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, quis optio minus sunt dignissimos hic laborum.
           </Body1>
           <Body1 bold>Strengths &amp; Moat:</Body1>
           <FlexBox padding="0 0 0 1.5rem" width="100%">
@@ -748,9 +660,6 @@ const Stock = () => {
           </FlexBox>
         </BusinessSectionRight>
       </Section>
-
-      {/* Financial Fundamentals Section */}
-
       <FlexBox column width="100%" id="fundamentals">
         <H1 bold>Financial Fundamentals</H1>
         <TableContainer>
@@ -785,7 +694,6 @@ const Stock = () => {
           ))}
         </TableContainer>
       </FlexBox>
-      {/* Cash Counter Section */}
       <FlexBox width="100%" column id="cash">
         <H1 bold>Cash Counter</H1>
         <CashContainer>
@@ -795,8 +703,6 @@ const Stock = () => {
           <Support bold>Cash Flow from Equivalents</Support>
         </CashContainer>
       </FlexBox>
-
-      {/* Peer Comparison Section */}
       <FlexBox width="100%" column id="peers" rowGap="2rem">
         <FlexBox column>
           <H1 bold>Peer Comparison</H1>
@@ -804,11 +710,7 @@ const Stock = () => {
         </FlexBox>
         <FlexBox width="100%" justify="center" column>
           <Large>
-            Conventional industrial classifications and peer determinations are
-            cursory, biased & often inaccurate. APART's Similarity Score peeps
-            through deep data to find securities & businesses that are more
-            similar to each other than the rest. This ensure that you are
-            comparing like to like and not apples to oranges! Phew!
+            Conventional industrial classifications and peer determinations are cursory, biased &amp; often inaccurate. APART's Similarity Score peeps through deep data to find securities &amp; businesses that are more similar to each other than the rest. This ensures that you are comparing like to like and not apples to oranges!
           </Large>
         </FlexBox>
         {peers && peers.length > 0 ? (
@@ -817,7 +719,6 @@ const Stock = () => {
           <Body1>No peer data available.</Body1>
         )}
       </FlexBox>
-
       <Section>
         <ShareholdingLeft width="100%" column id="peers">
           <H1 bold>Shareholding Analysis</H1>
@@ -861,7 +762,6 @@ const Stock = () => {
           </Row>
         </ShareholdingRight>
       </Section>
-
       {isLoggedIn && (
         <AddToWatchlistPopup
           visible={showWatchlistPopup}

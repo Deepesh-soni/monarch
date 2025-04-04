@@ -181,7 +181,7 @@ export default function StockComparePage() {
                                 title: <Link href="/"> Home</Link>,
                             },
                             {
-                                title: dataA ? <Link href={`/stock/${dataA?.fqn}`}>{dataA?.companyName}</Link> : '',
+                                title: dataA ? <Link href={`/stocks/${dataA?.fqn}`}>{dataA?.companyName}</Link> : '',
                             },
                             {
                                 title: "Compare",
