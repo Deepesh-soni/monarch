@@ -11,26 +11,24 @@ import SearchableDropdown from "./UI/Search/SearchDropdownCmp";
 import { HiMenu, HiX } from "react-icons/hi"; // hamburger + close
 import { useState } from "react";
 
-
 const Navbar = styled.nav`
   display: flex;
   flex-direction: column;
-  width: 86.67%;
-  max-width: 75rem;
   padding: 10px 20px;
   background: white;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
-  margin: 2rem auto;
   gap: 1rem;
 
   @media (min-width: 769px) {
+    width: 86.67%;
+    margin: 2rem auto;
+    max-width: 75rem;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
   }
 `;
-
 
 const MobileMenuToggle = styled.button`
   display: none;
@@ -65,7 +63,6 @@ const FlexLinks = styled(FlexBox)`
   }
 `;
 
-
 const SearchDesktop = styled.div`
   display: none;
 
@@ -80,13 +77,12 @@ const SearchDesktop = styled.div`
 const SearchMobile = styled.div`
   display: block;
   width: 100%;
-  margin: 1rem 0;
 
   @media (min-width: 769px) {
+    margin: 1rem 0;
     display: none;
   }
 `;
-
 
 const NavLink = styled(Link)`
   text-decoration: none;
@@ -110,6 +106,7 @@ const Button = styled.button`
   border: ${({ primary }) => (primary ? "none" : "2px solid #0033a0")};
   background: ${({ primary }) => (primary ? "#0033a0" : "white")};
   color: ${({ primary }) => (primary ? "white" : "#0033a0")};
+  white-space: nowrap;
 
   &:hover {
     background: ${({ primary }) => (primary ? "#002080" : "#f0f0f0")};
@@ -148,7 +145,6 @@ const DesktopRow = styled.div`
     gap: 2rem;
   }
 `;
-
 
 const NavBar = () => {
   const router = useRouter();
@@ -198,13 +194,15 @@ const NavBar = () => {
         </SearchDesktop>
 
         <FlexLinks>
-          {[{ path: "/news", label: "News" }, { path: "/screener", label: "Screens" }, { path: "/watch-list", label: "Watchlist" }].map(
-            ({ path, label }) => (
-              <NavLink key={path} href={path} active={pathname?.includes(path)}>
-                {label}
-              </NavLink>
-            )
-          )}
+          {[
+            { path: "/news", label: "News" },
+            { path: "/screener", label: "Screens" },
+            { path: "/watch-list", label: "Watchlist" },
+          ].map(({ path, label }) => (
+            <NavLink key={path} href={path} active={pathname?.includes(path)}>
+              {label}
+            </NavLink>
+          ))}
 
           {doesSessionExist ? (
             <Button onClick={handleLogout}>Logout</Button>
@@ -217,24 +215,42 @@ const NavBar = () => {
       </DesktopRow>
 
       <MobileMenu open={mobileNavOpen}>
-        {[{ path: "/news", label: "News" }, { path: "/screener", label: "Screens" }, { path: "/watch-list", label: "Watchlist" }].map(
-          ({ path, label }) => (
-            <NavLink key={path} href={path} onClick={() => setMobileNavOpen(false)} active={pathname?.includes(path)}>
-              {label}
-            </NavLink>
-          )
-        )}
+        {[
+          { path: "/news", label: "News" },
+          { path: "/screener", label: "Screens" },
+          { path: "/watch-list", label: "Watchlist" },
+        ].map(({ path, label }) => (
+          <NavLink
+            key={path}
+            href={path}
+            onClick={() => setMobileNavOpen(false)}
+            active={pathname?.includes(path)}
+          >
+            {label}
+          </NavLink>
+        ))}
         {doesSessionExist ? (
-          <Button onClick={() => { setMobileNavOpen(false); handleLogout(); }}>Logout</Button>
+          <Button
+            onClick={() => {
+              setMobileNavOpen(false);
+              handleLogout();
+            }}
+          >
+            Logout
+          </Button>
         ) : (
-          <Button primary onClick={() => { setMobileNavOpen(false); router.push("/auth"); }}>
+          <Button
+            primary
+            onClick={() => {
+              setMobileNavOpen(false);
+              router.push("/auth");
+            }}
+          >
             Login / Register
           </Button>
         )}
       </MobileMenu>
     </Navbar>
-
-
   );
 };
 

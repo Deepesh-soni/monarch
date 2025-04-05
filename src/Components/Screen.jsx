@@ -29,7 +29,7 @@ const Wrapper = styled(FlexBox)`
 
 const Section = styled(FlexBox)`
   width: 100%;
-  column-gap: 1.25rem;
+  gap: 1.25rem;
   flex-direction: column;
 
   @media ${device.laptop} {
@@ -50,7 +50,7 @@ const LeftSection = styled(FlexBox)`
 `;
 
 const RightSection = styled(FlexBox)`
-  width: 40%;
+  width: 100%;
   flex-direction: column;
   background: #ffffff;
   border: 1px solid #ebf0f4;
@@ -58,6 +58,10 @@ const RightSection = styled(FlexBox)`
   padding: 1rem;
   border-radius: 0.4rem;
   min-height: 100%;
+
+  @media ${device.laptop} {
+    width: 40%;
+  }
 `;
 
 const Container = styled(FlexBox)`
@@ -83,6 +87,7 @@ const Card = styled(FlexBox)`
   background: #ffffff;
   border-radius: 12px;
   column-gap: 5px;
+  cursor: pointer;
 `;
 
 const Icon = styled(FlexBox)`
@@ -161,40 +166,39 @@ const HeadingContainer = styled(FlexBox)`
   width: 100%;
 `;
 
-
 const presetCustomScreens = [
   {
     details: {
       name: "Dividend Stocks",
-      description: "Market cap > 2500 AND Dividend Yield > 5 AND ROCE > 15"
+      description: "Market cap > 2500 AND Dividend Yield > 5 AND ROCE > 15",
     },
     query: {
       combinator: "and",
       rules: [
         { field: "mcap", operator: ">", value: 2500 },
         { field: "dividendYield", operator: ">", value: 5 },
-        { field: "roceTtm", operator: ">", value: 15 }
-      ]
-    }
+        { field: "roceTtm", operator: ">", value: 15 },
+      ],
+    },
   },
   {
     details: {
       name: "Growth Stocks",
-      description: "Market Cap > 5000 AND PEG Ratio < 1"
+      description: "Market Cap > 5000 AND PEG Ratio < 1",
     },
     query: {
       combinator: "and",
       rules: [
         { field: "mcap", operator: ">", value: 5000 },
-        { field: "pegRatio", operator: "<", value: 1 }
-      ]
-    }
+        { field: "pegRatio", operator: "<", value: 1 },
+      ],
+    },
   },
   {
     details: {
       name: "Steady Growth Champs",
       description:
-        "Market Cap > 5000 AND Dividend Yield > 3 AND ROCE > 15 AND Debt to equity < 1"
+        "Market Cap > 5000 AND Dividend Yield > 3 AND ROCE > 15 AND Debt to equity < 1",
     },
     query: {
       combinator: "and",
@@ -202,55 +206,52 @@ const presetCustomScreens = [
         { field: "mcap", operator: ">", value: 5000 },
         { field: "dividendYield", operator: ">", value: 3 },
         { field: "roceTtm", operator: ">", value: 15 },
-        { field: "debtToEquity", operator: "<", value: 1 }
-      ]
-    }
+        { field: "debtToEquity", operator: "<", value: 1 },
+      ],
+    },
   },
   {
     details: {
       name: "High-Growth Titans",
       description:
-        "Market Cap > 500 AND EBITDA growth 3Y > 20 AND ROE TTM > 10"
+        "Market Cap > 500 AND EBITDA growth 3Y > 20 AND ROE TTM > 10",
     },
     query: {
       combinator: "and",
       rules: [
         { field: "mcap", operator: ">", value: 500 },
         { field: "ebitdaGrowth", operator: ">", value: 20 },
-        { field: "roeTtm", operator: ">", value: 10 }
-      ]
-    }
+        { field: "roeTtm", operator: ">", value: 10 },
+      ],
+    },
   },
   {
     details: {
       name: "High Volume Stocks",
-      description: "Volume > 1M AND PEG Ratio < 1.5"
+      description: "Volume > 1M AND PEG Ratio < 1.5",
     },
     query: {
       combinator: "and",
       rules: [
         { field: "volume", operator: ">", value: 1000000 },
-        { field: "pegRatio", operator: "<", value: 1.5 }
-      ]
-    }
+        { field: "pegRatio", operator: "<", value: 1.5 },
+      ],
+    },
   },
   {
     details: {
       name: "Financially Fit Companies",
-      description:
-        "Interest Coverage Ratio > 2 AND Market Cap > 500"
+      description: "Interest Coverage Ratio > 2 AND Market Cap > 500",
     },
     query: {
       combinator: "and",
       rules: [
         { field: "interestCoverageRatios", operator: ">", value: 2 },
-        { field: "mcap", operator: ">", value: 500 }
-      ]
-    }
+        { field: "mcap", operator: ">", value: 500 },
+      ],
+    },
   },
 ];
-
-
 
 const Screen = () => {
   const [search, setSearch] = useState("");
@@ -259,18 +260,15 @@ const Screen = () => {
   const [myScreens, setMyScreens] = useState([]);
   const [isLoadingScreens, setIsLoadingScreens] = useState(false);
 
-
   const router = useRouter();
   const { doesSessionExist } = useSessionContext();
-
-
 
   useEffect(() => {
     if (doesSessionExist) {
       const fetchMyList = async () => {
         setIsLoadingScreens(true);
         try {
-          const response = await client.get('/screener');
+          const response = await client.get("/screener");
           if (response?.data) {
             setMyScreens(response?.data);
           }
@@ -280,8 +278,7 @@ const Screen = () => {
       };
       fetchMyList();
     }
-  }, [doesSessionExist])
-
+  }, [doesSessionExist]);
 
   useEffect(() => {
     const fetchStockData = async () => {
@@ -341,15 +338,22 @@ const Screen = () => {
                 Create your own custom screening criteria
               </Medium>
             </FlexBox>
-            {doesSessionExist && <Button type="primary" onClick={() => router.push('/screener/query')} icon={<IoMdAdd />}>New Screen</Button>}
-
-
+            {doesSessionExist && (
+              <Button
+                type="primary"
+                onClick={() => router.push("/screener/query")}
+                icon={<IoMdAdd />}
+              >
+                New Screen
+              </Button>
+            )}
           </HeadingContainer>
           <Section>
             <LeftSection>
-              {doesSessionExist && <Container column>
-                <Title>Your Custom Screens</Title>
-                <Subtitle>Screens created by you</Subtitle>
+              {doesSessionExist && (
+                <Container column>
+                  <Title>Your Custom Screens</Title>
+                  <Subtitle>Screens created by you</Subtitle>
                   {isLoadingScreens ? (
                     <CardGridContainer>
                       {[...Array(2)].map((_, index) => (
@@ -367,9 +371,16 @@ const Screen = () => {
                   ) : (
                     <CardGridContainer>
                       {myScreens?.map(screen => (
-                        <Card key={screen.screenerId} onClick={() => router.push(`/screener/query/${screen.fqn}`)} style={{ cursor: 'pointer' }}>
+                        <Card
+                          key={screen.screenerId}
+                          onClick={() =>
+                            router.push(`/screener/query/${screen.fqn}`)
+                          }
+                        >
                           <Icon>
-                            <H1 bold>{screen?.name?.charAt(0)?.toUpperCase() ?? 'S'}</H1>
+                            <H1 bold>
+                              {screen?.name?.charAt(0)?.toUpperCase() ?? "S"}
+                            </H1>
                           </Icon>
                           <FlexBox column columnGap="0.5px">
                             <FlexBox align="center" columnGap="0.75rem">
@@ -384,15 +395,19 @@ const Screen = () => {
                       ))}
                     </CardGridContainer>
                   )}
-              </Container>}
+                </Container>
+              )}
               <Container column>
                 <Title>Popular Stock Screens</Title>
                 <Subtitle>Screens that are mostly used by investors</Subtitle>
                 <CardGridContainer>
                   {presetCustomScreens?.map((screen, index) => (
-                    <Card key={index} onClick={() => handlePrebuilt(index)} style={{ cursor: 'pointer' }}>
+                    <Card key={index} onClick={() => handlePrebuilt(index)}>
                       <Icon>
-                        <H1 bold>{screen?.details?.name?.charAt(0)?.toUpperCase() ?? 'S'}</H1>
+                        <H1 bold>
+                          {screen?.details?.name?.charAt(0)?.toUpperCase() ??
+                            "S"}
+                        </H1>
                       </Icon>
                       <FlexBox column columnGap="0.5px">
                         <FlexBox align="center" columnGap="0.75rem">

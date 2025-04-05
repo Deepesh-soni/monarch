@@ -35,12 +35,25 @@ const Card = styled(FlexBox)`
   background: #ffffff;
   border: 1px solid #ebf0f4;
   box-shadow: 0px 3px 3px 0px #00000040;
-  padding: 0.5rem;
+  padding: 0.75rem;
   row-gap: 1rem;
   border-radius: 12px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+  }
+
   @media ${device.laptop} {
     flex-direction: row;
     column-gap: 1rem;
+
+    img {
+      width: 352px;
+      height: 236px;
+      border-radius: 6px;
+    }
   }
 `;
 
@@ -49,7 +62,7 @@ const Hr = styled.hr`
   border: 1px solid #ebf0f4;
 `;
 
-const HoverSmall = styled(Small)`
+const HoverSmall = styled(Medium)`
   transition: all 0.3s ease;
 
   &:hover {
@@ -208,9 +221,8 @@ const News = () => {
             </FlexBox>
           </Card>
           <Card>
-            <FlexBox>
-              <img src="/imagesecond.svg" alt="Market Insights" />
-            </FlexBox>
+            <img src="/imagesecond.svg" alt="Market Insights" />
+
             <FlexBox column rowGap="15px" padding="1rem">
               <Support color="#142C8E">Market Insights</Support>
               <H6 bold>
