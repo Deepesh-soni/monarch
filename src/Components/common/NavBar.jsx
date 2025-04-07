@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -8,8 +8,7 @@ import Session from "supertokens-auth-react/recipe/session";
 
 import FlexBox from "@common/UI/FlexBox";
 import SearchableDropdown from "./UI/Search/SearchDropdownCmp";
-import { HiMenu, HiX } from "react-icons/hi"; // hamburger + close
-import { useState } from "react";
+import { HiMenu, HiX } from "react-icons/hi";
 
 const Navbar = styled.nav`
   display: flex;
@@ -146,17 +145,66 @@ const DesktopRow = styled.div`
   }
 `;
 
+// Dropdown Styles
+const UserMenu = styled.div`
+  position: relative;
+`;
+
+const UserToggle = styled(Button)`
+  position: relative;
+`;
+
+const Dropdown = styled.div`
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 999;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const DropdownItem = styled.button`
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+`;
+
 const NavBar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { doesSessionExist } = useSessionContext();
+  const dropdownRef = useRef();
 
   const handleLogout = async () => {
     await Session.signOut();
     router.push("/auth");
   };
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = event => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <Navbar>
@@ -205,7 +253,22 @@ const NavBar = () => {
           ))}
 
           {doesSessionExist ? (
-            <Button onClick={handleLogout}>Logout</Button>
+            <UserMenu ref={dropdownRef}>
+              <UserToggle onClick={() => setUserMenuOpen(prev => !prev)}>
+                Account
+              </UserToggle>
+              {userMenuOpen && (
+                <Dropdown>
+                  <DropdownItem onClick={() => router.push("/profile")}>
+                    Profile
+                  </DropdownItem>
+                  <DropdownItem onClick={() => router.push("/change-password")}>
+                    Change Password
+                  </DropdownItem>
+                  <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+                </Dropdown>
+              )}
+            </UserMenu>
           ) : (
             <Button primary onClick={() => router.push("/auth")}>
               Login / Register
@@ -229,15 +292,34 @@ const NavBar = () => {
             {label}
           </NavLink>
         ))}
+
         {doesSessionExist ? (
-          <Button
-            onClick={() => {
-              setMobileNavOpen(false);
-              handleLogout();
-            }}
-          >
-            Logout
-          </Button>
+          <>
+            <Button
+              onClick={() => {
+                setMobileNavOpen(false);
+                router.push("/profile");
+              }}
+            >
+              Profile
+            </Button>
+            <Button
+              onClick={() => {
+                setMobileNavOpen(false);
+                router.push("/change-password");
+              }}
+            >
+              Change Password
+            </Button>
+            <Button
+              onClick={() => {
+                setMobileNavOpen(false);
+                handleLogout();
+              }}
+            >
+              Logout
+            </Button>
+          </>
         ) : (
           <Button
             primary

@@ -12,19 +12,46 @@ import { Button } from "../Components/common/UI/Buttons";
 import { IoFilterOutline } from "react-icons/io5";
 import CheckBox from "../Components/common/UI/CheckBox";
 
-const Wrapper = styled(FlexBox)`
+// const Wrapper = styled(FlexBox)`
+//   flex-direction: column;
+//   padding: 0 1rem;
+//   align-items: center;
+//   gap: 0.5rem;
+//   background-color: red;
+//   @media ${device.laptop} {
+//     flex-direction: column;
+//     justify-content: space-between;
+//     margin: auto;
+//     gap: 2.5rem;
+//     width: 86.67%;
+//     max-width: 75rem;
+//   }
+// `;
+
+const Wrapper = styled.div`
+  background: url("/assets/home/page-bg.png");
+  background-position: center;
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
   flex-direction: column;
-  padding: 0 1rem;
   align-items: center;
-  gap: 0.5rem;
+`;
+
+const Container = styled(FlexBox)`
+  flex-direction: column;
+  padding: 1rem;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
 
   @media ${device.laptop} {
-    flex-direction: column;
     justify-content: space-between;
     margin: auto;
     gap: 2.5rem;
     width: 86.67%;
     max-width: 75rem;
+    padding-bottom: 150px;
   }
 `;
 
@@ -160,91 +187,95 @@ const News = () => {
   return (
     <>
       <Wrapper>
-        <FlexBox
-          width="100%"
-          height="100%"
-          column
-          columnGap="1rem"
-          rowGap="1rem"
-        >
+        <Container>
           <FlexBox
-            align="center"
-            justify="space-between"
             width="100%"
-            padding="1rem 0"
+            height="100%"
+            column
+            columnGap="1rem"
+            rowGap="1rem"
           >
-            <FlexBox columnGap="16px">
+            <FlexBox
+              align="center"
+              justify="space-between"
+              width="100%"
+              padding="1rem 0"
+            >
+              {/* <FlexBox columnGap="16px">
               <HoverSmall bold>Popular</HoverSmall>
               <HoverSmall bold>My news</HoverSmall>
+            </FlexBox> */}
+              <FlexBox
+                border="1.5px solid #142C8E"
+                align="center"
+                padding="0.5rem 1rem"
+                columnGap="0.75rem"
+                borderRadius="0.4rem"
+                cursor="pointer"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <IoFilterOutline color="#142C8E" size={20} />
+                <Small color="#142C8E">Filter</Small>
+              </FlexBox>
             </FlexBox>
-            <FlexBox
-              border="1.5px solid #142C8E"
-              align="center"
-              padding="0.5rem 1rem"
-              columnGap="0.75rem"
-              borderRadius="0.4rem"
-              cursor="pointer"
-              onClick={() => setIsModalOpen(true)}
-            >
-              <IoFilterOutline color="#142C8E" size={20} />
-              <Small color="#142C8E">Filter</Small>
-            </FlexBox>
-          </FlexBox>
 
-          <Card>
-            <FlexBox>
+            <Card>
+              {/* <FlexBox>
               <img
                 src="/imagesecond.svg"
                 alt="Market Insights"
                 style={{ objectFit: "cover" }}
               />
-            </FlexBox>
-            <FlexBox column rowGap="15px" padding="1rem">
-              <Support color="#142C8E">Market Insights</Support>
-              <H6 bold>
-                Market Analysis: Tech Stocks Rally Amid Strong Earnings Reports
-              </H6>
-              <Medium>
-                Major technology companies exceeded quarterly expectations,
-                driving a significant upturn in market performance. Analysts
-                predict continued growth through Q4, citing innovation and
-                market demand as key factors.
-              </Medium>
-              <Hr />
-              <FlexBox width="100%" justify="space-between">
-                <FlexBox columnGap="4px" align="center">
-                  <CiClock2 color="#687792" />
-                  <Small color="#687792">2 hours ago</Small>
+            </FlexBox> */}
+              <FlexBox column rowGap="15px" padding="1rem">
+                <Support color="#142C8E">Market Insights</Support>
+                <H6 bold>
+                  Market Analysis: Tech Stocks Rally Amid Strong Earnings
+                  Reports
+                </H6>
+                <Medium>
+                  Major technology companies exceeded quarterly expectations,
+                  driving a significant upturn in market performance. Analysts
+                  predict continued growth through Q4, citing innovation and
+                  market demand as key factors.
+                </Medium>
+                <Hr />
+                <FlexBox width="100%" justify="space-between">
+                  <FlexBox columnGap="4px" align="center">
+                    <CiClock2 color="#687792" />
+                    <Small color="#687792">2 hours ago</Small>
+                  </FlexBox>
+                  <Small>Read More</Small>
                 </FlexBox>
-                <Small>Read More</Small>
               </FlexBox>
-            </FlexBox>
-          </Card>
-          <Card>
-            <img src="/imagesecond.svg" alt="Market Insights" />
+            </Card>
+            <Card>
+              {/* <img src="/imagesecond.svg" alt="Market Insights" /> */}
 
-            <FlexBox column rowGap="15px" padding="1rem">
-              <Support color="#142C8E">Market Insights</Support>
-              <H6 bold>
-                Market Analysis: Tech Stocks Rally Amid Strong Earnings Reports
-              </H6>
-              <Medium>
-                Major technology companies exceeded quarterly expectations,
-                driving a significant upturn in market performance. Analysts
-                predict continued growth through Q4, citing innovation and
-                market demand as key factors.
-              </Medium>
-              <Hr />
-              <FlexBox width="100%" justify="space-between">
-                <FlexBox columnGap="4px" align="center">
-                  <CiClock2 color="#687792" />
-                  <Small color="#687792">2 hours ago</Small>
+              <FlexBox column rowGap="15px" padding="1rem">
+                <Support color="#142C8E">Market Insights</Support>
+                <H6 bold>
+                  Market Analysis: Tech Stocks Rally Amid Strong Earnings
+                  Reports
+                </H6>
+                <Medium>
+                  Major technology companies exceeded quarterly expectations,
+                  driving a significant upturn in market performance. Analysts
+                  predict continued growth through Q4, citing innovation and
+                  market demand as key factors.
+                </Medium>
+                <Hr />
+                <FlexBox width="100%" justify="space-between">
+                  <FlexBox columnGap="4px" align="center">
+                    <CiClock2 color="#687792" />
+                    <Small color="#687792">2 hours ago</Small>
+                  </FlexBox>
+                  <Small>Read More</Small>
                 </FlexBox>
-                <Small>Read More</Small>
               </FlexBox>
-            </FlexBox>
-          </Card>
-        </FlexBox>
+            </Card>
+          </FlexBox>
+        </Container>
       </Wrapper>
       {isModalOpen && (
         <ModalOverlay onClick={() => setIsModalOpen(false)}>
