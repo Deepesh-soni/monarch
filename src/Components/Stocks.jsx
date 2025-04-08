@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import FlexBox from "@common/UI/FlexBox";
@@ -82,7 +82,7 @@ function StackedBarChart({ data }) {
 // Updated AddToWatchlistPopup with multi-select and looping over API calls.
 const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
   const [watchlists, setWatchlists] = useState([]);
-  const [selectedWatchlists, setSelectedWatchlists] = useState([]); // Now an array
+  const [selectedWatchlists, setSelectedWatchlists] = useState([]);
   const [loadingWatchlists, setLoadingWatchlists] = useState(false);
   const [adding, setAdding] = useState(false);
   const router = useRouter();
@@ -92,35 +92,51 @@ const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
       setLoadingWatchlists(true);
       client
         .get("/watchlist")
-        .then(res => setWatchlists(res.data || []))
+        .then(res => {
+          const lists = res.data || [];
+          setWatchlists(lists);
+
+          // Preselect watchlists that already contain this stock
+          const preselected = lists
+            .filter(w => Array.isArray(w.stocks) && w.stocks.includes(stockFqn))
+            .map(w => w.fqn);
+          setSelectedWatchlists(preselected);
+        })
         .catch(err => console.error("Failed to fetch watchlists", err))
         .finally(() => setLoadingWatchlists(false));
     }
-  }, [visible]);
+  }, [visible, stockFqn]);
 
   const handleAdd = async () => {
-    if (!selectedWatchlists.length) return;
     setAdding(true);
     try {
-      // Loop through each selected watchlist and update
-      for (const watchlistFqn of selectedWatchlists) {
-        const watchlist = watchlists.find(w => w.fqn === watchlistFqn);
-        let updatedStocks = Array.isArray(watchlist.stocks)
-          ? [...watchlist.stocks]
-          : [];
-        if (!updatedStocks.includes(stockFqn)) {
+      for (const w of watchlists) {
+        const alreadyHas = Array.isArray(w.stocks) && w.stocks.includes(stockFqn);
+        const shouldHave = selectedWatchlists.includes(w.fqn);
+
+        // No change needed
+        if (alreadyHas === shouldHave) continue;
+
+        let updatedStocks = Array.isArray(w.stocks) ? [...w.stocks] : [];
+
+        if (shouldHave && !alreadyHas) {
           updatedStocks.push(stockFqn);
+        } else if (!shouldHave && alreadyHas) {
+          updatedStocks = updatedStocks.filter(s => s !== stockFqn);
         }
+
         const payload = {
-          name: watchlist.name,
-          description: watchlist.description,
+          name: w.name,
+          description: w.description,
           stocks: updatedStocks,
         };
-        await client.put(`/watchlist/${watchlist.fqn}`, payload);
+
+        await client.put(`/watchlist/${w.fqn}`, payload);
       }
+
       onClose();
     } catch (error) {
-      console.error("Failed to add stock to watchlist", error);
+      console.error("Failed to update watchlist", error);
     } finally {
       setAdding(false);
     }
@@ -128,7 +144,7 @@ const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       onCancel={onClose}
       title="Add to Watchlist"
       footer={null}
@@ -138,33 +154,31 @@ const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
         style={{ width: "100%" }}
         placeholder="Select one or more watchlists"
         loading={loadingWatchlists}
+        value={selectedWatchlists}
         onChange={setSelectedWatchlists}
       >
-        {watchlists.map(watchlist => (
-          <Select.Option key={watchlist.fqn} value={watchlist.fqn}>
-            {watchlist.name}
+        {watchlists.map(w => (
+          <Select.Option key={w.fqn} value={w.fqn}>
+            {w.name}
           </Select.Option>
         ))}
       </Select>
+
       <div style={{ marginTop: 16, textAlign: "right" }}>
-        <Button onClick={handleAdd} loading={adding} type="primary">
-          Add
+        <Button type="link" onClick={() => router.push('/watch-list/')}>
+          Create New Watchlist
         </Button>
         <Button onClick={onClose} style={{ marginLeft: 8 }}>
           Cancel
         </Button>
-        <Button
-          type="link"
-          onClick={() => {
-            router.push('/watch-list/');
-          }}
-        >
-          Create New Watchlist
+        <Button onClick={handleAdd} loading={adding} type="primary"  style={{ marginLeft: 8 }}>
+          Save
         </Button>
       </div>
     </Modal>
   );
 };
+
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -442,17 +456,34 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
 };
 
 
-function formatValue(value, show = false){
+function formatValue(value, show = false) {
   return show ? `₹ ${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}` : `${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}`;
 }
 
+function CustomCashflowTooltip({ active, payload, label }) {
+  if (active && payload && payload.length) {
+    const dataMap = Object.fromEntries(payload.map(p => [p.dataKey, p.value]));
+
+    return (
+      <div style={{ background: "#fff", padding: "10px", border: "1px solid #ccc" }}>
+        <strong>Year: {label}</strong>
+        <div>Cash Flow from Investing: ₹ {dataMap.cfi?.toLocaleString("en-IN")}</div>
+        <div>Cash Flow from Financing: ₹ {dataMap.cff?.toLocaleString("en-IN")}</div>
+        <div>Cash Flow from Operating: ₹ {dataMap.cfo?.toLocaleString("en-IN")}</div>
+        <div>Cash Flow from Equivalents: ₹ {dataMap.netcashflow?.toLocaleString("en-IN")}</div>
+      </div>
+    );
+  }
+
+  return null;
+}
 
 function CashflowChart({ data }) {
   return (
     <ResponsiveContainer width="100%" height={400}>
-      <BarChart data={data}>
+      <BarChart data={[...data].sort((a, b) => a.year - b.year)}>
         <XAxis dataKey="year" />
-        <Tooltip />
+        <Tooltip content={<CustomCashflowTooltip />} />
         <Bar dataKey="cfo" stackId="a" fill={blue[2]} />
         <Bar dataKey="cfi" stackId="a" fill={blue[4]} />
         <Bar dataKey="cff" stackId="a" fill={blue[6]} />
@@ -461,6 +492,7 @@ function CashflowChart({ data }) {
     </ResponsiveContainer>
   );
 }
+
 
 const Stock = () => {
   const router = useRouter();
@@ -474,49 +506,49 @@ const Stock = () => {
   const isLoggedIn = doesSessionExist;
   const [showWatchlistPopup, setShowWatchlistPopup] = useState(false);
   const [cashflowChartData, setCashflowChartData] = useState(null);
+  const [balanceSheetChartData, setBalanceSheetChartData] = useState(null);
+  const [pnlChartData, setPnlChartData] = useState(null);
 
 
-  const financialData = stock
-    ? {
-      "Profit & Loss": [
-        { metric: "Book Value", values: [stock.bookvalue, stock.bookvalue, stock.bookvalue] },
-        { metric: "EPS", values: [stock.eps, stock.eps, stock.eps] },
-        { metric: "Net Profit", values: [stock.netprofit, stock.netprofit, stock.netprofit] },
-        { metric: "Operating Profit", values: [stock.opm, stock.opm, stock.opm] },
-        { metric: "Revenue", values: [stock.revenue, stock.revenue, stock.revenue] },
-      ],
-      "Balance Sheet": [
-        { metric: "Cash & Equivalents", values: [stock.cash_op, stock.cash_investing, stock.cash_financing] },
-        { metric: "Debt", values: [stock.debtToEquity, stock.debtToEquity, stock.debtToEquity] },
-        { metric: "Net Worth", values: [stock.networth, stock.networth, stock.networth] },
-        { metric: "Total Assets", values: [stock.totalassets, stock.totalassets, stock.totalassets] },
-        { metric: "Total Liabilities", values: [stock.totalliabilities, stock.totalliabilities, stock.totalliabilities] },
-      ],
+  const financialData = useMemo(() => {
+    return {
+      "Profit & Loss": pnlChartData
+        ? [
+          { metric: "Book Value", values: pnlChartData.map(d => d.bookvalue), years: pnlChartData.map(d => d.year) },
+          { metric: "EPS", values: pnlChartData.map(d => d.eps), years: pnlChartData.map(d => d.year) },
+          { metric: "Net Profit", values: pnlChartData.map(d => d.netprofit), years: pnlChartData.map(d => d.year) },
+          { metric: "Operating Profit", values: pnlChartData.map(d => d.opprofit), years: pnlChartData.map(d => d.year) },
+          { metric: "Revenue", values: pnlChartData.map(d => d.revenue), years: pnlChartData.map(d => d.year) },
+        ]
+        : [],
+      "Balance Sheet": balanceSheetChartData
+        ? [
+          { metric: "Cash & Equivalents", values: balanceSheetChartData.map(d => d.cashEq), years: balanceSheetChartData.map(d => d.year) },
+          { metric: "Debt", values: balanceSheetChartData.map(d => d.debt), years: balanceSheetChartData.map(d => d.year) },
+          { metric: "Net Worth", values: balanceSheetChartData.map(d => d.networth), years: balanceSheetChartData.map(d => d.year) },
+          { metric: "Total Assets", values: balanceSheetChartData.map(d => d.totalAssets), years: balanceSheetChartData.map(d => d.year) },
+          { metric: "Total Liabilities", values: balanceSheetChartData.map(d => d.totalLiabilities), years: balanceSheetChartData.map(d => d.year) },
+        ]
+        : [],
     }
-    : {};
+  }
+    , [balanceSheetChartData, pnlChartData]);
+
 
   useEffect(() => {
     if (!fqn) return;
-    // Reset state before fetching new data
     setLoading(true);
     setError(null);
     setStock(null);
     setPeers(null);
     setStockHoldingChart(null);
+    setCashflowChartData(null);
 
     const fetchStockDetails = async () => {
       try {
-        const [stockRes, peersRes, chartRes, cashflowRes] = await Promise.all([
-          client.get(`/stock/details/${fqn}`),
-          client.get(`/stock/peers/${fqn}`),
-          client.get(`/stock/chart/shareholding/${fqn}`),
-          client.get(`/stock/chart/cashflow/${fqn}`),
-        ]);
-        setStock(stockRes.data);
-        setPeers(peersRes.data);
-        setStockHoldingChart(chartRes.data);
-        setCashflowChartData(cashflowRes.data?.chartData || []);
-      } catch (err) {
+        const res = await client.get(`/stock/details/${fqn}`);
+        setStock(res.data);
+      } catch {
         setError("Failed to fetch stock details.");
       } finally {
         setLoading(false);
@@ -524,7 +556,23 @@ const Stock = () => {
     };
 
     fetchStockDetails();
+
+    client.get(`/stock/peers/${fqn}`).then(res => setPeers(res.data)).catch(() => setPeers(null));
+    client.get(`/stock/chart/shareholding/${fqn}`).then(res => setStockHoldingChart(res.data)).catch(() => setStockHoldingChart(null));
+    client.get(`/stock/chart/cashflow/${fqn}`).then(res => {
+      const sorted = [...res.data.chartData].sort((a, b) => a.year - b.year);
+      setCashflowChartData(sorted);
+    }).catch(() => setCashflowChartData(null));
+
+    client.get(`/stock/chart/balancesheet/${fqn}`).then(res => {
+      setBalanceSheetChartData(res.data.chartData.sort((a, b) => a.year - b.year));
+    }).catch(() => setBalanceSheetChartData(null));
+
+    client.get(`/stock/chart/pnl/${fqn}`).then(res => {
+      setPnlChartData(res.data.chartData.sort((a, b) => a.year - b.year));
+    }).catch(() => setPnlChartData(null));
   }, [fqn]);
+
 
   const handleCompareClick = () => {
     if (stock && peers) {
@@ -688,35 +736,50 @@ const Stock = () => {
       <FlexBox column width="100%" id="fundamentals">
         <H1 bold>Financial Fundamentals</H1>
         <TableContainer>
-          {Object.entries(financialData).map(([section, data]) => (
-            <div key={section} style={{ width: "48%" }}>
-              <Body1 bold>{section}</Body1>
-              <Table>
-                <StyledTable>
-                  <thead>
-                    <tr>
-                      <TableHeader>Evaluation Metrics</TableHeader>
-                      <TableHeader>Mar 2022</TableHeader>
-                      <TableHeader>Mar 2023</TableHeader>
-                      <TableHeader>Mar 2024</TableHeader>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.map(row => (
-                      <TableRow key={row.metric}>
-                        <TableCell>{row.metric}</TableCell>
-                        {row.values.map((value, index) => (
-                          <TableCell key={index}>
-                            {value !== undefined ? value?.toFixed(2) : "N/A"}
-                          </TableCell>
+          {Object.entries(financialData).map(([section, data]) => {
+            // Extract last 3 years from data
+            const years = data[0]?.values?.length
+              ? data[0].years.slice(-3)
+              : [];
+
+            return (
+              <div key={section} style={{ width: "48%" }}>
+                <Body1 bold>{section}</Body1>
+
+                {!data.length || !years.length ? (
+                  <Body1>{section} data unavailable right now.</Body1>
+                ) : (
+                  <Table>
+                    <StyledTable>
+                      <thead>
+                        <tr>
+                          <TableHeader>Evaluation Metrics</TableHeader>
+                          {years.map(year => (
+                            <TableHeader key={year}>{year}</TableHeader>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.map(row => (
+                          <TableRow key={row.metric}>
+                            <TableCell>{row.metric}</TableCell>
+                            {row.values.slice(-3).map((value, index) => (
+                              <TableCell key={index}>
+                                {value !== undefined ? formatValue(value) : "N/A"}
+                              </TableCell>
+                            ))}
+                          </TableRow>
                         ))}
-                      </TableRow>
-                    ))}
-                  </tbody>
-                </StyledTable>
-              </Table>
-            </div>
-          ))}
+                      </tbody>
+                    </StyledTable>
+                  </Table>
+                )}
+              </div>
+            );
+          })}
+
+
+
         </TableContainer>
       </FlexBox>
       <FlexBox width="100%" column id="cash">
