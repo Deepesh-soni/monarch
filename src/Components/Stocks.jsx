@@ -60,22 +60,24 @@ function formatYRC(yrc) {
 function StackedBarChart({ data }) {
   const chartData = prepareChartData(data);
   return (
-    <ResponsiveContainer width="100%" height={400}>
-      <BarChart data={chartData}>
-        <XAxis dataKey="YRC" />
-        <Tooltip formatter={(value, name) => [`${value.toFixed(2)}%`, _.startCase(name)]} />
-        {keys.map(key => (
-          <Bar key={key} dataKey={key} stackId="a" fill={keyColors[key]}>
-            <LabelList
-              dataKey={key}
-              position="center"
-              formatter={val => `${val.toFixed(2)}%`}
-              style={{ fill: "#fff", fontSize: 10 }}
-            />
-          </Bar>
-        ))}
-      </BarChart>
-    </ResponsiveContainer>
+    <div style={{ width: '100%', overflowX: 'auto' }}>
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart data={chartData}>
+          <XAxis dataKey="YRC" />
+          <Tooltip content={<CustomShareholdingTooltip />} />
+          {keys.map(key => (
+            <Bar key={key} dataKey={key} stackId="a" fill={keyColors[key]}>
+              <LabelList
+                dataKey={key}
+                position="center"
+                formatter={val => `${val.toFixed(2)}%`}
+                style={{ fill: "#fff", fontSize: 10 }}
+              />
+            </Bar>
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
 
@@ -171,7 +173,7 @@ const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
         <Button onClick={onClose} style={{ marginLeft: 8 }}>
           Cancel
         </Button>
-        <Button onClick={handleAdd} loading={adding} type="primary"  style={{ marginLeft: 8 }}>
+        <Button onClick={handleAdd} loading={adding} type="primary" style={{ marginLeft: 8 }}>
           Save
         </Button>
       </div>
@@ -389,6 +391,15 @@ const Row = styled.div`
   font-size: 14px;
 `;
 
+const ResponsiveTableWrapper = styled.div`
+  width: 100%;
+  overflow-x: auto;
+
+  @media ${device.laptop} {
+    overflow-x: unset;
+  }
+`;
+
 const slugify = text =>
   text
     .toString()
@@ -413,45 +424,47 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
   ];
 
   return (
-    <table
-      style={{
-        width: "100%",
-        marginTop: "1rem",
-        border: "1px solid black",
-        borderRadius: "8px",
-      }}
-    >
-      <thead>
-        <tr>
-          <th style={{ textAlign: "left", borderBottom: "2px solid #ccc", padding: "0.75rem" }}>
-            Metric
-          </th>
-          <th style={{ textAlign: "center", borderBottom: "2px solid #ccc", padding: "8px" }}>
-            <strong>{currentStock.companyName}</strong>
-          </th>
-          <th style={{ textAlign: "right", borderBottom: "2px solid #ccc", padding: "8px" }}>
-            <strong>
-              <a href={`/stocks/${peer.fqn}`}>{peer.companyName}</a>
-            </strong>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map(row => (
-          <tr key={row.label}>
-            <td style={{ textAlign: "left", padding: "8px", borderBottom: "1px solid #eee" }}>
-              {row.label}
-            </td>
-            <td style={{ textAlign: "center", padding: "8px", borderBottom: "1px solid #eee" }}>
-              {row.current !== undefined ? row.current : "N/A"}
-            </td>
-            <td style={{ textAlign: "right", padding: "8px", borderBottom: "1px solid #eee" }}>
-              {row.peer !== undefined ? row.peer : "N/A"}
-            </td>
+    <ResponsiveTableWrapper>
+      <table
+        style={{
+          width: "100%",
+          marginTop: "1rem",
+          border: "1px solid black",
+          borderRadius: "8px",
+        }}
+      >
+        <thead>
+          <tr>
+            <th style={{ textAlign: "left", borderBottom: "2px solid #ccc", padding: "0.75rem" }}>
+              Metric
+            </th>
+            <th style={{ textAlign: "center", borderBottom: "2px solid #ccc", padding: "8px" }}>
+              <strong>{currentStock.companyName}</strong>
+            </th>
+            <th style={{ textAlign: "right", borderBottom: "2px solid #ccc", padding: "8px" }}>
+              <strong>
+                <a href={`/stocks/${peer.fqn}`}>{peer.companyName}</a>
+              </strong>
+            </th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {rows.map(row => (
+            <tr key={row.label}>
+              <td style={{ textAlign: "left", padding: "8px", borderBottom: "1px solid #eee" }}>
+                {row.label}
+              </td>
+              <td style={{ textAlign: "center", padding: "8px", borderBottom: "1px solid #eee" }}>
+                {row.current !== undefined ? row.current : "N/A"}
+              </td>
+              <td style={{ textAlign: "right", padding: "8px", borderBottom: "1px solid #eee" }}>
+                {row.peer !== undefined ? row.peer : "N/A"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </ResponsiveTableWrapper>
   );
 };
 
@@ -459,7 +472,6 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
 function formatValue(value, show = false) {
   return show ? `₹ ${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}` : `${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}`;
 }
-
 function CustomCashflowTooltip({ active, payload, label }) {
   if (active && payload && payload.length) {
     const dataMap = Object.fromEntries(payload.map(p => [p.dataKey, p.value]));
@@ -467,10 +479,18 @@ function CustomCashflowTooltip({ active, payload, label }) {
     return (
       <div style={{ background: "#fff", padding: "10px", border: "1px solid #ccc" }}>
         <strong>Year: {label}</strong>
-        <div>Cash Flow from Investing: ₹ {dataMap.cfi?.toLocaleString("en-IN")}</div>
-        <div>Cash Flow from Financing: ₹ {dataMap.cff?.toLocaleString("en-IN")}</div>
-        <div>Cash Flow from Operating: ₹ {dataMap.cfo?.toLocaleString("en-IN")}</div>
-        <div>Cash Flow from Equivalents: ₹ {dataMap.netcashflow?.toLocaleString("en-IN")}</div>
+        <div>
+          <span style={{ color: payload[1]?.color }}>Cash Flow from Investing</span>: ₹ {dataMap.cfi?.toLocaleString("en-IN")}
+        </div>
+        <div>
+          <span style={{ color: payload[2]?.color }}>Cash Flow from Financing</span>: ₹ {dataMap.cff?.toLocaleString("en-IN")}
+        </div>
+        <div>
+          <span style={{ color: payload[0]?.color }}>Cash Flow from Operating</span>: ₹ {dataMap.cfo?.toLocaleString("en-IN")}
+        </div>
+        <div>
+          <span style={{ color: payload[3]?.color }}>Cash Flow from Equivalents</span>: ₹ {dataMap.netcashflow?.toLocaleString("en-IN")}
+        </div>
       </div>
     );
   }
@@ -478,20 +498,40 @@ function CustomCashflowTooltip({ active, payload, label }) {
   return null;
 }
 
+
 function CashflowChart({ data }) {
   return (
-    <ResponsiveContainer width="100%" height={400}>
-      <BarChart data={[...data].sort((a, b) => a.year - b.year)}>
-        <XAxis dataKey="year" />
-        <Tooltip content={<CustomCashflowTooltip />} />
-        <Bar dataKey="cfo" stackId="a" fill={blue[2]} />
-        <Bar dataKey="cfi" stackId="a" fill={blue[4]} />
-        <Bar dataKey="cff" stackId="a" fill={blue[6]} />
-        <Bar dataKey="netcashflow" stackId="a" fill={blue[8]} />
-      </BarChart>
-    </ResponsiveContainer>
+    <div style={{ width: '100%', overflowX: 'auto' }}>
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart data={[...data].sort((a, b) => a.year - b.year)}>
+          <XAxis dataKey="year" />
+          <Tooltip content={<CustomCashflowTooltip />} />
+          <Bar dataKey="cfo" stackId="a" fill={blue[2]} />
+          <Bar dataKey="cfi" stackId="a" fill={blue[4]} />
+          <Bar dataKey="cff" stackId="a" fill={blue[6]} />
+          <Bar dataKey="netcashflow" stackId="a" fill={blue[8]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
+
+function CustomShareholdingTooltip({ active, payload, label }) {
+  if (active && payload && payload.length) {
+    return (
+      <div style={{ background: "#fff", padding: "10px", border: "1px solid #ccc" }}>
+        <strong>Year: {label}</strong>
+        {payload.map(entry => (
+          <div key={entry.name} style={{ color: entry.color }}>
+            {_.startCase(entry.name)}: {entry.value?.toFixed(2)}%
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+}
+
 
 
 const Stock = () => {
@@ -747,32 +787,34 @@ const Stock = () => {
                 <Body1 bold>{section}</Body1>
 
                 {!data.length || !years.length ? (
-                  <Body1>{section} data unavailable right now.</Body1>
+                  <Body1><br />data unavailable right now.</Body1>
                 ) : (
-                  <Table>
-                    <StyledTable>
-                      <thead>
-                        <tr>
-                          <TableHeader>Evaluation Metrics</TableHeader>
-                          {years.map(year => (
-                            <TableHeader key={year}>{year}</TableHeader>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {data.map(row => (
-                          <TableRow key={row.metric}>
-                            <TableCell>{row.metric}</TableCell>
-                            {row.values.slice(-3).map((value, index) => (
-                              <TableCell key={index}>
-                                {value !== undefined ? formatValue(value) : "N/A"}
-                              </TableCell>
+                  <ResponsiveTableWrapper>
+                    <Table>
+                      <StyledTable>
+                        <thead>
+                          <tr>
+                            <TableHeader>Evaluation Metrics</TableHeader>
+                            {years.map(year => (
+                              <TableHeader key={year}>{year}</TableHeader>
                             ))}
-                          </TableRow>
-                        ))}
-                      </tbody>
-                    </StyledTable>
-                  </Table>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {data.map(row => (
+                            <TableRow key={row.metric}>
+                              <TableCell>{row.metric}</TableCell>
+                              {row.values.slice(-3).map((value, index) => (
+                                <TableCell key={index}>
+                                  {value !== undefined ? formatValue(value) : "N/A"}
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                          ))}
+                        </tbody>
+                      </StyledTable>
+                    </Table>
+                  </ResponsiveTableWrapper>
                 )}
               </div>
             );
@@ -782,7 +824,7 @@ const Stock = () => {
 
         </TableContainer>
       </FlexBox>
-      <FlexBox width="100%" column id="cash">
+      {cashflowChartData && cashflowChartData?.length > 0 && <FlexBox width="100%" column id="cash">
         <H1 bold>Cash Counter</H1>
         <CashContainer>
           <Support bold>Cash Flow from Investing</Support>
@@ -790,9 +832,8 @@ const Stock = () => {
           <Support bold>Cash Flow from Operating</Support>
           <Support bold>Cash Flow from Equivalents</Support>
         </CashContainer>
-        {cashflowChartData && <CashflowChart data={cashflowChartData} />}
-
-      </FlexBox>
+        <CashflowChart data={cashflowChartData} />
+      </FlexBox>}
       <FlexBox width="100%" column id="peers" rowGap="2rem">
         <FlexBox column>
           <H1 bold>Peer Comparison</H1>
