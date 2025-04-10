@@ -588,3 +588,27 @@ a {
 .ruleGroup-addRule{
   width: 125px !important;
 }
+
+@media screen and (max-width: 768px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead tr {
+    display: none;
+  }
+
+  td {
+    padding-left: 50%;
+    position: relative;
+  }
+
+  td::before {
+    position: absolute;
+    left: 0;
+    width: 50%;
+    white-space: nowrap;
+    padding-left: 10px;
+    font-weight: bold;
+  }
+}

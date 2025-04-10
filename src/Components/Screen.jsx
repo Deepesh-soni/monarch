@@ -10,7 +10,7 @@ import { Medium } from "../Components/common/Paragraph";
 import { client } from "@axiosClient";
 import { useRouter } from "next/router";
 import { encode } from "js-base64";
-import { Button, Skeleton } from "antd";
+import { Button, Skeleton, Tooltip } from "antd";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 
 const Wrapper = styled(FlexBox)`
@@ -57,12 +57,37 @@ const RightSection = styled(FlexBox)`
   box-shadow: 0px 3px 3px 0px #00000040;
   padding: 1rem;
   border-radius: 0.4rem;
-  min-height: 100%;
+  max-height: 80vh; // ✅ prevents full-screen overflow
+  overflow: hidden;
 
   @media ${device.laptop} {
     width: 40%;
   }
 `;
+
+const ScrollableListWrapper = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 1rem;
+  min-height: 0; // ✅ ensures proper flex behavior
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+`;
+
+
 
 const Container = styled(FlexBox)`
   background: #ffffff;
@@ -74,30 +99,56 @@ const Container = styled(FlexBox)`
 
 const CardGridContainer = styled.div`
   display: grid;
-  grid-template-rows: repeat(1, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 1rem;
+
   @media ${device.laptop} {
     grid-template-columns: repeat(2, 1fr);
   }
 `;
 
+
 const Card = styled(FlexBox)`
-  padding: 0.5rem;
+  padding: 0.75rem;
   border: 1px solid #ebf0f4;
   background: #ffffff;
   border-radius: 12px;
-  column-gap: 5px;
+  column-gap: 0.75rem;
   cursor: pointer;
+  overflow: hidden;
+  align-items: center;
+  min-width: 0;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.05);
 `;
 
+const CardTitle = styled(Body1)`
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1rem;
+`;
+
+const CardDescription = styled(Support)`
+  color: #687792;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.75rem;
+  font-weight: 400;
+`;
+
+
 const Icon = styled(FlexBox)`
-  width: 45px;
-  height: 45px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   background: #142c8e1a;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 `;
+
 
 const Title = styled.h2`
   font-size: 1.2rem;
@@ -141,8 +192,6 @@ const List = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 300px;
-  overflow-y: auto;
 `;
 
 const ListItem = styled.li`
@@ -170,7 +219,7 @@ const presetCustomScreens = [
   {
     details: {
       name: "Dividend Stocks",
-      description: "Market cap > 2500 AND Dividend Yield > 5 AND ROCE > 15",
+      description: "Mkt. Cap >2500 & Div Yld >5 & ROCE >15",
     },
     query: {
       combinator: "and",
@@ -184,7 +233,7 @@ const presetCustomScreens = [
   {
     details: {
       name: "Growth Stocks",
-      description: "Market Cap > 5000 AND PEG Ratio < 1",
+      description: "Mkt. Cap >5000 & PEG Ratio <1",
     },
     query: {
       combinator: "and",
@@ -198,7 +247,7 @@ const presetCustomScreens = [
     details: {
       name: "Steady Growth Champs",
       description:
-        "Market Cap > 5000 AND Dividend Yield > 3 AND ROCE > 15 AND Debt to equity < 1",
+        "Mkt. Cap >5000 & Div Yld >3 & ROCE > 15 & Debt/Equity <1",
     },
     query: {
       combinator: "and",
@@ -214,7 +263,7 @@ const presetCustomScreens = [
     details: {
       name: "High-Growth Titans",
       description:
-        "Market Cap > 500 AND EBITDA growth 3Y > 20 AND ROE TTM > 10",
+        "Mkt. Cap >500 & EBITDA growth >20 & ROE >10",
     },
     query: {
       combinator: "and",
@@ -228,7 +277,7 @@ const presetCustomScreens = [
   {
     details: {
       name: "High Volume Stocks",
-      description: "Volume > 1M AND PEG Ratio < 1.5",
+      description: "Volume > 1M & PEG Ratio < 1.5",
     },
     query: {
       combinator: "and",
@@ -241,7 +290,7 @@ const presetCustomScreens = [
   {
     details: {
       name: "Financially Fit Companies",
-      description: "Interest Coverage Ratio > 2 AND Market Cap > 500",
+      description: "Int. Covrg Ratio > 2 & Mkt. Cap >500",
     },
     query: {
       combinator: "and",
@@ -259,6 +308,14 @@ const Screen = () => {
   const [sectorData, setSectorData] = useState([]);
   const [myScreens, setMyScreens] = useState([]);
   const [isLoadingScreens, setIsLoadingScreens] = useState(false);
+  const ITEMS_PER_PAGE = 8;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(myScreens.length / ITEMS_PER_PAGE);
+  const paginatedScreens = myScreens.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const router = useRouter();
   const { doesSessionExist } = useSessionContext();
@@ -271,6 +328,7 @@ const Screen = () => {
           const response = await client.get("/screener");
           if (response?.data) {
             setMyScreens(response?.data);
+            setCurrentPage(1);
           }
         } finally {
           setIsLoadingScreens(false);
@@ -370,30 +428,45 @@ const Screen = () => {
                     </CardGridContainer>
                   ) : (
                     <CardGridContainer>
-                      {myScreens?.map(screen => (
-                        <Card
-                          key={screen.screenerId}
-                          onClick={() =>
-                            router.push(`/screener/query/${screen.fqn}`)
-                          }
-                        >
-                          <Icon>
-                            <H1 bold>
-                              {screen?.name?.charAt(0)?.toUpperCase() ?? "S"}
-                            </H1>
-                          </Icon>
-                          <FlexBox column columnGap="0.5px">
-                            <FlexBox align="center" columnGap="0.75rem">
-                              <Body1>{screen.name}</Body1>
-                              <SlArrowRight size={12} />
+                      {paginatedScreens?.map(screen => (
+                        <Tooltip key={screen.screenerId} title={<><strong>{screen.name}</strong><br />{screen.description}</>}>
+                          <Card
+                            key={screen.screenerId}
+                            onClick={() => router.push(`/screener/query/${screen.fqn}`)}
+                          >
+                            <Icon>
+                              <H1 bold>{screen?.name?.charAt(0)?.toUpperCase() ?? "S"}</H1>
+                            </Icon>
+                            <FlexBox column style={{ overflow: "hidden" }}>
+                              <FlexBox align="center" columnGap="0.5rem">
+                                <CardTitle>{screen.name}</CardTitle>
+                                <SlArrowRight size={12} />
+                              </FlexBox>
+                              <CardDescription>{screen.description}</CardDescription>
                             </FlexBox>
-                            <Support color="#687792">
-                              {screen.description}
-                            </Support>
-                          </FlexBox>
-                        </Card>
+                          </Card>
+                        </Tooltip>
                       ))}
                     </CardGridContainer>
+                  )}
+                  {totalPages > 1 && (
+                    <FlexBox justify="center" columnGap="0.5rem" style={{ marginTop: "1rem" }}>
+                      <Button
+                        size="small"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(p => p - 1)}
+                      >
+                        Prev
+                      </Button>
+                      <Body1>{currentPage} / {totalPages}</Body1>
+                      <Button
+                        size="small"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage(p => p + 1)}
+                      >
+                        Next
+                      </Button>
+                    </FlexBox>
                   )}
                 </Container>
               )}
@@ -438,16 +511,18 @@ const Screen = () => {
               {loading ? (
                 <p>Loading...</p>
               ) : (
-                <List className="custom-scrollbar">
-                  {filteredSectors.map(sector => (
-                    <ListItem
-                      key={sector?.sectorcode}
-                      onClick={() => handleSectorClick(sector?.sectorname)}
-                    >
-                      {sector?.sectorname} <SlArrowRight />
-                    </ListItem>
-                  ))}
-                </List>
+                <ScrollableListWrapper>
+                  <List className="custom-scrollbar">
+                    {filteredSectors.map(sector => (
+                      <ListItem
+                        key={sector?.sectorcode}
+                        onClick={() => handleSectorClick(sector?.sectorname)}
+                      >
+                        {sector?.sectorname} <SlArrowRight />
+                      </ListItem>
+                    ))}
+                  </List>
+                </ScrollableListWrapper>
               )}
             </RightSection>
           </Section>
