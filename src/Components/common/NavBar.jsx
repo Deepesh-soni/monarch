@@ -259,10 +259,7 @@ const NavBar = () => {
               </UserToggle>
               {userMenuOpen && (
                 <Dropdown>
-                  <DropdownItem onClick={() => router.push("/profile")}>
-                    Profile
-                  </DropdownItem>
-                  <DropdownItem onClick={() => router.push("/change-password")}>
+                  <DropdownItem onClick={() => router.push("/changepassword")}>
                     Change Password
                   </DropdownItem>
                   <DropdownItem onClick={handleLogout}>Logout</DropdownItem>

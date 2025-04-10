@@ -91,7 +91,7 @@ const Home = () => {
 
   return (
     <Wrapper>
-      <Layout>
+      <Layout noBg>
         <Container>
           <FlexBox column align="center">
             <Heading>Discover & Analyze</Heading>

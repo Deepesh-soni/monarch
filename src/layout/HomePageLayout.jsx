@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 import Navbar from "@common/NavBar";
 import { Small } from "@Components/common/Typography";
@@ -8,6 +9,8 @@ const ChildrenWrapper = styled.div`
   width: 100%;
   height: 100%;
   min-height: 100vh;
+  background-color: ${({ noBg }) =>
+    noBg ? "transparent" : "rgba(20, 44, 142, 0.05)"};
 `;
 
 const CopyRightBox = styled.div`
@@ -19,14 +22,12 @@ const CopyRightBox = styled.div`
   align-items: center;
 `;
 
-const Layout = ({ children }) => (
+const Layout = ({ children, noBg = false }) => (
   <>
     <Navbar />
-    <ChildrenWrapper>{children}</ChildrenWrapper>
+    <ChildrenWrapper noBg={noBg}>{children}</ChildrenWrapper>
     <CopyRightBox>
-      <Small color="white">
-        Copyright © 2025 FinEase Pvt. Ltd. All rights reserved.
-      </Small>
+      <Small color="white">© 2025 FinEase Pvt. Ltd. All rights reserved.</Small>
     </CopyRightBox>
   </>
 );
