@@ -598,14 +598,30 @@ function formatValue(value, show = false) {
   return show ? `₹ ${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}` : `${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}`;
 }
 
+
 const cashFlowTabs = [
   { key: 'cfo', label: 'Cash Flow from Operating' },
   { key: 'cfi', label: 'Cash Flow from Investing' },
   { key: 'cff', label: 'Cash Flow from Financing' },
-  { key: 'netcashflow', label: 'Cash Flow from Equivalents' }
+  { key: 'netcashflow', label: 'Net Cash Flow' }
 ];
 
-function CashFlowSection({ data }) {
+function CustomCashflowTooltip({ active, payload, label }) {
+  if (active && payload && payload.length) {
+    const { name, value, payload: fullData } = payload[0];
+    return (
+      <div style={{ background: "#fff", padding: "10px", border: "1px solid #ccc" }}>
+        <strong>Year: {label}</strong>
+        <div style={{ marginTop: 4 }}>
+          {cashFlowTabs.find(tab => tab.key === name).label}: ₹ {value.toLocaleString("en-IN")}
+        </div>
+      </div>
+    );
+  }
+  return null;
+}
+
+export function CashFlowSection({ data }) {
   const [selectedKey, setSelectedKey] = useState('cfi');
 
   return (
@@ -630,14 +646,17 @@ function CashFlowSection({ data }) {
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={[...data].sort((a, b) => a.year - b.year)}>
           <XAxis dataKey="year" />
-          <Tooltip formatter={(val) => `₹ ${val.toLocaleString("en-IN")}`} />
+          <YAxis
+            tickFormatter={(val) => `₹ ${val.toLocaleString("en-IN")}`}
+            width={100}
+          />
+          <Tooltip content={<CustomCashflowTooltip />} />
           <Bar dataKey={selectedKey} fill={blue[5]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
   );
 }
-
 
 function CustomShareholdingTooltip({ active, payload, label }) {
   if (active && payload && payload.length) {
