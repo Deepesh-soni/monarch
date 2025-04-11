@@ -597,49 +597,47 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
 function formatValue(value, show = false) {
   return show ? `₹ ${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}` : `${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}`;
 }
-function CustomCashflowTooltip({ active, payload, label }) {
-  if (active && payload && payload.length) {
-    const dataMap = Object.fromEntries(payload.map(p => [p.dataKey, p.value]));
 
-    return (
-      <div style={{ background: "#fff", padding: "10px", border: "1px solid #ccc" }}>
-        <strong>Year: {label}</strong>
-        <div>
-          <span style={{ color: payload[1]?.color }}>Cash Flow from Investing</span>: ₹ {dataMap.cfi?.toLocaleString("en-IN")}
-        </div>
-        <div>
-          <span style={{ color: payload[2]?.color }}>Cash Flow from Financing</span>: ₹ {dataMap.cff?.toLocaleString("en-IN")}
-        </div>
-        <div>
-          <span style={{ color: payload[0]?.color }}>Cash Flow from Operating</span>: ₹ {dataMap.cfo?.toLocaleString("en-IN")}
-        </div>
-        <div>
-          <span style={{ color: payload[3]?.color }}>Cash Flow from Equivalents</span>: ₹ {dataMap.netcashflow?.toLocaleString("en-IN")}
-        </div>
-      </div>
-    );
-  }
+const cashFlowTabs = [
+  { key: 'cfo', label: 'Cash Flow from Operating' },
+  { key: 'cfi', label: 'Cash Flow from Investing' },
+  { key: 'cff', label: 'Cash Flow from Financing' },
+  { key: 'netcashflow', label: 'Cash Flow from Equivalents' }
+];
 
-  return null;
-}
+function CashFlowSection({ data }) {
+  const [selectedKey, setSelectedKey] = useState('cfi');
 
-
-function CashflowChart({ data }) {
   return (
-    <div style={{ width: '100%', overflowX: 'auto' }}>
+    <div>
+      <div style={{ display: 'flex', gap: '20px', marginBottom: '10px' }}>
+        {cashFlowTabs.map(tab => (
+          <div
+            key={tab.key}
+            onClick={() => setSelectedKey(tab.key)}
+            style={{
+              padding: '10px 20px',
+              cursor: 'pointer',
+              borderBottom: selectedKey === tab.key ? '2px solid black' : '2px solid transparent',
+              fontWeight: selectedKey === tab.key ? 'bold' : 'normal'
+            }}
+          >
+            {tab.label}
+          </div>
+        ))}
+      </div>
+
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={[...data].sort((a, b) => a.year - b.year)}>
           <XAxis dataKey="year" />
-          <Tooltip content={<CustomCashflowTooltip />} />
-          <Bar dataKey="cfo" stackId="a" fill={blue[2]} />
-          <Bar dataKey="cfi" stackId="a" fill={blue[4]} />
-          <Bar dataKey="cff" stackId="a" fill={blue[6]} />
-          <Bar dataKey="netcashflow" stackId="a" fill={blue[8]} />
+          <Tooltip formatter={(val) => `₹ ${val.toLocaleString("en-IN")}`} />
+          <Bar dataKey={selectedKey} fill={blue[5]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
   );
 }
+
 
 function CustomShareholdingTooltip({ active, payload, label }) {
   if (active && payload && payload.length) {
@@ -949,13 +947,7 @@ const Stock = () => {
       </FlexBox>
       {cashflowChartData && cashflowChartData?.length > 0 && <FlexBox width="100%" column id="cash">
         <H1 bold>Cash Counter</H1>
-        <CashContainer>
-          <Support bold>Cash Flow from Investing</Support>
-          <Support bold>Cash Flow from Financing</Support>
-          <Support bold>Cash Flow from Operating</Support>
-          <Support bold>Cash Flow from Equivalents</Support>
-        </CashContainer>
-        <CashflowChart data={cashflowChartData} />
+        <CashFlowSection data={cashflowChartData} />
       </FlexBox>}
       <FlexBox width="100%" column id="peers" rowGap="2rem">
         <FlexBox column>
