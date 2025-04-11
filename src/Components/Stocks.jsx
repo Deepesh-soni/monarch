@@ -622,11 +622,11 @@ function CustomCashflowTooltip({ active, payload, label }) {
 }
 
 export function CashFlowSection({ data }) {
-  const [selectedKey, setSelectedKey] = useState('cfi');
+  const [selectedKey, setSelectedKey] = useState('cfo');
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '10px' }}>
+      <div style={{ display: 'flex', gap: '20px', marginBottom: '10px' , justifyContent: 'center'}}>
         {cashFlowTabs.map(tab => (
           <div
             key={tab.key}
@@ -635,7 +635,7 @@ export function CashFlowSection({ data }) {
               padding: '10px 20px',
               cursor: 'pointer',
               borderBottom: selectedKey === tab.key ? '2px solid black' : '2px solid transparent',
-              fontWeight: selectedKey === tab.key ? 'bold' : 'normal'
+              fontWeight: selectedKey === tab.key ? 'bold' : 'normal',
             }}
           >
             {tab.label}
