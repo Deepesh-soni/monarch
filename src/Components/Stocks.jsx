@@ -103,13 +103,16 @@ const StockChart = ({ stockCode = "delhivery" }) => {
           <ComposedChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             <XAxis
               dataKey="date"
-              tickFormatter={(date) =>
-                new Date(date).toLocaleDateString("en-US", {
+              fontSize={10}
+              tickFormatter={(date) => {
+                const d = new Date(date);
+                const isShortTerm = ["1W", "1M", "3M"].includes(timeFrame);
+                return d.toLocaleDateString("en-US", {
                   month: "short",
-                  day: "numeric",
-                  year: "numeric"
-                })
-              }
+                  ...(isShortTerm && { day: "numeric" }),
+                  year: "2-digit"
+                }).replace(' ', "' ");
+              }}
             />
             <YAxis yAxisId="price" domain={['auto', 'auto']} />
             <YAxis
@@ -626,7 +629,7 @@ export function CashFlowSection({ data }) {
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '10px' , justifyContent: 'center'}}>
+      <div style={{ display: 'flex', gap: '20px', marginBottom: '10px', justifyContent: 'center' }}>
         {cashFlowTabs.map(tab => (
           <div
             key={tab.key}
