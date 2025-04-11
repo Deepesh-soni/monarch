@@ -112,7 +112,12 @@ const StockChart = ({ stockCode = "delhivery" }) => {
               }
             />
             <YAxis yAxisId="price" domain={['auto', 'auto']} />
-            <YAxis yAxisId="volume" orientation="right" domain={['auto', 'auto']} />
+            <YAxis
+              yAxisId="volume"
+              orientation="right"
+              domain={[0, (dataMax) => dataMax * 2]} // limit height
+              hide // hide the axis scale, purely visual
+            />
             <CartesianGrid strokeDasharray="3 3" />
             <Tooltip content={<CustomTooltip />} />
             <Area
@@ -127,7 +132,8 @@ const StockChart = ({ stockCode = "delhivery" }) => {
               yAxisId="volume"
               dataKey="volume"
               fill="#82ca9d"
-              barSize={8}
+              barSize={6}
+              opacity={0.5}
             />
           </ComposedChart>
         </ResponsiveContainer>
@@ -883,7 +889,7 @@ const Stock = () => {
         <BusinessSectionRight id="insights">
           <Body1 bold>APART Insights</Body1>
           <Body1>
-            <Unavailble/>
+            <Unavailble />
           </Body1>
         </BusinessSectionRight>
       </Section>
@@ -904,7 +910,7 @@ const Stock = () => {
                 <Body1 bold>{section}</Body1>
 
                 {!data.length || !years.length ? (
-                  <Body1><br /><Unavailble/></Body1>
+                  <Body1><br /><Unavailble /></Body1>
                 ) : (
                   <ResponsiveTableWrapper>
                     <Table>
@@ -964,7 +970,7 @@ const Stock = () => {
         {peers && peers.length > 0 ? (
           <PeerComparisonTable peer={peers[0]} currentStock={stock} />
         ) : (
-          <Body1><Unavailble/></Body1>
+          <Body1><Unavailble /></Body1>
         )}
       </FlexBox>
       <Section>
@@ -972,7 +978,7 @@ const Stock = () => {
           <H1 bold>Shareholding Analysis</H1>
           {stockHoldingChart ? (
             <StackedBarChart data={stockHoldingChart?.chartData} />
-          ) : <Unavailble/>}
+          ) : <Unavailble />}
         </ShareholdingLeft>
         <ShareholdingRight>
           <H1 bold>Valuation</H1>
