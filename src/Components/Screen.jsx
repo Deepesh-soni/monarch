@@ -414,7 +414,7 @@ const Screen = () => {
                   <Subtitle>Screens created by you</Subtitle>
                   {isLoadingScreens ? (
                     <CardGridContainer>
-                      {[...Array(2)].map((_, index) => (
+                      {[...Array(6)].map((_, index) => (
                         <Card key={index}>
                           <Skeleton.Avatar active shape="square" size="large" />
                           <Skeleton

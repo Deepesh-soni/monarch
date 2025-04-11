@@ -10,12 +10,131 @@ import { client } from "@axiosClient";
 import { BiLinkExternal } from "react-icons/bi";
 import { H5, H4 } from "../Components/common/Typography";
 import { Medium, Large } from "../Components/common/Paragraph";
-import { Modal, Select, Button, Spin } from "antd";
+import { Modal, Select, Button, Spin, Result } from "antd";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { blue } from "@ant-design/colors";
 import _ from "lodash";
 import { LabelList } from "recharts";
+import {
+  ComposedChart,
+  YAxis,
+  CartesianGrid,
+  Area
+} from "recharts";
+
+const TIME_FRAMES = ['1W', '1M', '3M', '6M', '1Y', '5Y', 'MAX'];
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    const dateStr = new Date(label).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    });
+    return (
+      <div style={{ backgroundColor: "#fff", padding: 10, border: "1px solid #ccc" }}>
+        <p>{`Date: ${dateStr}`}</p>
+        <p>{`Price: ${formatValue(payload[0]?.value, true)}`}</p>
+        {payload[1] && <p>{`Volume: ${payload[1]?.value}`}</p>}
+      </div>
+    );
+  }
+  return null;
+};
+
+const StockChart = ({ stockCode = "delhivery" }) => {
+  const [timeFrame, setTimeFrame] = useState("1Y");
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    setLoading(true);
+    setError("");
+    client.get(`/stock/chart/price/${stockCode}/${timeFrame}`)
+      .then(res => {
+        const formatted = res?.data?.data?.map(d => ({
+          ...d,
+          date: new Date(d.date),
+          volume: +d.volume,
+        }));
+        if (!formatted || formatted.length === 0) {
+          throw new Error("No data available");
+        }
+        setData(formatted);
+      })
+      .catch(err => {
+        console.error("Error fetching data:", err);
+        setError("Data is currently unavailable. Please try again later.");
+      })
+      .finally(() => setLoading(false));
+  }, [stockCode, timeFrame]);
+
+  return (
+    <div>
+      <div style={{ marginBottom: 16, textAlign: "center" }}>
+        {TIME_FRAMES.map(tf => (
+          <Button
+            key={tf}
+            type={timeFrame === tf ? "primary" : "default"}
+            onClick={() => setTimeFrame(tf)}
+            style={{ margin: "0 5px" }}
+          >
+            {tf}
+          </Button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div style={{ textAlign: "center", paddingTop: 100 }}>
+          <Spin size="large" />
+        </div>
+      ) : error ? (
+        <Alert
+          message="Error"
+          description={error}
+          type="error"
+          showIcon
+          style={{ maxWidth: 600, margin: "0 auto" }}
+        />
+      ) : (
+        <ResponsiveContainer width="100%" height={400}>
+          <ComposedChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <XAxis
+              dataKey="date"
+              tickFormatter={(date) =>
+                new Date(date).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric"
+                })
+              }
+            />
+            <YAxis yAxisId="price" domain={['auto', 'auto']} />
+            <YAxis yAxisId="volume" orientation="right" domain={['auto', 'auto']} />
+            <CartesianGrid strokeDasharray="3 3" />
+            <Tooltip content={<CustomTooltip />} />
+            <Area
+              yAxisId="price"
+              type="monotone"
+              dataKey="close"
+              stroke="#8884d8"
+              fill="#8884d8"
+              fillOpacity={0.2}
+            />
+            <Bar
+              yAxisId="volume"
+              dataKey="volume"
+              fill="#82ca9d"
+              barSize={8}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+      )}
+    </div>
+  );
+};
 
 const keys = [
   "Promoters",
@@ -532,6 +651,15 @@ function CustomShareholdingTooltip({ active, payload, label }) {
   return null;
 }
 
+function Unavailble() {
+  return (
+    <Result
+      status="warning"
+      title="Data Unavailable for this stock right now."
+    />
+  )
+}
+
 
 
 const Stock = () => {
@@ -755,24 +883,13 @@ const Stock = () => {
         <BusinessSectionRight id="insights">
           <Body1 bold>APART Insights</Body1>
           <Body1>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, quis optio minus sunt dignissimos hic laborum.
+            <Unavailble/>
           </Body1>
-          <Body1 bold>Strengths &amp; Moat:</Body1>
-          <FlexBox padding="0 0 0 1.5rem" width="100%">
-            <ul>
-              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-            </ul>
-          </FlexBox>
-          <Body1 bold>Risks &amp; Threats</Body1>
-          <FlexBox padding="0 0 0 1.5rem" width="100%">
-            <ul>
-              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-            </ul>
-          </FlexBox>
         </BusinessSectionRight>
       </Section>
+      <FlexBox column width="100%" id="pricechart" style={{ paddingTop: '1.5em' }}>
+        <StockChart stockCode={stock.fqn} />
+      </FlexBox>
       <FlexBox column width="100%" id="fundamentals">
         <H1 bold>Financial Fundamentals</H1>
         <TableContainer>
@@ -787,7 +904,7 @@ const Stock = () => {
                 <Body1 bold>{section}</Body1>
 
                 {!data.length || !years.length ? (
-                  <Body1><br />data unavailable right now.</Body1>
+                  <Body1><br /><Unavailble/></Body1>
                 ) : (
                   <ResponsiveTableWrapper>
                     <Table>
@@ -847,15 +964,15 @@ const Stock = () => {
         {peers && peers.length > 0 ? (
           <PeerComparisonTable peer={peers[0]} currentStock={stock} />
         ) : (
-          <Body1>No peer data available.</Body1>
+          <Body1><Unavailble/></Body1>
         )}
       </FlexBox>
       <Section>
         <ShareholdingLeft width="100%" column id="peers">
           <H1 bold>Shareholding Analysis</H1>
-          {stockHoldingChart && (
+          {stockHoldingChart ? (
             <StackedBarChart data={stockHoldingChart?.chartData} />
-          )}
+          ) : <Unavailble/>}
         </ShareholdingLeft>
         <ShareholdingRight>
           <H1 bold>Valuation</H1>
