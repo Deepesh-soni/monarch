@@ -27,6 +27,10 @@ const Navbar = styled.nav`
     align-items: center;
     justify-content: space-between;
   }
+
+  @media (max-width: 768px) {
+    width: 100vw;
+  }
 `;
 
 const MobileMenuToggle = styled.button`
@@ -259,7 +263,7 @@ const NavBar = () => {
               </UserToggle>
               {userMenuOpen && (
                 <Dropdown>
-                  <DropdownItem onClick={() => router.push("/changepassword")}>
+                  <DropdownItem onClick={() => router.push("/auth/changepassword")}>
                     Change Password
                   </DropdownItem>
                   <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
@@ -303,7 +307,7 @@ const NavBar = () => {
             <Button
               onClick={() => {
                 setMobileNavOpen(false);
-                router.push("/change-password");
+                router.push("/auth/changepassword");
               }}
             >
               Change Password

@@ -114,7 +114,11 @@ const StockChart = ({ stockCode = "delhivery" }) => {
                 }).replace(' ', "' ");
               }}
             />
-            <YAxis yAxisId="price" domain={['auto', 'auto']} />
+            <YAxis
+              yAxisId="price"
+              tickFormatter={(val) => `₹ ${val.toLocaleString("en-IN")}`}
+              width={100}
+            />
             <YAxis
               yAxisId="volume"
               orientation="right"

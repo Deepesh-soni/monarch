@@ -8,7 +8,7 @@ import { Display } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
 import SearchableDropdown from "@Components/common/UI/Search/SearchDropdownCmp";
 import { H6, H2 } from "../common/Typography";
-import { Medium, Small } from "../common/Paragraph";
+import { Medium } from "../common/Paragraph";
 import Layout from "@layout/HomePageLayout";
 import StockImage from "./StockImage";
 
@@ -45,6 +45,7 @@ const Heading = styled(Display)`
   font-size: 27px;
   line-height: 120%;
   letter-spacing: -2%;
+  text-align: center;
   padding: 0 1rem;
 
   @media ${device.tablet} {
@@ -53,7 +54,20 @@ const Heading = styled(Display)`
 
   @media ${device.laptop} {
     font-size: 91.31px;
-    text-align: center;
+  }
+`;
+
+// New inline container for the second line
+const InlineHeading = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* space between logo and text */
+  padding: 0 1rem;
+  text-align: center;
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
   }
 `;
 
@@ -67,25 +81,10 @@ const TextWrapper = styled(FlexBox)`
   }
 `;
 
-const Image = styled.img`
-  width: 100px;
-  height: 20px;
-
-  @media ${device.tablet} {
-    max-width: 80px;
-  }
-
-  @media ${device.laptop} {
-    width: 236px;
-    height: 126px;
-    max-width: unset;
-  }
-`;
-
 const Home = () => {
   const router = useRouter();
 
-  const handleSearchSelect = value => {
+  const handleSearchSelect = (value) => {
     router.push(`/stocks/${value.fqn}`);
   };
 
@@ -94,12 +93,13 @@ const Home = () => {
       <Layout noBg>
         <Container>
           <FlexBox column align="center">
-            <Heading>Discover & Analyze</Heading>
-            <FlexBox>
+            <Heading>Discover &amp; Analyze</Heading>
+            <InlineHeading>
               <StockImage />
-              <Heading>like never before</Heading>
-            </FlexBox>
+              <Heading style={{ margin: 0 }}>like never before</Heading>
+            </InlineHeading>
           </FlexBox>
+
           <TextWrapper>
             <H6 textAlign="center">
               Advanced stock screening, real-time analysis, and powerful tools
@@ -112,8 +112,7 @@ const Home = () => {
           <FlexBox column align="center">
             <H2 textAlign="center">Discover Trending Stocks</H2>
             <Medium color="#687792" textAlign="center">
-              Explore the most popular stocks that investors are watching right
-              now.
+              Explore the most popular stocks that investors are watching right now.
             </Medium>
           </FlexBox>
           <StocksGrid />
