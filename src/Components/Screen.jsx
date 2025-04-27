@@ -9,13 +9,13 @@ import { H5 } from "../Components/common/Typography";
 import { Medium } from "../Components/common/Paragraph";
 import { client } from "@axiosClient";
 import { useRouter } from "next/router";
-import { encode } from "js-base64";
+// import { encode } from "js-base64";
 import { Button, Skeleton, Tooltip } from "antd";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
-  padding: 0 1rem;
+  padding: 1rem;
   align-items: center;
   gap: 0.5rem;
 
@@ -388,7 +388,7 @@ const Screen = () => {
   return (
     <>
       <Wrapper>
-        <FlexBox width="100%" height="100%" column rowGap="1.5rem">
+        <FlexBox width="100%" height="100%" column rowGap="1.5rem" padding="1rem">
           <HeadingContainer>
             <FlexBox column>
               <H5 bold>Stock Screens</H5>
