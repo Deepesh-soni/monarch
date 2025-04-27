@@ -9,7 +9,7 @@ import { H5 } from "../Components/common/Typography";
 import { Medium } from "../Components/common/Paragraph";
 import { client } from "@axiosClient";
 import { useRouter } from "next/router";
-// import { encode } from "js-base64";
+import { encode } from "js-base64";
 import { Button, Skeleton, Tooltip } from "antd";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 
@@ -353,8 +353,14 @@ const Screen = () => {
     fetchStockData();
   }, []);
 
-  const filteredSectors = sectorData.filter(sector =>
-    sector?.sectorname?.toLowerCase().includes(search.toLowerCase())
+  const filteredSectors = sectorData
+  .filter(sector =>
+    sector?.sectorname
+      ?.toLowerCase()
+      .includes(search.toLowerCase())
+  )
+  .sort((a, b) =>
+    a.sectorname.localeCompare(b.sectorname)
   );
 
   const handleSectorClick = sectorName => {
