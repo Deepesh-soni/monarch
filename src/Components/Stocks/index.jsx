@@ -2,39 +2,42 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import FlexBox from "@common/UI/FlexBox";
-import { Body1, Support, H1 } from "@common/UI/Headings";
+import { Body1, H1 } from "@common/UI/Headings";
 import { device } from "@common/UI/Responsive";
 import { CiExport } from "react-icons/ci";
 import { FaArrowsRotate } from "react-icons/fa6";
 import { client } from "@axiosClient";
 import { BiLinkExternal } from "react-icons/bi";
-import { H5, H4 } from "../Components/common/Typography";
-import { Medium, Large } from "../Components/common/Paragraph";
-import { Modal, Select, Button, Spin, Result, Divider, Typography, List } from "antd";
+import { H5, H4 } from "../common/Typography";
+import { Medium, Large } from "../common/Paragraph";
+import { Modal, Select, Button, Spin, Result, Typography } from "antd";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { blue } from "@ant-design/colors";
 import _ from "lodash";
 import { LabelList } from "recharts";
-import {
-  ComposedChart,
-  YAxis,
-  CartesianGrid,
-  Area
-} from "recharts";
-const { Title, Paragraph } = Typography;
+import { ComposedChart, YAxis, CartesianGrid, Area } from "recharts";
+import InsightsSection from "./InsightsSection";
+import { Alert } from "antd";
+import AnnualReportsSection from "./AnnualReports";
 
-const TIME_FRAMES = ['1W', '1M', '3M', '6M', '1Y', '5Y', 'MAX'];
+const TIME_FRAMES = ["1W", "1M", "3M", "6M", "1Y", "5Y", "MAX"];
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     const dateStr = new Date(label).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
-      year: "numeric"
+      year: "numeric",
     });
     return (
-      <div style={{ backgroundColor: "#fff", padding: 10, border: "1px solid #ccc" }}>
+      <div
+        style={{
+          backgroundColor: "#fff",
+          padding: 10,
+          border: "1px solid #ccc",
+        }}
+      >
         <p>{`Date: ${dateStr}`}</p>
         <p>{`Price: ${formatValue(payload[0]?.value, true)}`}</p>
         {payload[1] && <p>{`Volume: ${payload[1]?.value}`}</p>}
@@ -53,7 +56,8 @@ const StockChart = ({ stockCode = "delhivery" }) => {
   useEffect(() => {
     setLoading(true);
     setError("");
-    client.get(`/stock/chart/price/${stockCode}/${timeFrame}`)
+    client
+      .get(`/stock/chart/price/${stockCode}/${timeFrame}`)
       .then(res => {
         const formatted = res?.data?.data?.map(d => ({
           ...d,
@@ -101,29 +105,34 @@ const StockChart = ({ stockCode = "delhivery" }) => {
         />
       ) : (
         <ResponsiveContainer width="100%" height={400}>
-          <ComposedChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <ComposedChart
+            data={data}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
             <XAxis
               dataKey="date"
               fontSize={10}
-              tickFormatter={(date) => {
+              tickFormatter={date => {
                 const d = new Date(date);
                 const isShortTerm = ["1W", "1M", "3M"].includes(timeFrame);
-                return d.toLocaleDateString("en-US", {
-                  month: "short",
-                  ...(isShortTerm && { day: "numeric" }),
-                  year: "2-digit"
-                }).replace(' ', "' ");
+                return d
+                  .toLocaleDateString("en-US", {
+                    month: "short",
+                    ...(isShortTerm && { day: "numeric" }),
+                    year: "2-digit",
+                  })
+                  .replace(" ", "' ");
               }}
             />
             <YAxis
               yAxisId="price"
-              tickFormatter={(val) => `₹ ${val.toLocaleString("en-IN")}`}
+              tickFormatter={val => `₹ ${val.toLocaleString("en-IN")}`}
               width={100}
             />
             <YAxis
               yAxisId="volume"
               orientation="right"
-              domain={[0, (dataMax) => dataMax * 2]} // limit height
+              domain={[0, dataMax => dataMax * 2]} // limit height
               hide // hide the axis scale, purely visual
             />
             <CartesianGrid strokeDasharray="3 3" />
@@ -193,7 +202,7 @@ function formatYRC(yrc) {
 function StackedBarChart({ data }) {
   const chartData = prepareChartData(data);
   return (
-    <div style={{ width: '100%', overflowX: 'auto' }}>
+    <div style={{ width: "100%", overflowX: "auto" }}>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={chartData}>
           <XAxis dataKey="YRC" />
@@ -246,7 +255,8 @@ const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
     setAdding(true);
     try {
       for (const w of watchlists) {
-        const alreadyHas = Array.isArray(w.stocks) && w.stocks.includes(stockFqn);
+        const alreadyHas =
+          Array.isArray(w.stocks) && w.stocks.includes(stockFqn);
         const shouldHave = selectedWatchlists.includes(w.fqn);
 
         // No change needed
@@ -300,20 +310,24 @@ const AddToWatchlistPopup = ({ visible, onClose, stockFqn }) => {
       </Select>
 
       <div style={{ marginTop: 16, textAlign: "right" }}>
-        <Button type="link" onClick={() => router.push('/watch-list/')}>
+        <Button type="link" onClick={() => router.push("/watch-list/")}>
           Create New Watchlist
         </Button>
         <Button onClick={onClose} style={{ marginLeft: 8 }}>
           Cancel
         </Button>
-        <Button onClick={handleAdd} loading={adding} type="primary" style={{ marginLeft: 8 }}>
+        <Button
+          onClick={handleAdd}
+          loading={adding}
+          type="primary"
+          style={{ marginLeft: 8 }}
+        >
           Save
         </Button>
       </div>
     </Modal>
   );
 };
-
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -331,9 +345,16 @@ const Hr = styled.hr`
 
 const NavLinks = styled(FlexBox)`
   width: 100%;
+  position: sticky;
+  top: 0;
+  border: 1px solid #3c3c3c;
+  border-radius: 12px;
+  padding: 1rem;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
+  background-color: white;
+  z-index: 10;
 `;
 
 const NavLink = styled.a`
@@ -360,14 +381,6 @@ const SecuritySection = styled(FlexBox)`
   padding: 1rem;
   flex-direction: column;
   background: #fff;
-`;
-
-const CashContainer = styled(FlexBox)`
-  width: 100%;
-  justify-content: space-between;
-  @media ${device.laptop} {
-    padding: 1rem 2rem;
-  }
 `;
 
 const GridContainer = styled.div`
@@ -404,20 +417,9 @@ const BusinessSectionLeft = styled(FlexBox)`
   padding: 0.5rem;
   flex-direction: column;
   gap: 1rem;
+  background-color: white;
   @media ${device.laptop} {
     width: 60%;
-  }
-`;
-
-const BusinessSectionRight = styled(FlexBox)`
-  border: 1px solid #3c3c3c;
-  width: 100%;
-  border-radius: 12px;
-  padding: 0.5rem;
-  flex-direction: column;
-  gap: 1rem;
-  @media ${device.laptop} {
-    width: 40%;
   }
 `;
 
@@ -542,9 +544,21 @@ const slugify = text =>
 
 const PeerComparisonTable = ({ peer, currentStock }) => {
   const rows = [
-    { label: "Price", peer: formatValue(peer.price, true), current: formatValue(currentStock.price, true) },
-    { label: "Market Cap", peer: `${formatValue(peer.mcap, true)} Cr.`, current: `${formatValue(currentStock.mcap, true)} Cr.` },
-    { label: "Volume", peer: formatValue(peer.volume), current: formatValue(currentStock.volume) },
+    {
+      label: "Price",
+      peer: formatValue(peer.price, true),
+      current: formatValue(currentStock.price, true),
+    },
+    {
+      label: "Market Cap",
+      peer: `${formatValue(peer.mcap, true)} Cr.`,
+      current: `${formatValue(currentStock.mcap, true)} Cr.`,
+    },
+    {
+      label: "Volume",
+      peer: formatValue(peer.volume),
+      current: formatValue(currentStock.volume),
+    },
     { label: "Change", peer: peer.change, current: currentStock.change },
     {
       label: "Dividend Yield",
@@ -568,13 +582,31 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
       >
         <thead>
           <tr>
-            <th style={{ textAlign: "left", borderBottom: "2px solid #ccc", padding: "0.75rem" }}>
+            <th
+              style={{
+                textAlign: "left",
+                borderBottom: "2px solid #ccc",
+                padding: "0.75rem",
+              }}
+            >
               Metric
             </th>
-            <th style={{ textAlign: "center", borderBottom: "2px solid #ccc", padding: "8px" }}>
+            <th
+              style={{
+                textAlign: "center",
+                borderBottom: "2px solid #ccc",
+                padding: "8px",
+              }}
+            >
               <strong>{currentStock.companyName}</strong>
             </th>
-            <th style={{ textAlign: "right", borderBottom: "2px solid #ccc", padding: "8px" }}>
+            <th
+              style={{
+                textAlign: "right",
+                borderBottom: "2px solid #ccc",
+                padding: "8px",
+              }}
+            >
               <strong>
                 <a href={`/stocks/${peer.fqn}`}>{peer.companyName}</a>
               </strong>
@@ -584,13 +616,31 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
         <tbody>
           {rows.map(row => (
             <tr key={row.label}>
-              <td style={{ textAlign: "left", padding: "8px", borderBottom: "1px solid #eee" }}>
+              <td
+                style={{
+                  textAlign: "left",
+                  padding: "8px",
+                  borderBottom: "1px solid #eee",
+                }}
+              >
                 {row.label}
               </td>
-              <td style={{ textAlign: "center", padding: "8px", borderBottom: "1px solid #eee" }}>
+              <td
+                style={{
+                  textAlign: "center",
+                  padding: "8px",
+                  borderBottom: "1px solid #eee",
+                }}
+              >
                 {row.current !== undefined ? row.current : "N/A"}
               </td>
-              <td style={{ textAlign: "right", padding: "8px", borderBottom: "1px solid #eee" }}>
+              <td
+                style={{
+                  textAlign: "right",
+                  padding: "8px",
+                  borderBottom: "1px solid #eee",
+                }}
+              >
                 {row.peer !== undefined ? row.peer : "N/A"}
               </td>
             </tr>
@@ -601,27 +651,34 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
   );
 };
 
-
 function formatValue(value, show = false) {
-  return show ? `₹ ${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}` : `${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}`;
+  return show
+    ? `₹ ${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}`
+    : `${new Intl.NumberFormat("en-IN").format(value?.toFixed(2))}`;
 }
 
-
 const cashFlowTabs = [
-  { key: 'cfo', label: 'Cash Flow from Operating' },
-  { key: 'cfi', label: 'Cash Flow from Investing' },
-  { key: 'cff', label: 'Cash Flow from Financing' },
-  { key: 'netcashflow', label: 'Net Cash Flow' }
+  { key: "cfo", label: "Cash Flow from Operating" },
+  { key: "cfi", label: "Cash Flow from Investing" },
+  { key: "cff", label: "Cash Flow from Financing" },
+  { key: "netcashflow", label: "Net Cash Flow" },
 ];
 
 function CustomCashflowTooltip({ active, payload, label }) {
   if (active && payload && payload.length) {
     const { name, value, payload: fullData } = payload[0];
     return (
-      <div style={{ background: "#fff", padding: "10px", border: "1px solid #ccc" }}>
+      <div
+        style={{
+          background: "#fff",
+          padding: "10px",
+          border: "1px solid #ccc",
+        }}
+      >
         <strong>Year: {label}</strong>
         <div style={{ marginTop: 4 }}>
-          {cashFlowTabs.find(tab => tab.key === name).label} (Cr.): ₹ {value.toLocaleString("en-IN")}
+          {cashFlowTabs.find(tab => tab.key === name).label} (Cr.): ₹{" "}
+          {value.toLocaleString("en-IN")}
         </div>
       </div>
     );
@@ -630,20 +687,30 @@ function CustomCashflowTooltip({ active, payload, label }) {
 }
 
 export function CashFlowSection({ data }) {
-  const [selectedKey, setSelectedKey] = useState('cfo');
+  const [selectedKey, setSelectedKey] = useState("cfo");
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '10px', justifyContent: 'center' }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "20px",
+          marginBottom: "10px",
+          justifyContent: "center",
+        }}
+      >
         {cashFlowTabs.map(tab => (
           <div
             key={tab.key}
             onClick={() => setSelectedKey(tab.key)}
             style={{
-              padding: '10px 20px',
-              cursor: 'pointer',
-              borderBottom: selectedKey === tab.key ? '2px solid black' : '2px solid transparent',
-              fontWeight: selectedKey === tab.key ? 'bold' : 'normal',
+              padding: "10px 20px",
+              cursor: "pointer",
+              borderBottom:
+                selectedKey === tab.key
+                  ? "2px solid black"
+                  : "2px solid transparent",
+              fontWeight: selectedKey === tab.key ? "bold" : "normal",
             }}
           >
             {tab.label}
@@ -655,7 +722,7 @@ export function CashFlowSection({ data }) {
         <BarChart data={[...data].sort((a, b) => a.year - b.year)}>
           <XAxis dataKey="year" />
           <YAxis
-            tickFormatter={(val) => `₹ ${val.toLocaleString("en-IN")}`}
+            tickFormatter={val => `₹ ${val.toLocaleString("en-IN")}`}
             width={100}
           />
           <Tooltip content={<CustomCashflowTooltip />} />
@@ -669,7 +736,13 @@ export function CashFlowSection({ data }) {
 function CustomShareholdingTooltip({ active, payload, label }) {
   if (active && payload && payload.length) {
     return (
-      <div style={{ background: "#fff", padding: "10px", border: "1px solid #ccc" }}>
+      <div
+        style={{
+          background: "#fff",
+          padding: "10px",
+          border: "1px solid #ccc",
+        }}
+      >
         <strong>Year: {label}</strong>
         {payload.map(entry => (
           <div key={entry.name} style={{ color: entry.color }}>
@@ -688,10 +761,8 @@ function Unavailble() {
       status="warning"
       title="Data Unavailable for this stock right now."
     />
-  )
+  );
 }
-
-
 
 const Stock = () => {
   const router = useRouter();
@@ -710,31 +781,68 @@ const Stock = () => {
   const [insightsData, setInsightsData] = useState(null);
   const [newsData, setNewsData] = useState(null); //ISKO KAR
 
-
   const financialData = useMemo(() => {
     return {
       "Profit & Loss": pnlChartData
         ? [
-          { metric: "Book Value (Cr.)", values: pnlChartData.map(d => d.bookvalue), years: pnlChartData.map(d => d.year) },
-          { metric: "EPS", values: pnlChartData.map(d => d.eps), years: pnlChartData.map(d => d.year) },
-          { metric: "Net Profit (Cr.)", values: pnlChartData.map(d => d.netprofit), years: pnlChartData.map(d => d.year) },
-          { metric: "Operating Profit (Cr.)", values: pnlChartData.map(d => d.opprofit), years: pnlChartData.map(d => d.year) },
-          { metric: "Revenue (Cr.)", values: pnlChartData.map(d => d.revenue), years: pnlChartData.map(d => d.year) },
-        ]
+            {
+              metric: "Book Value (Cr.)",
+              values: pnlChartData.map(d => d.bookvalue),
+              years: pnlChartData.map(d => d.year),
+            },
+            {
+              metric: "EPS",
+              values: pnlChartData.map(d => d.eps),
+              years: pnlChartData.map(d => d.year),
+            },
+            {
+              metric: "Net Profit (Cr.)",
+              values: pnlChartData.map(d => d.netprofit),
+              years: pnlChartData.map(d => d.year),
+            },
+            {
+              metric: "Operating Profit (Cr.)",
+              values: pnlChartData.map(d => d.opprofit),
+              years: pnlChartData.map(d => d.year),
+            },
+            {
+              metric: "Revenue (Cr.)",
+              values: pnlChartData.map(d => d.revenue),
+              years: pnlChartData.map(d => d.year),
+            },
+          ]
         : [],
       "Balance Sheet": balanceSheetChartData
         ? [
-          { metric: "Cash & Equivalents (Cr.)", values: balanceSheetChartData.map(d => d.cashEq), years: balanceSheetChartData.map(d => d.year) },
-          { metric: "Debt (Cr.)", values: balanceSheetChartData.map(d => d.debt), years: balanceSheetChartData.map(d => d.year) },
-          { metric: "Net Worth (Cr.)", values: balanceSheetChartData.map(d => d.networth), years: balanceSheetChartData.map(d => d.year) },
-          { metric: "Total Assets (Cr.)", values: balanceSheetChartData.map(d => d.totalAssets), years: balanceSheetChartData.map(d => d.year) },
-          { metric: "Total Liabilities (Cr.)", values: balanceSheetChartData.map(d => d.totalLiabilities), years: balanceSheetChartData.map(d => d.year) },
-        ]
+            {
+              metric: "Cash & Equivalents (Cr.)",
+              values: balanceSheetChartData.map(d => d.cashEq),
+              years: balanceSheetChartData.map(d => d.year),
+            },
+            {
+              metric: "Debt (Cr.)",
+              values: balanceSheetChartData.map(d => d.debt),
+              years: balanceSheetChartData.map(d => d.year),
+            },
+            {
+              metric: "Net Worth (Cr.)",
+              values: balanceSheetChartData.map(d => d.networth),
+              years: balanceSheetChartData.map(d => d.year),
+            },
+            {
+              metric: "Total Assets (Cr.)",
+              values: balanceSheetChartData.map(d => d.totalAssets),
+              years: balanceSheetChartData.map(d => d.year),
+            },
+            {
+              metric: "Total Liabilities (Cr.)",
+              values: balanceSheetChartData.map(d => d.totalLiabilities),
+              years: balanceSheetChartData.map(d => d.year),
+            },
+          ]
         : [],
-    }
-  }
-    , [balanceSheetChartData, pnlChartData]);
-
+    };
+  }, [balanceSheetChartData, pnlChartData]);
 
   useEffect(() => {
     if (!fqn) return;
@@ -760,32 +868,52 @@ const Stock = () => {
 
     fetchStockDetails();
 
-    client.get(`/stock/peers/${fqn}`).then(res => setPeers(res.data)).catch(() => setPeers(null));
-    client.get(`/stock/chart/shareholding/${fqn}`).then(res => setStockHoldingChart(res.data)).catch(() => setStockHoldingChart(null));
-    client.get(`/stock/chart/cashflow/${fqn}`).then(res => {
-      const sorted = [...res.data.chartData].sort((a, b) => a.year - b.year);
-      setCashflowChartData(sorted);
-    }).catch(() => setCashflowChartData(null));
+    client
+      .get(`/stock/peers/${fqn}`)
+      .then(res => setPeers(res.data))
+      .catch(() => setPeers(null));
+    client
+      .get(`/stock/chart/shareholding/${fqn}`)
+      .then(res => setStockHoldingChart(res.data))
+      .catch(() => setStockHoldingChart(null));
+    client
+      .get(`/stock/chart/cashflow/${fqn}`)
+      .then(res => {
+        const sorted = [...res.data.chartData].sort((a, b) => a.year - b.year);
+        setCashflowChartData(sorted);
+      })
+      .catch(() => setCashflowChartData(null));
 
-    client.get(`/stock/chart/balancesheet/${fqn}`).then(res => {
-      setBalanceSheetChartData(res.data.chartData.sort((a, b) => a.year - b.year));
-    }).catch(() => setBalanceSheetChartData(null));
+    client
+      .get(`/stock/chart/balancesheet/${fqn}`)
+      .then(res => {
+        setBalanceSheetChartData(
+          res.data.chartData.sort((a, b) => a.year - b.year)
+        );
+      })
+      .catch(() => setBalanceSheetChartData(null));
 
-    client.get(`/stock/chart/pnl/${fqn}`).then(res => {
-      setPnlChartData(res.data.chartData.sort((a, b) => a.year - b.year));
-    }).catch(() => setPnlChartData(null));
+    client
+      .get(`/stock/chart/pnl/${fqn}`)
+      .then(res => {
+        setPnlChartData(res.data.chartData.sort((a, b) => a.year - b.year));
+      })
+      .catch(() => setPnlChartData(null));
 
-    client.get(`/stock/chart/annualreport/${fqn}`).then(res => {
-      setNewsData(res.data.chartData);
-    }).catch(() => setPnlChartData(null));
+    client
+      .get(`/stock/chart/annualreport/${fqn}`)
+      .then(res => {
+        setNewsData(res.data.chartData);
+      })
+      .catch(() => setPnlChartData(null));
 
-    client.get(`/stock/insights/${fqn}`).then(res => {
-      setInsightsData(res.data.data);
-    }).catch(() => setPnlChartData(null));
-
-
+    client
+      .get(`/stock/insights/${fqn}`)
+      .then(res => {
+        setInsightsData(res.data.data);
+      })
+      .catch(() => setPnlChartData(null));
   }, [fqn]);
-
 
   const handleCompareClick = () => {
     if (stock && peers) {
@@ -828,7 +956,9 @@ const Stock = () => {
             )}
             {stock.bseListed && stock.bseCode && (
               <ExchangeLink
-                href={`https://www.bseindia.com/stock-share-price/${slugify(stock.companyName)}/${stock.companyShortName}/${stock.bseCode}/`}
+                href={`https://www.bseindia.com/stock-share-price/${slugify(
+                  stock.companyName
+                )}/${stock.companyShortName}/${stock.bseCode}/`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -923,41 +1053,32 @@ const Stock = () => {
         <BusinessSectionLeft id="business">
           <Body1 bold>Business Description</Body1>
           <Body1>
-            {<>{stock.details?.slice(0, 1024)} <a href={`https://www.bseindia.com/stock-share-price/${slugify(stock.companyName)}/${stock.companyShortName}/${stock.bseCode}/corp-information/`} target="_blank"
-              rel="noopener noreferrer">...(read more)</a></> ?? 'Company Information Unavailable'}
+            {(
+              <>
+                {stock.details?.slice(0, 1024)}{" "}
+                <a
+                  href={`https://www.bseindia.com/stock-share-price/${slugify(
+                    stock.companyName
+                  )}/${stock.companyShortName}/${
+                    stock.bseCode
+                  }/corp-information/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  ...(read more)
+                </a>
+              </>
+            ) ?? "Company Information Unavailable"}
           </Body1>
         </BusinessSectionLeft>
-        <BusinessSectionRight id="insights">
-          <Body1 bold>APART Insights</Body1>
-          <Body1>
-            {insightsData ? <>
-              <Title level={4}>Outlook</Title>
-              <Paragraph>{insightsData.outlook}</Paragraph>
-
-              <Title level={4}>Pros</Title>
-              <List
-                dataSource={insightsData.pros}
-                renderItem={(item) => (
-                  <List.Item>
-                    <Typography.Text>✓ {item}</Typography.Text>
-                  </List.Item>
-                )}
-              />
-
-              <Title level={4}>Cons</Title>
-              <List
-                dataSource={insightsData.cons}
-                renderItem={(item) => (
-                  <List.Item>
-                    <Typography.Text>✗ {item}</Typography.Text>
-                  </List.Item>
-                )}
-              />
-            </> : <Unavailble />}
-          </Body1>
-        </BusinessSectionRight>
+        <InsightsSection />
       </Section>
-      <FlexBox column width="100%" id="pricechart" style={{ paddingTop: '1.5em' }}>
+      <FlexBox
+        column
+        width="100%"
+        id="pricechart"
+        style={{ paddingTop: "1.5em" }}
+      >
         <StockChart stockCode={stock.fqn} />
       </FlexBox>
       <FlexBox column width="100%" id="fundamentals">
@@ -974,7 +1095,10 @@ const Stock = () => {
                 <Body1 bold>{section}</Body1>
 
                 {!data.length || !years.length ? (
-                  <Body1><br /><Unavailble /></Body1>
+                  <Body1>
+                    <br />
+                    <Unavailble />
+                  </Body1>
                 ) : (
                   <ResponsiveTableWrapper>
                     <Table>
@@ -993,7 +1117,9 @@ const Stock = () => {
                               <TableCell>{row.metric}</TableCell>
                               {row.values.slice(-3).map((value, index) => (
                                 <TableCell key={index}>
-                                  {value !== undefined ? formatValue(value, true) : "N/A"}
+                                  {value !== undefined
+                                    ? formatValue(value, true)
+                                    : "N/A"}
                                 </TableCell>
                               ))}
                             </TableRow>
@@ -1006,15 +1132,14 @@ const Stock = () => {
               </div>
             );
           })}
-
-
-
         </TableContainer>
       </FlexBox>
-      {cashflowChartData && cashflowChartData?.length > 0 && <FlexBox width="100%" column id="cash">
-        <H1 bold>Cash Counter</H1>
-        <CashFlowSection data={cashflowChartData} />
-      </FlexBox>}
+      {cashflowChartData && cashflowChartData?.length > 0 && (
+        <FlexBox width="100%" column id="cash">
+          <H1 bold>Cash Counter</H1>
+          <CashFlowSection data={cashflowChartData} />
+        </FlexBox>
+      )}
       <FlexBox width="100%" column id="peers" rowGap="2rem">
         <FlexBox column>
           <H1 bold>Peer Comparison</H1>
@@ -1022,13 +1147,19 @@ const Stock = () => {
         </FlexBox>
         <FlexBox width="100%" justify="center" column>
           <Large>
-            Conventional industrial classifications and peer determinations are cursory, biased &amp; often inaccurate. APART's Similarity Score peeps through deep data to find securities &amp; businesses that are more similar to each other than the rest. This ensures that you are comparing like to like and not apples to oranges!
+            Conventional industrial classifications and peer determinations are
+            cursory, biased &amp; often inaccurate. APART's Similarity Score
+            peeps through deep data to find securities &amp; businesses that are
+            more similar to each other than the rest. This ensures that you are
+            comparing like to like and not apples to oranges!
           </Large>
         </FlexBox>
         {peers && peers.length > 0 ? (
           <PeerComparisonTable peer={peers[0]} currentStock={stock} />
         ) : (
-          <Body1><Unavailble /></Body1>
+          <Body1>
+            <Unavailble />
+          </Body1>
         )}
       </FlexBox>
       <Section>
@@ -1036,7 +1167,9 @@ const Stock = () => {
           <H1 bold>Shareholding Analysis</H1>
           {stockHoldingChart ? (
             <StackedBarChart data={stockHoldingChart?.chartData} />
-          ) : <Unavailble />}
+          ) : (
+            <Unavailble />
+          )}
         </ShareholdingLeft>
         <ShareholdingRight>
           <H1 bold>Valuation</H1>
@@ -1074,10 +1207,7 @@ const Stock = () => {
           </Row>
         </ShareholdingRight>
       </Section>
-      <FlexBox width="100%" column id="news">
-        <H1 bold>Corporate News</H1>
-        {newsData && newsData.map((data) => <pre>{JSON.stringify(data)}</pre>)}
-      </FlexBox>
+      <AnnualReportsSection newsData={newsData} />
       {isLoggedIn && (
         <AddToWatchlistPopup
           visible={showWatchlistPopup}

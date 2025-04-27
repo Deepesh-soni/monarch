@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CiClock2 } from "react-icons/ci";
-import { Pagination } from "antd";
+import { Pagination, Spin } from "antd";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import axios from "axios";
@@ -25,6 +25,13 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+`;
+
+const LoaderWrapper = styled.div`
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Container = styled(FlexBox)`
@@ -76,14 +83,38 @@ const News = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  // New States for filters
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  const [selectedNewsTypes, setSelectedNewsTypes] = useState([]);
+
   const pageSize = 10; // Set pageSize same as backend
 
   const fetchNews = async (page = 1) => {
     try {
       setLoading(true);
+
+      const params = {
+        page,
+        pageSize,
+      };
+
+      // Add filters to API call if selected
+      if (fromDate) {
+        params.fromDate = fromDate;
+      }
+      if (toDate) {
+        params.toDate = toDate;
+      }
+      if (selectedNewsTypes.length > 0) {
+        params.newsTypes = selectedNewsTypes.join(",");
+      }
+
       const response = await axios.get(
-        `https://api-test-monarq.pamprazzi.in/news?page=${page}&pageSize=${pageSize}`
+        "https://api-test-monarq.pamprazzi.in/news",
+        { params }
       );
+
       const { data, total } = response.data;
       setNewsList(data);
       setTotalItems(total);
@@ -96,7 +127,14 @@ const News = () => {
 
   useEffect(() => {
     fetchNews(currentPage);
-  }, [currentPage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, fromDate, toDate, selectedNewsTypes]);
+
+  const handleApplyFilter = () => {
+    setCurrentPage(1); // Reset to page 1 when filter applied
+    fetchNews(1);
+    setIsModalOpen(false);
+  };
 
   return (
     <>
@@ -125,11 +163,11 @@ const News = () => {
 
             {/* If loading, show loading text (you can add skeletons too) */}
             {loading ? (
-              <FlexBox width="100%" justify="center" padding="2rem">
-                <Medium>Loading news...</Medium>
-              </FlexBox>
+              <LoaderWrapper width="100%" justify="center" padding="2rem">
+                <Spin size="large" />
+              </LoaderWrapper>
             ) : (
-              newsList.map((item) => (
+              newsList.map(item => (
                 <StyledLink key={item.newsId} href={`/news/${item.newsId}`}>
                   <Card>
                     <FlexBox width="100%" column rowGap="15px" padding="1rem">
@@ -166,7 +204,10 @@ const News = () => {
 
             <Pagination
               current={currentPage}
-              onChange={(page) => setCurrentPage(page)}
+              onChange={page => {
+                setCurrentPage(page);
+                window.scrollTo(0, 0);
+              }}
               total={totalItems}
               pageSize={pageSize}
               showSizeChanger={false}
@@ -177,7 +218,18 @@ const News = () => {
       </Wrapper>
 
       {/* Filter Modal */}
-      {isModalOpen && <FilterModal setIsModalOpen={setIsModalOpen} />}
+      {isModalOpen && (
+        <FilterModal
+          setIsModalOpen={setIsModalOpen}
+          fromDate={fromDate}
+          toDate={toDate}
+          setFromDate={setFromDate}
+          setToDate={setToDate}
+          selectedNewsTypes={selectedNewsTypes}
+          setSelectedNewsTypes={setSelectedNewsTypes}
+          onApplyFilter={handleApplyFilter}
+        />
+      )}
     </>
   );
 };

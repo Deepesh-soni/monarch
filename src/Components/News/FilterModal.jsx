@@ -65,37 +65,49 @@ const FilterSection = ({ title, children, resettable }) => (
   </>
 );
 
-const DateInput = ({ label }) => (
+const DateInput = ({ label, value, onChange }) => (
   <FlexBox column width="100%" rowGap="0.25rem">
     <Medium bold color="#687792">
       {label}
     </Medium>
-    <Input type="date" />
+    <Input type="date" value={value} onChange={onChange} />
   </FlexBox>
 );
 
-const DateQuickOptions = () => (
-  <FlexBox columnGap="1rem">
-    {["Today", "This Week", "Month"].map(option => (
-      <ButtonDay key={option}>
-        <Medium>{option}</Medium>
-      </ButtonDay>
-    ))}
-  </FlexBox>
-);
+// const DateQuickOptions = () => (
+//   <FlexBox columnGap="1rem">
+//     {"Today", "This Week", "Month".map(option => (
+//       <ButtonDay key={option}>
+//         <Medium>{option}</Medium>
+//       </ButtonDay>
+//     ))}
+//   </FlexBox>
+// );
 
-const CheckboxGroup = ({ options }) => (
+const CheckboxGroup = ({ options, selectedOptions, onChange }) => (
   <FlexBox columnGap="1rem" wrap>
     {options.map(option => (
       <FlexBox key={option} align="center" columnGap="0.25rem">
-        <CheckBox />
+        <CheckBox
+          checked={selectedOptions.includes(option)}
+          onChange={() => onChange(option)}
+        />
         <Medium color="#687792">{option}</Medium>
       </FlexBox>
     ))}
   </FlexBox>
 );
 
-const FilterModal = ({ setIsModalOpen }) => (
+const FilterModal = ({
+  setIsModalOpen,
+  fromDate,
+  toDate,
+  onFromDateChange,
+  onToDateChange,
+  newsTypeOptions = [],
+  selectedNewsTypes = [],
+  onNewsTypeChange,
+}) => (
   <ModalOverlay onClick={() => setIsModalOpen(false)}>
     <ModalContent onClick={e => e.stopPropagation()}>
       <CloseButton onClick={() => setIsModalOpen(false)}>&times;</CloseButton>
@@ -103,24 +115,25 @@ const FilterModal = ({ setIsModalOpen }) => (
         <Small>Filter by:</Small>
         <FilterSection title="Date Range" resettable>
           <FlexBox columnGap="18px">
-            <DateInput label="From" />
-            <DateInput label="To" />
+            <DateInput
+              label="From"
+              value={fromDate}
+              onChange={onFromDateChange}
+            />
+            <DateInput label="To" value={toDate} onChange={onToDateChange} />
           </FlexBox>
-          <DateQuickOptions />
+          {/* <DateQuickOptions /> */}
         </FilterSection>
         <FilterSection title="News Type">
           <CheckboxGroup
-            options={[
-              "Expert Analysis",
-              "Market Trends",
-              "Breaking News",
-              "Opinions",
-            ]}
+            options={newsTypeOptions}
+            selectedOptions={selectedNewsTypes}
+            onChange={onNewsTypeChange}
           />
         </FilterSection>
-        <FilterSection title="Source">
-          <CheckboxGroup options={["BBC", "CNN", "Reuters", "Bloomberg"]} />
-        </FilterSection>
+        {/* <FilterSection title="Source">
+          <CheckboxGroup options={"BBC", "CNN", "Reuters", "Bloomberg"} />
+        </FilterSection> */}
         <FlexBox columnGap="18px">
           <Button outline width="100%" onClick={() => setIsModalOpen(false)}>
             Reset
