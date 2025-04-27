@@ -430,6 +430,8 @@ const ShareholdingLeft = styled(FlexBox)`
   padding: 0.5rem;
   flex-direction: column;
   gap: 1rem;
+    background-color: white;
+
   @media ${device.laptop} {
     width: 55%;
   }
@@ -442,6 +444,8 @@ const ShareholdingRight = styled(FlexBox)`
   padding: 0.5rem;
   flex-direction: column;
   gap: 1rem;
+    background-color: white;
+
   @media ${device.laptop} {
     width: 45%;
   }
@@ -529,7 +533,6 @@ const Row = styled.div`
 const ResponsiveTableWrapper = styled.div`
   width: 100%;
   overflow-x: auto;
-
   @media ${device.laptop} {
     overflow-x: unset;
   }
@@ -578,6 +581,8 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
           marginTop: "1rem",
           border: "1px solid black",
           borderRadius: "8px",
+          backgroundColor:"white"
+
         }}
       >
         <thead>

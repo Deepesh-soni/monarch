@@ -136,6 +136,15 @@ const News = () => {
     setIsModalOpen(false);
   };
 
+  const handleResetFilters = () => {
+    setFromDate(null);
+    setToDate(null);
+    setSelectedNewsTypes([]);
+    setCurrentPage(1); // Reset to first page
+    fetchNews(1); // Fetch news after resetting
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       <Wrapper>
@@ -228,6 +237,7 @@ const News = () => {
           selectedNewsTypes={selectedNewsTypes}
           setSelectedNewsTypes={setSelectedNewsTypes}
           onApplyFilter={handleApplyFilter}
+          onResetFilters={handleResetFilters}
         />
       )}
     </>
