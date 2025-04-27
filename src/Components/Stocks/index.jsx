@@ -1060,7 +1060,7 @@ const Stock = () => {
           <Body1>
             {(
               <>
-                {stock.details?.slice(0, 1024)}{" "}
+                {stock.details?.slice(0, 1576)}{" "}
                 <a
                   href={`https://www.bseindia.com/stock-share-price/${slugify(
                     stock.companyName
@@ -1076,7 +1076,7 @@ const Stock = () => {
             ) ?? "Company Information Unavailable"}
           </Body1>
         </BusinessSectionLeft>
-        <InsightsSection />
+        <InsightsSection insightsData={insightsData}/>
       </Section>
       <FlexBox
         column

@@ -1,52 +1,155 @@
+import React from "react";
 import styled from "styled-components";
-import { Skeleton, Typography, List } from "antd";
+import { Skeleton, Typography, List, Tooltip, Row, Col, Divider } from "antd";
 import FlexBox from "@common/UI/FlexBox";
 import { device } from "@common/UI/Responsive";
 
-const { Title, Paragraph } = Typography;
+const { Title, Paragraph, Text } = Typography;
 
 const BusinessSectionRight = styled(FlexBox)`
   border: 1px solid #3c3c3c;
   width: 100%;
   border-radius: 12px;
-  padding: 0.5rem;
+  padding: 1rem;
   flex-direction: column;
-  gap: 1rem;
   background-color: white;
   @media ${device.laptop} {
     width: 40%;
   }
 `;
 
+const HeaderContainer = styled(FlexBox)`
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`;
+
+const OutlookContainer = styled.div`
+  margin-bottom: 16px;
+`;
+
+const OutlookText = styled(Text)`
+  font-weight: bold;
+  margin-right: 8px;
+`;
+
+const RecommendationBox = styled.div`
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-width: 70px;
+  text-align: center;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  background-color: ${props => {
+    switch(props.recommendation?.toLowerCase()) {
+      case 'buy': return '#52c41a';
+      case 'sell': return '#f5222d';
+      case 'neutral': return '#faad14';
+      default: return '#1890ff';
+    }
+  }};
+  color: white;
+`;
+
+const StyledList = styled(List)`
+  .ant-list-item {
+    padding: 8px 0;
+    border-bottom: none;
+  }
+`;
+
+const ProsList = styled(StyledList)`
+  .ant-list-item {
+    color: #52c41a;
+  }
+`;
+
+const ConsList = styled(StyledList)`
+  .ant-list-item {
+    color: #f5222d;
+  }
+`;
+
+const SectionTitle = styled(Title)`
+  margin-bottom: 12px !important;
+`;
+
 export default function InsightsSection({ insightsData }) {
+  // Get the recommendation text and description
+  const getRecommendationInfo = (recommendation) => {
+    const rec = recommendation?.toLowerCase() || '';
+    if (rec === 'buy') {
+      return { text: 'BUY', description: 'Go long. The trend is up.' };
+    } else if (rec === 'sell') {
+      return { text: 'SELL', description: 'Go short. The trend is down.' };
+    } else {
+      return { text: 'NEUTRAL', description: 'The trend is undetermined. Consider cash or hedged positions.' };
+    }
+  };
+
+  const recommendationInfo = insightsData ? getRecommendationInfo(insightsData.recommendation) : { text: 'NEUTRAL', description: '' };
+
   return (
     <BusinessSectionRight id="insights">
-      <Typography.Text strong>APART Insights</Typography.Text>
+      <HeaderContainer>
+        <Typography.Text strong>APART Insights</Typography.Text>
+        
+        {insightsData && (
+          <Tooltip 
+            title={`Apart Insight Score: ${insightsData.buysellscore || 'N/A'}`}
+            placement="top"
+            color="#1f1f1f"
+          >
+            <RecommendationBox recommendation={insightsData.recommendation}>
+              {recommendationInfo.text}
+            </RecommendationBox>
+          </Tooltip>
+        )}
+      </HeaderContainer>
 
       {insightsData ? (
         <>
-          <Title level={4}>Outlook</Title>
-          <Paragraph>{insightsData.outlook}</Paragraph>
-
-          <Title level={4}>Pros</Title>
-          <List
-            dataSource={insightsData.pros}
-            renderItem={item => (
-              <List.Item>
-                <Typography.Text>✓ {item}</Typography.Text>
-              </List.Item>
-            )}
-          />
-
-          <Title level={4}>Cons</Title>
-          <List
-            dataSource={insightsData.cons}
-            renderItem={item => (
-              <List.Item>
-                <Typography.Text>✗ {item}</Typography.Text>
-              </List.Item>
-            )}
-          />
+          <OutlookContainer>
+            <div>
+              <OutlookText>Outlook:</OutlookText>
+              <Paragraph style={{ display: 'inline' }}>{insightsData.outlook}</Paragraph>
+            </div>
+            <Text type="secondary" style={{ marginTop: '8px', display: 'block' }}>
+              {recommendationInfo.description}
+            </Text>
+          </OutlookContainer>          
+          <Row gutter={16}>
+            <Col xs={24} md={12}>
+              <SectionTitle level={4}>Pros</SectionTitle>
+              <ProsList
+                dataSource={insightsData.pros}
+                renderItem={item => (
+                  <List.Item>
+                    <Typography.Text>👍 {item}</Typography.Text>
+                  </List.Item>
+                )}
+              />
+            </Col>
+            
+            <Col xs={24} md={12}>
+              <SectionTitle level={4}>Cons</SectionTitle>
+              <ConsList
+                dataSource={insightsData.cons}
+                renderItem={item => (
+                  <List.Item>
+                    <Typography.Text>👎 {item}</Typography.Text>
+                  </List.Item>
+                )}
+              />
+            </Col>
+          </Row>
         </>
       ) : (
         <>
