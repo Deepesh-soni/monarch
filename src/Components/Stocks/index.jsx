@@ -20,6 +20,7 @@ import { ComposedChart, YAxis, CartesianGrid, Area } from "recharts";
 import InsightsSection from "./InsightsSection";
 import { Alert } from "antd";
 import AnnualReportsSection from "./AnnualReports";
+import News from "./News";
 
 const TIME_FRAMES = ["1W", "1M", "3M", "6M", "1Y", "5Y", "MAX"];
 
@@ -430,7 +431,7 @@ const ShareholdingLeft = styled(FlexBox)`
   padding: 0.5rem;
   flex-direction: column;
   gap: 1rem;
-    background-color: white;
+  background-color: white;
 
   @media ${device.laptop} {
     width: 55%;
@@ -444,7 +445,7 @@ const ShareholdingRight = styled(FlexBox)`
   padding: 0.5rem;
   flex-direction: column;
   gap: 1rem;
-    background-color: white;
+  background-color: white;
 
   @media ${device.laptop} {
     width: 45%;
@@ -581,8 +582,7 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
           marginTop: "1rem",
           border: "1px solid black",
           borderRadius: "8px",
-          backgroundColor:"white"
-
+          backgroundColor: "white",
         }}
       >
         <thead>
@@ -941,8 +941,6 @@ const Stock = () => {
   const changeValue = parseFloat(stock.change || "0");
   const changeColor = changeValue >= 0 ? "green" : "red";
 
-  console.log(insightsData);
-
   return (
     <Wrapper>
       <HeaderRow>
@@ -1076,7 +1074,7 @@ const Stock = () => {
             ) ?? "Company Information Unavailable"}
           </Body1>
         </BusinessSectionLeft>
-        <InsightsSection insightsData={insightsData}/>
+        <InsightsSection insightsData={insightsData} />
       </Section>
       <FlexBox
         column
@@ -1220,6 +1218,7 @@ const Stock = () => {
           stockFqn={stock.fqn}
         />
       )}
+      <News fqn={fqn} />
     </Wrapper>
   );
 };

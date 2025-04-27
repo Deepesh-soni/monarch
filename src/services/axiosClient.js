@@ -1,23 +1,5 @@
 import { createAxiosClient } from "./createAxiosClient";
-import { URL, BASE_URL } from "@constants/urls";
-import { store } from "@redux/stores";
-import { logout, setRefreshedTokens } from "@redux/slices/auth";
-
-function getCurrentAccessToken() {
-  return store.getState().auth?.user?.token;
-}
-
-function getCurrentRefreshToken() {
-  return store.getState().auth?.user?.refreshToken;
-}
-
-function setRefreshTokens(tokens) {
-  store.dispatch(setRefreshedTokens(tokens));
-}
-
-async function terminateSession() {
-  store.dispatch(logout());
-}
+import { BASE_URL } from "@constants/urls";
 
 export const client = createAxiosClient({
   options: {
@@ -29,4 +11,3 @@ export const client = createAxiosClient({
     },
   },
 });
-

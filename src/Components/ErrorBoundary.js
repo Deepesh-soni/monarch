@@ -2,13 +2,11 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import Bugsnag from "@bugsnag/js";
 import BugsnagPluginReact from "@bugsnag/plugin-react";
-import { connect } from "react-redux";
 
 import FlexBox from "@common/UI/FlexBox";
 import { Body1 } from "@common/UI/Headings";
 import { PRIMARY_800 } from "@common/UI/colors";
 import { Button } from "@common/UI/Buttons";
-import { logout } from "@redux/slices/auth";
 
 const Container = styled(FlexBox)`
   height: 80vh;
@@ -88,6 +86,4 @@ class ErrorBoundary extends Component {
   }
 }
 
-const mapDispatchToProps = { logout };
-
-export default connect(null, mapDispatchToProps)(ErrorBoundary);
+export default ErrorBoundary;
