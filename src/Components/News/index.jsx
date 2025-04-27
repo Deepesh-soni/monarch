@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CiClock2 } from "react-icons/ci";
 import { Pagination } from "antd";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import axios from "axios";
 
 import FlexBox from "@common/UI/FlexBox";
 import { Support } from "@common/UI/Headings";
@@ -11,7 +12,6 @@ import { device } from "@common/UI/Responsive";
 import { H6 } from "../common/Typography";
 import { Small, Medium } from "../common/Paragraph";
 import { IoFilterOutline } from "react-icons/io5";
-import { newsList } from "../../metaData/news";
 
 const FilterModal = dynamic(() => import("./FilterModal"), {
   ssr: false,
@@ -71,14 +71,32 @@ const StyledLink = styled(Link)`
 
 const News = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newsList, setNewsList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const pageSize = 6;
-  const totalItems = newsList.length;
-  const paginatedNews = newsList.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
+  const pageSize = 10; // Set pageSize same as backend
+
+  const fetchNews = async (page = 1) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `https://api-test-monarq.pamprazzi.in/news?page=${page}&pageSize=${pageSize}`
+      );
+      const { data, total } = response.data;
+      setNewsList(data);
+      setTotalItems(total);
+      setLoading(false);
+    } catch (error) {
+      console.error("Failed to fetch news:", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNews(currentPage);
+  }, [currentPage]);
 
   return (
     <>
@@ -105,29 +123,50 @@ const News = () => {
               </FlexBox>
             </FlexBox>
 
-            {paginatedNews.map((item, index) => (
-              <StyledLink key={index} href={item.newsLink}>
-                <Card>
-                  <FlexBox width="100%" column rowGap="15px" padding="1rem">
-                    <Support color="#142C8E">{item.newsType}</Support>
-                    <H6 bold>{item.newsTitle}</H6>
-                    <Medium>{item.newsDescription}</Medium>
-                    <Hr />
-                    <FlexBox width="100%" justify="space-between">
-                      <FlexBox columnGap="4px" align="center">
-                        <CiClock2 color="#687792" />
-                        <Small color="#687792">{item.newsDate}</Small>
+            {/* If loading, show loading text (you can add skeletons too) */}
+            {loading ? (
+              <FlexBox width="100%" justify="center" padding="2rem">
+                <Medium>Loading news...</Medium>
+              </FlexBox>
+            ) : (
+              newsList.map((item) => (
+                <StyledLink key={item.newsId} href={`/news/${item.newsId}`}>
+                  <Card>
+                    <FlexBox width="100%" column rowGap="15px" padding="1rem">
+                      <Support color="#142C8E">{item.newsType}</Support>
+                      <H6 bold>{item.newsTitle}</H6>
+                      {/* Truncate newsContent if too long */}
+                      <Medium>
+                        {item.newsContent.length > 100
+                          ? item.newsContent.slice(0, 100) + "..."
+                          : item.newsContent}
+                      </Medium>
+                      <Hr />
+                      <FlexBox width="100%" justify="space-between">
+                        <FlexBox columnGap="4px" align="center">
+                          <CiClock2 color="#687792" />
+                          <Small color="#687792">
+                            {new Date(item.newsDate).toLocaleDateString(
+                              "en-IN",
+                              {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              }
+                            )}
+                          </Small>
+                        </FlexBox>
+                        <Medium bold>Read More</Medium>
                       </FlexBox>
-                      <Medium bold>Read More</Medium>
                     </FlexBox>
-                  </FlexBox>
-                </Card>
-              </StyledLink>
-            ))}
+                  </Card>
+                </StyledLink>
+              ))
+            )}
 
             <Pagination
               current={currentPage}
-              onChange={page => setCurrentPage(page)}
+              onChange={(page) => setCurrentPage(page)}
               total={totalItems}
               pageSize={pageSize}
               showSizeChanger={false}
@@ -137,6 +176,7 @@ const News = () => {
         </Container>
       </Wrapper>
 
+      {/* Filter Modal */}
       {isModalOpen && <FilterModal setIsModalOpen={setIsModalOpen} />}
     </>
   );
