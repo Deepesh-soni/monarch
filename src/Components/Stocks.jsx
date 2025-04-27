@@ -10,7 +10,7 @@ import { client } from "@axiosClient";
 import { BiLinkExternal } from "react-icons/bi";
 import { H5, H4 } from "../Components/common/Typography";
 import { Medium, Large } from "../Components/common/Paragraph";
-import { Modal, Select, Button, Spin, Result } from "antd";
+import { Modal, Select, Button, Spin, Result, Divider, Typography, List } from "antd";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { blue } from "@ant-design/colors";
@@ -22,6 +22,7 @@ import {
   CartesianGrid,
   Area
 } from "recharts";
+const { Title, Paragraph } = Typography;
 
 const TIME_FRAMES = ['1W', '1M', '3M', '6M', '1Y', '5Y', 'MAX'];
 
@@ -620,7 +621,7 @@ function CustomCashflowTooltip({ active, payload, label }) {
       <div style={{ background: "#fff", padding: "10px", border: "1px solid #ccc" }}>
         <strong>Year: {label}</strong>
         <div style={{ marginTop: 4 }}>
-          {cashFlowTabs.find(tab => tab.key === name).label}: ₹ {value.toLocaleString("en-IN")}
+          {cashFlowTabs.find(tab => tab.key === name).label} (Cr.): ₹ {value.toLocaleString("en-IN")}
         </div>
       </div>
     );
@@ -706,26 +707,28 @@ const Stock = () => {
   const [cashflowChartData, setCashflowChartData] = useState(null);
   const [balanceSheetChartData, setBalanceSheetChartData] = useState(null);
   const [pnlChartData, setPnlChartData] = useState(null);
+  const [insightsData, setInsightsData] = useState(null);
+  const [newsData, setNewsData] = useState(null); //ISKO KAR
 
 
   const financialData = useMemo(() => {
     return {
       "Profit & Loss": pnlChartData
         ? [
-          { metric: "Book Value", values: pnlChartData.map(d => d.bookvalue), years: pnlChartData.map(d => d.year) },
+          { metric: "Book Value (Cr.)", values: pnlChartData.map(d => d.bookvalue), years: pnlChartData.map(d => d.year) },
           { metric: "EPS", values: pnlChartData.map(d => d.eps), years: pnlChartData.map(d => d.year) },
-          { metric: "Net Profit", values: pnlChartData.map(d => d.netprofit), years: pnlChartData.map(d => d.year) },
-          { metric: "Operating Profit", values: pnlChartData.map(d => d.opprofit), years: pnlChartData.map(d => d.year) },
-          { metric: "Revenue", values: pnlChartData.map(d => d.revenue), years: pnlChartData.map(d => d.year) },
+          { metric: "Net Profit (Cr.)", values: pnlChartData.map(d => d.netprofit), years: pnlChartData.map(d => d.year) },
+          { metric: "Operating Profit (Cr.)", values: pnlChartData.map(d => d.opprofit), years: pnlChartData.map(d => d.year) },
+          { metric: "Revenue (Cr.)", values: pnlChartData.map(d => d.revenue), years: pnlChartData.map(d => d.year) },
         ]
         : [],
       "Balance Sheet": balanceSheetChartData
         ? [
-          { metric: "Cash & Equivalents", values: balanceSheetChartData.map(d => d.cashEq), years: balanceSheetChartData.map(d => d.year) },
-          { metric: "Debt", values: balanceSheetChartData.map(d => d.debt), years: balanceSheetChartData.map(d => d.year) },
-          { metric: "Net Worth", values: balanceSheetChartData.map(d => d.networth), years: balanceSheetChartData.map(d => d.year) },
-          { metric: "Total Assets", values: balanceSheetChartData.map(d => d.totalAssets), years: balanceSheetChartData.map(d => d.year) },
-          { metric: "Total Liabilities", values: balanceSheetChartData.map(d => d.totalLiabilities), years: balanceSheetChartData.map(d => d.year) },
+          { metric: "Cash & Equivalents (Cr.)", values: balanceSheetChartData.map(d => d.cashEq), years: balanceSheetChartData.map(d => d.year) },
+          { metric: "Debt (Cr.)", values: balanceSheetChartData.map(d => d.debt), years: balanceSheetChartData.map(d => d.year) },
+          { metric: "Net Worth (Cr.)", values: balanceSheetChartData.map(d => d.networth), years: balanceSheetChartData.map(d => d.year) },
+          { metric: "Total Assets (Cr.)", values: balanceSheetChartData.map(d => d.totalAssets), years: balanceSheetChartData.map(d => d.year) },
+          { metric: "Total Liabilities (Cr.)", values: balanceSheetChartData.map(d => d.totalLiabilities), years: balanceSheetChartData.map(d => d.year) },
         ]
         : [],
     }
@@ -741,6 +744,8 @@ const Stock = () => {
     setPeers(null);
     setStockHoldingChart(null);
     setCashflowChartData(null);
+    setInsightsData(null);
+    setNewsData(null);
 
     const fetchStockDetails = async () => {
       try {
@@ -769,6 +774,16 @@ const Stock = () => {
     client.get(`/stock/chart/pnl/${fqn}`).then(res => {
       setPnlChartData(res.data.chartData.sort((a, b) => a.year - b.year));
     }).catch(() => setPnlChartData(null));
+
+    client.get(`/stock/chart/annualreport/${fqn}`).then(res => {
+      setNewsData(res.data.chartData);
+    }).catch(() => setPnlChartData(null));
+
+    client.get(`/stock/insights/${fqn}`).then(res => {
+      setInsightsData(res.data.data);
+    }).catch(() => setPnlChartData(null));
+
+
   }, [fqn]);
 
 
@@ -792,6 +807,8 @@ const Stock = () => {
 
   const changeValue = parseFloat(stock.change || "0");
   const changeColor = changeValue >= 0 ? "green" : "red";
+
+  console.log(insightsData);
 
   return (
     <Wrapper>
@@ -833,7 +850,7 @@ const Stock = () => {
         </LeftContainer>
         <RightContainer>
           <H4 bold style={{ fontSize: "1.25rem" }}>
-            ₹ {stock.price}
+            {formatValue(stock.price, true)}
           </H4>
           <Medium style={{ color: changeColor }}>{stock.change}</Medium>
         </RightContainer>
@@ -913,7 +930,30 @@ const Stock = () => {
         <BusinessSectionRight id="insights">
           <Body1 bold>APART Insights</Body1>
           <Body1>
-            <Unavailble />
+            {insightsData ? <>
+              <Title level={4}>Outlook</Title>
+              <Paragraph>{insightsData.outlook}</Paragraph>
+
+              <Title level={4}>Pros</Title>
+              <List
+                dataSource={insightsData.pros}
+                renderItem={(item) => (
+                  <List.Item>
+                    <Typography.Text>✓ {item}</Typography.Text>
+                  </List.Item>
+                )}
+              />
+
+              <Title level={4}>Cons</Title>
+              <List
+                dataSource={insightsData.cons}
+                renderItem={(item) => (
+                  <List.Item>
+                    <Typography.Text>✗ {item}</Typography.Text>
+                  </List.Item>
+                )}
+              />
+            </> : <Unavailble />}
           </Body1>
         </BusinessSectionRight>
       </Section>
@@ -953,7 +993,7 @@ const Stock = () => {
                               <TableCell>{row.metric}</TableCell>
                               {row.values.slice(-3).map((value, index) => (
                                 <TableCell key={index}>
-                                  {value !== undefined ? formatValue(value) : "N/A"}
+                                  {value !== undefined ? formatValue(value, true) : "N/A"}
                                 </TableCell>
                               ))}
                             </TableRow>
@@ -1034,6 +1074,10 @@ const Stock = () => {
           </Row>
         </ShareholdingRight>
       </Section>
+      <FlexBox width="100%" column id="news">
+        <H1 bold>Corporate News</H1>
+        {newsData && newsData.map((data) => <pre>{JSON.stringify(data)}</pre>)}
+      </FlexBox>
       {isLoggedIn && (
         <AddToWatchlistPopup
           visible={showWatchlistPopup}

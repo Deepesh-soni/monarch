@@ -27,7 +27,7 @@ const Layout = ({ children, noBg = false }) => (
     <Navbar />
     <ChildrenWrapper noBg={noBg}>{children}</ChildrenWrapper>
     <CopyRightBox>
-      <Small color="white">© 2025 FinEase Pvt. Ltd. All rights reserved.</Small>
+      <Small color="white">© 2025 FinEase. All rights reserved.</Small>
     </CopyRightBox>
   </>
 );
