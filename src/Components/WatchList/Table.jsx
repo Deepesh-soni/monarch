@@ -12,6 +12,7 @@ import Link from "next/link";
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
   align-items: center;
+  padding: 16px;
 
   @media ${device.laptop} {
     width: 86.67%;
@@ -57,8 +58,6 @@ export default function StockTable() {
       </Wrapper>
     );
   }
-
-  console.log(data);
 
   return (
     <Wrapper>

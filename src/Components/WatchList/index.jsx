@@ -114,7 +114,7 @@ const WatchList = () => {
         />
 
         <FlexBox width="100%" column rowGap="2rem">
-          <FlexBox align="center" justify="space-between">
+          <FlexBox align="center" justify="space-between" style={{marginTop: '16px'}}>
             <FlexBox column>
               <H5 bold>My Watchlists</H5>
               <Medium color="#687792">

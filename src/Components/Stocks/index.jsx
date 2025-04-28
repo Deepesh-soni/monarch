@@ -125,11 +125,11 @@ const StockChart = ({ stockCode = "delhivery" }) => {
                   .replace(" ", "' ");
               }}
             />
-            <YAxis
+            {<YAxis
               yAxisId="price"
               tickFormatter={val => `₹ ${val.toLocaleString("en-IN")}`}
               width={100}
-            />
+            />}
             <YAxis
               yAxisId="volume"
               orientation="right"
@@ -487,23 +487,42 @@ const TableCell = styled.td`
 `;
 
 const LeftContainer = styled.div`
-  display: flex;
+ display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 100%;
+
+  @media ${device.laptop} {
+    width: auto;
+  }
 `;
 
 const RightContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
+  width: 100%;
+
+  @media ${device.laptop} {
+    align-items: flex-end;
+    width: auto;
+  }
 `;
 
 const HeaderRow = styled.div`
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: flex-start;
   margin-bottom: 1rem;
+  gap: 0.5rem;
+
+  @media ${device.laptop} {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0;
+  }
 `;
 
 const ExchangeLinksRow = styled.div`
@@ -538,6 +557,85 @@ const ResponsiveTableWrapper = styled.div`
     overflow-x: unset;
   }
 `;
+
+const SecurityHeader = styled(FlexBox)`
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+
+  @media ${device.laptop} {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0;
+  }
+`;
+
+const ButtonGroup = styled(FlexBox)`
+  column-gap: 16px;
+  flex-wrap: wrap;
+`;
+
+const FundamentalBlock = styled.div`
+  width: 100%;
+
+  @media ${device.laptop} {
+    width: 48%;
+  }
+`;
+
+const TabList = styled.div`
+  display: flex;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 0 16px;        /* give a bit of breathing room on left & right */
+  justify-content: center;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.2);
+    border-radius: 2px;
+  }
+`;
+
+const TabItem = styled.div`
+  flex: 0 0 auto;         /* never shrink or grow, size to content */
+  padding: 8px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid ${({ selected }) => (selected ? "#000" : "transparent")};
+  font-weight: ${({ selected }) => (selected ? "bold" : "normal")};
+`;
+
+
+const CardList = styled.div`
+  display: grid;
+  gap: 1rem;
+  @media ${device.laptop} {
+    display: table;
+    width: 100%;
+  }
+`;
+
+const Card = styled.div`
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #ebf0f4;
+  border-radius: 8px;
+
+  @media ${device.laptop} {
+    display: table-row;
+    border: none;
+    background: none;
+  }
+`;
+
 
 const slugify = text =>
   text
@@ -691,37 +789,22 @@ function CustomCashflowTooltip({ active, payload, label }) {
   return null;
 }
 
-export function CashFlowSection({ data }) {
+export function CashFlowSection({ data = [] }) {
   const [selectedKey, setSelectedKey] = useState("cfo");
 
   return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-          marginBottom: "10px",
-          justifyContent: "center",
-        }}
-      >
+    <>
+      <TabList>
         {cashFlowTabs.map(tab => (
-          <div
+          <TabItem
             key={tab.key}
+            selected={tab.key === selectedKey}
             onClick={() => setSelectedKey(tab.key)}
-            style={{
-              padding: "10px 20px",
-              cursor: "pointer",
-              borderBottom:
-                selectedKey === tab.key
-                  ? "2px solid black"
-                  : "2px solid transparent",
-              fontWeight: selectedKey === tab.key ? "bold" : "normal",
-            }}
           >
             {tab.label}
-          </div>
+          </TabItem>
         ))}
-      </div>
+      </TabList>
 
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={[...data].sort((a, b) => a.year - b.year)}>
@@ -734,7 +817,7 @@ export function CashFlowSection({ data }) {
           <Bar dataKey={selectedKey} fill={blue[5]} />
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </>
   );
 }
 
@@ -998,9 +1081,9 @@ const Stock = () => {
         <NavLink href="#peers">Peer Comparison</NavLink>
       </NavLinks>
       <SecuritySection id="security">
-        <FlexBox width="100%" align="center" justify="space-between">
+        <SecurityHeader>
           <H5 bold>Security Information</H5>
-          <FlexBox columnGap="16px">
+          <ButtonGroup align="center">
             {isLoggedIn && (
               <Button outline onClick={() => setShowWatchlistPopup(true)}>
                 <FaArrowsRotate size={18} />
@@ -1011,8 +1094,8 @@ const Stock = () => {
               <CiExport />
               <Body1>Compare</Body1>
             </Button>
-          </FlexBox>
-        </FlexBox>
+          </ButtonGroup>
+        </SecurityHeader>
         <GridContainer>
           <GridItem>
             <Body1 bold>ISIN</Body1>
@@ -1087,20 +1170,16 @@ const Stock = () => {
         <H1 bold>Financial Fundamentals</H1>
         <TableContainer>
           {Object.entries(financialData).map(([section, data]) => {
-            // Extract last 3 years from data
             const years = data[0]?.values?.length
               ? data[0].years.slice(-3)
               : [];
 
             return (
-              <div key={section} style={{ width: "48%" }}>
+              <FundamentalBlock key={section}>
                 <Body1 bold>{section}</Body1>
 
                 {!data.length || !years.length ? (
-                  <Body1>
-                    <br />
-                    <Unavailble />
-                  </Body1>
+                  <Body1><br /><Unavailble /></Body1>
                 ) : (
                   <ResponsiveTableWrapper>
                     <Table>
@@ -1117,11 +1196,9 @@ const Stock = () => {
                           {data.map(row => (
                             <TableRow key={row.metric}>
                               <TableCell>{row.metric}</TableCell>
-                              {row.values.slice(-3).map((value, index) => (
-                                <TableCell key={index}>
-                                  {value !== undefined
-                                    ? formatValue(value, true)
-                                    : "N/A"}
+                              {row.values.slice(-3).map((value, idx) => (
+                                <TableCell key={idx}>
+                                  {value != null ? formatValue(value, true) : "N/A"}
                                 </TableCell>
                               ))}
                             </TableRow>
@@ -1131,11 +1208,12 @@ const Stock = () => {
                     </Table>
                   </ResponsiveTableWrapper>
                 )}
-              </div>
+              </FundamentalBlock>
             );
           })}
         </TableContainer>
       </FlexBox>
+
       {cashflowChartData && cashflowChartData?.length > 0 && (
         <FlexBox width="100%" column id="cash">
           <H1 bold>Cash Counter</H1>
@@ -1211,7 +1289,7 @@ const Stock = () => {
       </Section>
 
       <AnnualReportsSection newsData={newsData} />
-      
+
       {isLoggedIn && (
         <AddToWatchlistPopup
           visible={showWatchlistPopup}
@@ -1222,7 +1300,7 @@ const Stock = () => {
 
       <FlexBox width="100%" column id="news">
         <H1 bold>Corporate News</H1>
-        <div style={{paddingTop: '16px'}}>
+        <div style={{ paddingTop: '16px' }}>
           <News onlyCompanyNews={true} companyFqn={fqn} />
         </div>
       </FlexBox>

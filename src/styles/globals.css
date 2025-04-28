@@ -590,13 +590,6 @@ a {
 }
 
 @media screen and (max-width: 768px) {
-  table, thead, tbody, th, td, tr {
-    display: block;
-  }
-
-  thead tr {
-    display: none;
-  }
 
   td {
     padding-left: 50%;
