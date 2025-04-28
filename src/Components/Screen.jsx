@@ -386,7 +386,6 @@ const Screen = () => {
 
   const handlePrebuilt = index => {
     const payload = presetCustomScreens[index];
-    console.log(index, payload);
     const encoded = encodeURIComponent(encode(JSON.stringify(payload)));
     router.push(`/screener/screen?preset=${encoded}`);
   };
