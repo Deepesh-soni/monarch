@@ -103,7 +103,7 @@ export default function InsightsSection({ insightsData }) {
       <HeaderContainer>
         <H1 bold>APART Insights</H1>
         
-        {insightsData && (
+        {/* {insightsData && (
           <Tooltip 
             title={`Apart Insight Score: ${insightsData.buysellscore || 'N/A'}`}
             placement="top"
@@ -113,7 +113,7 @@ export default function InsightsSection({ insightsData }) {
               {recommendationInfo.text}
             </RecommendationBox>
           </Tooltip>
-        )}
+        )} */}
       </HeaderContainer>
 
       {insightsData ? (
@@ -122,9 +122,9 @@ export default function InsightsSection({ insightsData }) {
             <div>
               <Body1 style={{ display: 'inline' }}><strong>Outlook:</strong> {insightsData.outlook}</Body1>
             </div>
-            <Text type="secondary" style={{ marginTop: '8px', display: 'block' }}>
+            {/* <Text type="secondary" style={{ marginTop: '8px', display: 'block' }}>
               {recommendationInfo.description}
-            </Text>
+            </Text> */}
           </OutlookContainer>          
           <Row gutter={16}>
             <Col xs={24} md={12}>

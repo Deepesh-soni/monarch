@@ -8,6 +8,7 @@ import Layout from "../../../layout/HomePageLayout";
 import Meta from "@layout/Meta";
 import { Breadcrumb, Skeleton } from "antd";
 import Link from "next/link";
+import TextWithEllipsis from "@common/ElipsisText";
 
 const Wrapper = styled.div`
   padding: 2rem;
@@ -31,6 +32,11 @@ const Row = styled.div`
   align-items: center;
   gap: 2rem;
   margin-bottom: 2rem;
+  
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const CompareCard = styled.div`
@@ -53,9 +59,18 @@ const SectionSubtitle = styled.p`
   margin-bottom: 1rem;
 `;
 
+// Add a scrollable container for the table
+const TableContainer = styled.div`
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+`;
+
 const CompareTable = styled.table`
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed; // This ensures columns respect the width settings
+  min-width: 650px; // Ensures table doesn't shrink too much on mobile
 `;
 
 const Th = styled.th`
@@ -63,11 +78,25 @@ const Th = styled.th`
   font-weight: 600;
   color: #6b7280;
   padding: 0.75rem 1rem;
+  white-space: nowrap;
 `;
 
 const Td = styled.td`
   padding: 0.75rem 1rem;
   border-top: 1px solid #e5e7eb;
+  white-space: nowrap;
+`;
+
+const MetricColumn = styled(Th)`
+  width: 20%;
+`;
+
+const ValueColumn = styled(Th)`
+  width: 30%;
+`;
+
+const DiffColumn = styled(Th)`
+  width: 20%;
 `;
 
 const Difference = styled.span`
@@ -116,7 +145,6 @@ export default function StockComparePage() {
     const [loadingA, setLoadingA] = useState(false);
     const [loadingB, setLoadingB] = useState(false);
 
-
     useEffect(() => {
         if (Array.isArray(query?.slug)) {
             if (query.slug.length === 2) {
@@ -147,7 +175,6 @@ export default function StockComparePage() {
             setLoading(false);
         }
     };
-
 
     const formatValue = (key, val, start = '', end = '') => {
         const invalid = val === undefined || val === null || val === 0 || isNaN(val);
@@ -213,50 +240,66 @@ export default function StockComparePage() {
                                 <SectionSubtitle>Compare key market performance indicators</SectionSubtitle>
 
                                 <Skeleton loading={loadingA || loadingB} active paragraph={{ rows: groupMetrics.length + 1 }}>
-                                    <CompareTable>
-                                        <thead>
-                                            <tr>
-                                                <Th>Metric</Th>
-                                                <Th>{dataA?.companyName || stockA || "-"}</Th>
-                                                <Th>{dataB?.companyName || stockB || "-"}</Th>
-                                                <Th>Difference</Th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {groupMetrics.map(({ key, label, start = "", end = "" }) => {
-                                                const a = dataA?.[key];
-                                                const b = dataB?.[key];
-                                                const isValid =
-                                                    typeof a === "number" &&
-                                                    typeof b === "number" &&
-                                                    a !== 0 &&
-                                                    !isNaN(a) &&
-                                                    !isNaN(b);
-                                                const diff = isValid ? (((b - a) / a) * 100).toFixed(2) : null;
+                                    <TableContainer>
+                                        <CompareTable>
+                                            <thead>
+                                                <tr>
+                                                    <MetricColumn>Metric</MetricColumn>
+                                                    <ValueColumn>
+                                                        <TextWithEllipsis>
+                                                            {dataA?.companyName || stockA || "-"}
+                                                        </TextWithEllipsis>
+                                                    </ValueColumn>
+                                                    <ValueColumn>
+                                                        <TextWithEllipsis>
+                                                            {dataB?.companyName || stockB || "-"}
+                                                        </TextWithEllipsis>
+                                                    </ValueColumn>
+                                                    <DiffColumn>Difference</DiffColumn>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {groupMetrics.map(({ key, label, start = "", end = "" }) => {
+                                                    const a = dataA?.[key];
+                                                    const b = dataB?.[key];
+                                                    const isValid =
+                                                        typeof a === "number" &&
+                                                        typeof b === "number" &&
+                                                        a !== 0 &&
+                                                        !isNaN(a) &&
+                                                        !isNaN(b);
+                                                    const diff = isValid ? (((b - a) / a) * 100).toFixed(2) : null;
 
-                                                return (
-                                                    <tr key={key}>
-                                                        <Td>{label}</Td>
-                                                        <Td>{formatValue(key, a, start, end)}</Td>
-                                                        <Td>{formatValue(key, b, start, end)}</Td>
-                                                        <Td>
-                                                            {diff !== null ? (
-                                                                <Difference positive={parseFloat(diff) > 0}>
-                                                                    {parseFloat(diff) > 0 ? `+${diff}%` : `${diff}%`}
-                                                                </Difference>
-                                                            ) : (
-                                                                "-"
-                                                            )}
-                                                        </Td>
-                                                    </tr>
-                                                );
-                                            })}
-                                        </tbody>
-                                    </CompareTable>
+                                                    return (
+                                                        <tr key={key}>
+                                                            <Td style={{ width: "40%" }}>
+                                                                <TextWithEllipsis>{label}</TextWithEllipsis>
+                                                            </Td>
+                                                            <Td style={{ width: "20%" }}>
+                                                                <TextWithEllipsis>{formatValue(key, a, start, end)}</TextWithEllipsis>
+                                                            </Td>
+                                                            <Td style={{ width: "20%" }}>
+                                                                <TextWithEllipsis>{formatValue(key, b, start, end)}</TextWithEllipsis>
+                                                            </Td>
+                                                            <Td style={{ width: "20%" }}>
+                                                                {diff !== null ? (
+                                                                    <Difference positive={parseFloat(diff) > 0}>
+                                                                        {parseFloat(diff) > 0 ? `+${diff}%` : `${diff}%`}
+                                                                    </Difference>
+                                                                ) : (
+                                                                    "-"
+                                                                )}
+                                                            </Td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </CompareTable>
+
+                                    </TableContainer>
                                 </Skeleton>
                             </CompareCard>
                         ))}
-
                 </Wrapper>
             </Layout>
         </>
