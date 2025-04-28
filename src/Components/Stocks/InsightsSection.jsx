@@ -90,7 +90,7 @@ export default function InsightsSection({ insightsData }) {
     } else if (rec === 'sell') {
       return { text: 'SELL', description: 'Go short. The trend is down.' };
     } else {
-      return { text: 'NEUTRAL', description: 'The trend is undetermined. Consider cash or hedged positions.' };
+      return { text: 'HOLD', description: 'The trend is undetermined. Consider cash or hedged positions.' };
     }
   };
 
