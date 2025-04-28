@@ -42,6 +42,8 @@ const ButtonRow = styled.div`
 `;
 
 const StockQueryBuilderIndex = () => {
+
+    const [isNewModalOpen, setIsNewModalOpen] = useState(false);
     const [fields, setFields] = useState([]);
     const [query, setQuery] = useState({ combinator: "and", rules: [] });
     const [loadingFields, setLoadingFields] = useState(true);
@@ -141,11 +143,6 @@ const StockQueryBuilderIndex = () => {
             setPendingNavigation(null);
         }
     }, [pendingNavigation, router, isNewModalOpen]);
-
-
-
-    const [isNewModalOpen, setIsNewModalOpen] = useState(false);
-
 
     return (
         <>
