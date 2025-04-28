@@ -10,7 +10,6 @@ import SearchableDropdown from "@Components/common/UI/Search/SearchDropdownCmp";
 import { H6, H2 } from "../common/Typography";
 import { Medium } from "../common/Paragraph";
 import Layout from "@layout/HomePageLayout";
-import StockImage from "./StockImage";
 
 const Wrapper = styled.div`
   background: url("/assets/home/page-bg.png");
@@ -57,17 +56,18 @@ const Heading = styled(Display)`
   }
 `;
 
-// New inline container for the second line
-const InlineHeading = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px; /* space between logo and text */
-  padding: 0 1rem;
-  text-align: center;
-  @media (max-width: 768px) {
-    flex-wrap: wrap;
+const StyledStock = styled.span`
+  background: linear-gradient(to right, #009CDE, #142C8E);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 600;
+`;
+
+const SubTitle = styled(H6)`
+   @media ${device.laptop} {
+      font-size: 24px;
+      font-weight: 400;
   }
 `;
 
@@ -94,17 +94,16 @@ const Home = () => {
         <Container>
           <FlexBox column align="center">
             <Heading>Discover &amp; Analyze</Heading>
-            <InlineHeading>
-              <StockImage />
-              <Heading style={{ margin: 0 }}>like never before</Heading>
-            </InlineHeading>
+            <Heading style={{ margin: 0 }}>
+              <StyledStock>Stocks</StyledStock> like never before
+            </Heading>
           </FlexBox>
 
           <TextWrapper>
-            <H6 textAlign="center">
+            <SubTitle textAlign="center">
               Advanced stock screening, real-time analysis, and powerful tools
               to make informed investment decisions
-            </H6>
+            </SubTitle>
           </TextWrapper>
           <div style={{ width: "100%", maxWidth: "806px", padding: "0 1rem" }}>
             <SearchableDropdown width="100%" onChange={handleSearchSelect} />

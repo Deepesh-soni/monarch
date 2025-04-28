@@ -131,7 +131,7 @@ const StockChart = ({ stockCode = "delhivery" }) => {
             <YAxis
               yAxisId="price"
               tickFormatter={val => `₹ ${val.toLocaleString("en-IN")}`}
-              width={ isMobile ? 30 : 100}
+              width={ isMobile ? 60 : 100}
               fontSize={isMobile ? 10 : 'default'}
             />
             <YAxis
@@ -469,6 +469,7 @@ const Table = styled.div`
   border: 1px solid #ebf0f4;
   border-radius: 12px;
   background: #fff;
+  min-width: 600px; // Set a minimum width to ensure all columns are visible when scrolling
 `;
 
 const StyledTable = styled.table`
@@ -481,6 +482,7 @@ const TableHeader = styled.th`
   text-align: left;
   font-weight: bold;
   border-bottom: 2px solid #ebf0f4;
+  white-space: nowrap; // Prevents text wrapping
 `;
 
 const TableRow = styled.tr``;
@@ -488,6 +490,7 @@ const TableRow = styled.tr``;
 const TableCell = styled.td`
   padding: 12px;
   border-bottom: 1px solid #ebf0f4;
+  white-space: nowrap; // Prevents text wrapping
 `;
 
 const LeftContainer = styled.div`
@@ -557,8 +560,11 @@ const Row = styled.div`
 const ResponsiveTableWrapper = styled.div`
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch; // For smooth scrolling on iOS
+  
   @media ${device.laptop} {
-    overflow-x: unset;
+    // On larger screens, you can decide if you want to keep scrolling or not
+    // overflow-x: unset; // Remove this line if you want scrolling on all devices
   }
 `;
 
@@ -817,7 +823,7 @@ export function CashFlowSection({ data = [] }) {
           <XAxis dataKey="year" />
           <YAxis
             tickFormatter={val => `₹ ${val.toLocaleString("en-IN")}`}
-            width={ isMobile ? 30 : 100}
+            width={ isMobile ? 60 : 100}
             fontSize={isMobile ? 10 : 'default'}
           />
           <Tooltip content={<CustomCashflowTooltip />} />
