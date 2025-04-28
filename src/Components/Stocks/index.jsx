@@ -21,6 +21,7 @@ import InsightsSection from "./InsightsSection";
 import { Alert } from "antd";
 import AnnualReportsSection from "./AnnualReports";
 import News from "@Components/News";
+import useMobileView from "../../hooks/useMobileView";
 
 const TIME_FRAMES = ["1W", "1M", "3M", "6M", "1Y", "5Y", "MAX"];
 
@@ -53,6 +54,8 @@ const StockChart = ({ stockCode = "delhivery" }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const isMobile = useMobileView();
 
   useEffect(() => {
     setLoading(true);
@@ -125,11 +128,12 @@ const StockChart = ({ stockCode = "delhivery" }) => {
                   .replace(" ", "' ");
               }}
             />
-            {<YAxis
+            <YAxis
               yAxisId="price"
               tickFormatter={val => `₹ ${val.toLocaleString("en-IN")}`}
-              width={100}
-            />}
+              width={ isMobile ? 30 : 100}
+              fontSize={isMobile ? 10 : 'default'}
+            />
             <YAxis
               yAxisId="volume"
               orientation="right"
@@ -792,6 +796,8 @@ function CustomCashflowTooltip({ active, payload, label }) {
 export function CashFlowSection({ data = [] }) {
   const [selectedKey, setSelectedKey] = useState("cfo");
 
+  const isMobile = useMobileView();
+
   return (
     <>
       <TabList>
@@ -811,7 +817,8 @@ export function CashFlowSection({ data = [] }) {
           <XAxis dataKey="year" />
           <YAxis
             tickFormatter={val => `₹ ${val.toLocaleString("en-IN")}`}
-            width={100}
+            width={ isMobile ? 30 : 100}
+            fontSize={isMobile ? 10 : 'default'}
           />
           <Tooltip content={<CustomCashflowTooltip />} />
           <Bar dataKey={selectedKey} fill={blue[5]} />
