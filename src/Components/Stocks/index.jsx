@@ -850,7 +850,7 @@ function CustomShareholdingTooltip({ active, payload, label }) {
   return null;
 }
 
-function Unavailble() {
+export function Unavailble() {
   return (
     <Result
       status="warning"
@@ -1012,7 +1012,7 @@ const Stock = () => {
 
   const handleCompareClick = () => {
     if (stock && peers) {
-      router.push(`/stocks/compare/${stock.fqn}/${peers[0].fqn}`);
+      router.push(`/stocks/compare/${stock.fqn}/${peers?.length > 0 ? peers[0].fqn : ''}`);
     }
   };
 

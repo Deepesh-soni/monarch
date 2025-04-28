@@ -3,6 +3,7 @@ import { Card, Typography } from "antd";
 import { FilePdfOutlined } from "@ant-design/icons";
 import { device } from "@common/UI/Responsive";
 import { Body1, H1 } from "@common/UI/Headings";
+import { Unavailble } from ".";
 
 const FlexBox = styled.div`
   display: flex;
@@ -29,6 +30,11 @@ const CardContent = styled.div`
 `;
 
 export default function AnnualReportsSection({ newsData }) {
+
+  if(newsData?.length < 1){
+    return <></>;
+  }
+
   return (
     <FlexBox id="news">
       <H1 bold>
