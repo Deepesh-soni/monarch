@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Card, Typography } from "antd";
 import { FilePdfOutlined } from "@ant-design/icons";
 import { device } from "@common/UI/Responsive";
+import { Body1, H1 } from "@common/UI/Headings";
 
 const FlexBox = styled.div`
   display: flex;
@@ -30,9 +31,9 @@ const CardContent = styled.div`
 export default function AnnualReportsSection({ newsData }) {
   return (
     <FlexBox id="news">
-      <Typography.Title level={1} strong>
+      <H1 bold>
         Annual Reports
-      </Typography.Title>
+      </H1>
 
       <ReportsGrid>
         {newsData &&
@@ -53,7 +54,7 @@ export default function AnnualReportsSection({ newsData }) {
                 <Typography.Paragraph
                   style={{ marginTop: "8px", marginBottom: 0, fontWeight: 700 }}
                 >
-                  {String(data.year).substring(0, 4)}
+                  Annual Report {String(data.year).substring(0, 4)}
                 </Typography.Paragraph>
               </CardContent>
             </Card>

@@ -20,7 +20,7 @@ import { ComposedChart, YAxis, CartesianGrid, Area } from "recharts";
 import InsightsSection from "./InsightsSection";
 import { Alert } from "antd";
 import AnnualReportsSection from "./AnnualReports";
-import News from "./News";
+import News from "@Components/News";
 
 const TIME_FRAMES = ["1W", "1M", "3M", "6M", "1Y", "5Y", "MAX"];
 
@@ -790,61 +790,61 @@ const Stock = () => {
     return {
       "Profit & Loss": pnlChartData
         ? [
-            {
-              metric: "Book Value (Cr.)",
-              values: pnlChartData.map(d => d.bookvalue),
-              years: pnlChartData.map(d => d.year),
-            },
-            {
-              metric: "EPS",
-              values: pnlChartData.map(d => d.eps),
-              years: pnlChartData.map(d => d.year),
-            },
-            {
-              metric: "Net Profit (Cr.)",
-              values: pnlChartData.map(d => d.netprofit),
-              years: pnlChartData.map(d => d.year),
-            },
-            {
-              metric: "Operating Profit (Cr.)",
-              values: pnlChartData.map(d => d.opprofit),
-              years: pnlChartData.map(d => d.year),
-            },
-            {
-              metric: "Revenue (Cr.)",
-              values: pnlChartData.map(d => d.revenue),
-              years: pnlChartData.map(d => d.year),
-            },
-          ]
+          {
+            metric: "Book Value (Cr.)",
+            values: pnlChartData.map(d => d.bookvalue),
+            years: pnlChartData.map(d => d.year),
+          },
+          {
+            metric: "EPS",
+            values: pnlChartData.map(d => d.eps),
+            years: pnlChartData.map(d => d.year),
+          },
+          {
+            metric: "Net Profit (Cr.)",
+            values: pnlChartData.map(d => d.netprofit),
+            years: pnlChartData.map(d => d.year),
+          },
+          {
+            metric: "Operating Profit (Cr.)",
+            values: pnlChartData.map(d => d.opprofit),
+            years: pnlChartData.map(d => d.year),
+          },
+          {
+            metric: "Revenue (Cr.)",
+            values: pnlChartData.map(d => d.revenue),
+            years: pnlChartData.map(d => d.year),
+          },
+        ]
         : [],
       "Balance Sheet": balanceSheetChartData
         ? [
-            {
-              metric: "Cash & Equivalents (Cr.)",
-              values: balanceSheetChartData.map(d => d.cashEq),
-              years: balanceSheetChartData.map(d => d.year),
-            },
-            {
-              metric: "Debt (Cr.)",
-              values: balanceSheetChartData.map(d => d.debt),
-              years: balanceSheetChartData.map(d => d.year),
-            },
-            {
-              metric: "Net Worth (Cr.)",
-              values: balanceSheetChartData.map(d => d.networth),
-              years: balanceSheetChartData.map(d => d.year),
-            },
-            {
-              metric: "Total Assets (Cr.)",
-              values: balanceSheetChartData.map(d => d.totalAssets),
-              years: balanceSheetChartData.map(d => d.year),
-            },
-            {
-              metric: "Total Liabilities (Cr.)",
-              values: balanceSheetChartData.map(d => d.totalLiabilities),
-              years: balanceSheetChartData.map(d => d.year),
-            },
-          ]
+          {
+            metric: "Cash & Equivalents (Cr.)",
+            values: balanceSheetChartData.map(d => d.cashEq),
+            years: balanceSheetChartData.map(d => d.year),
+          },
+          {
+            metric: "Debt (Cr.)",
+            values: balanceSheetChartData.map(d => d.debt),
+            years: balanceSheetChartData.map(d => d.year),
+          },
+          {
+            metric: "Net Worth (Cr.)",
+            values: balanceSheetChartData.map(d => d.networth),
+            years: balanceSheetChartData.map(d => d.year),
+          },
+          {
+            metric: "Total Assets (Cr.)",
+            values: balanceSheetChartData.map(d => d.totalAssets),
+            years: balanceSheetChartData.map(d => d.year),
+          },
+          {
+            metric: "Total Liabilities (Cr.)",
+            values: balanceSheetChartData.map(d => d.totalLiabilities),
+            years: balanceSheetChartData.map(d => d.year),
+          },
+        ]
         : [],
     };
   }, [balanceSheetChartData, pnlChartData]);
@@ -1062,9 +1062,8 @@ const Stock = () => {
                 <a
                   href={`https://www.bseindia.com/stock-share-price/${slugify(
                     stock.companyName
-                  )}/${stock.companyShortName}/${
-                    stock.bseCode
-                  }/corp-information/`}
+                  )}/${stock.companyShortName}/${stock.bseCode
+                    }/corp-information/`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -1210,7 +1209,9 @@ const Stock = () => {
           </Row>
         </ShareholdingRight>
       </Section>
+
       <AnnualReportsSection newsData={newsData} />
+      
       {isLoggedIn && (
         <AddToWatchlistPopup
           visible={showWatchlistPopup}
@@ -1218,7 +1219,14 @@ const Stock = () => {
           stockFqn={stock.fqn}
         />
       )}
-      <News fqn={fqn} />
+
+      <FlexBox width="100%" column id="news">
+        <H1 bold>Corporate News</H1>
+        <div style={{paddingTop: '16px'}}>
+          <News onlyCompanyNews={true} companyFqn={fqn} />
+        </div>
+      </FlexBox>
+
     </Wrapper>
   );
 };

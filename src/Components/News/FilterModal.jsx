@@ -1,154 +1,66 @@
 import React from "react";
 import styled from "styled-components";
+import { Modal, DatePicker, Checkbox, Button, Space, Typography } from "antd";
+import dayjs from "dayjs";
 
-import FlexBox from "@common/UI/FlexBox";
-import Input from "@common/UI/InputBox";
-import { Small, Medium } from "@Components/common/Paragraph";
-import { Button } from "@Components/common/UI/Buttons";
-import CheckBox from "@Components/common/UI/CheckBox";
+const { Title, Text } = Typography;
 
-const Hr = styled.hr`
-  width: 100%;
-  border: 1px solid #ebf0f4;
-`;
-
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+const Footer = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
 `;
 
-const ModalContent = styled.div`
-  background: white;
-  padding: 0.75rem;
-  border-radius: 10px;
-  min-width: fit-content;
-  text-align: center;
-  position: relative;
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  border: none;
-  background: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #142c8e;
-`;
-
-const ButtonDay = styled(FlexBox)`
-  width: 213px;
-  height: 54px;
-  border-radius: 13.55px;
-  padding: 0 5.65px;
-  border: 1.13px solid #ecedf0;
-  align-items: center;
-  justify-content: center;
-`;
-
-const FilterSection = ({ title, children, resettable }) => (
-  <>
-    <FlexBox columnGap="1rem">
-      <Medium bold>{title}</Medium>
-      {resettable && <Medium>Reset</Medium>}
-    </FlexBox>
-    {children}
-    <Hr />
-  </>
-);
-
-const DateInput = ({ label, value, onChange }) => (
-  <FlexBox column width="100%" rowGap="0.25rem">
-    <Medium bold color="#687792">
-      {label}
-    </Medium>
-    <Input type="date" value={value} onChange={onChange} />
-  </FlexBox>
-);
-
-const CheckboxGroup = ({ options, selectedOptions, onChange }) => (
-  <FlexBox columnGap="1rem" wrap>
-    {options.map(option => (
-      <FlexBox key={option} align="center" columnGap="0.25rem">
-        <CheckBox
-          checked={selectedOptions.includes(option)}
-          onChange={() => onChange(option)}
-        />
-        <Medium color="#687792">{option}</Medium>
-      </FlexBox>
-    ))}
-  </FlexBox>
-);
-
-const FilterModal = ({
-  setIsModalOpen,
+export default function FilterModal({
+  isOpen,
+  onClose,
   fromDate,
   toDate,
   setFromDate,
   setToDate,
-  selectedNewsTypes = [],
+  selectedNewsTypes,
   setSelectedNewsTypes,
-  onApplyFilter,
-  onResetFilters,
-}) => {
-  const handleNewsTypeChange = (option) => {
-    if (selectedNewsTypes.includes(option)) {
-      setSelectedNewsTypes(selectedNewsTypes.filter(item => item !== option));
-    } else {
-      setSelectedNewsTypes([...selectedNewsTypes, option]);
-    }
-  };
-
+  onApply,
+  onReset,
+}) {
   return (
-    <ModalOverlay onClick={() => setIsModalOpen(false)}>
-      <ModalContent onClick={e => e.stopPropagation()}>
-        <CloseButton onClick={() => setIsModalOpen(false)}>&times;</CloseButton>
-        <FlexBox column rowGap="1rem">
-          <Small>Filter by:</Small>
+    <Modal
+      title="Filter News"
+      visible={isOpen}
+      onCancel={onClose}
+      footer={null}
+      width={400}
+      centered
+    >
+      <Title level={5}>Date Range</Title>
+      <DatePicker.RangePicker
+        value={
+          fromDate && toDate
+            ? [dayjs(fromDate, "YYYY-MM-DD"), dayjs(toDate, "YYYY-MM-DD")]
+            : []
+        }
+        onChange={(_, [start, end]) => {
+          setFromDate(start || null);
+          setToDate(end || null);
+        }}
+        style={{ width: "100%", marginBottom: 16 }}
+      />
 
-          <FilterSection title="Date Range" resettable>
-            <FlexBox columnGap="18px">
-              <DateInput
-                label="From"
-                value={fromDate}
-                onChange={e => setFromDate(e.target.value)}
-              />
-              <DateInput
-                label="To"
-                value={toDate}
-                onChange={e => setToDate(e.target.value)}
-              />
-            </FlexBox>
-          </FilterSection>
+      <Title level={5}>News Type</Title>
+      <Checkbox.Group
+        options={["Corporate News"]}
+        value={selectedNewsTypes}
+        onChange={setSelectedNewsTypes}
+        style={{ marginBottom: 16 }}
+      />
 
-          <FilterSection title="News Type" resettable>
-            <CheckboxGroup
-              options={["Corporate News"]}
-              selectedOptions={selectedNewsTypes}
-              onChange={handleNewsTypeChange}
-            />
-          </FilterSection>
-
-          <FlexBox columnGap="18px" marginTop="1rem">
-            <Button outline width="100%" onClick={onResetFilters}>
-              Reset All
-            </Button>
-            <Button width="100%" onClick={onApplyFilter}>
-              Apply Filter
-            </Button>
-          </FlexBox>
-        </FlexBox>
-      </ModalContent>
-    </ModalOverlay>
+      <Footer>
+        <Button onClick={onReset}>Reset All</Button>
+        <Button type="primary" onClick={onApply}>
+          Apply
+        </Button>
+      </Footer>
+    </Modal>
   );
-};
-
-export default FilterModal;
+}

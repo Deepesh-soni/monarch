@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CiClock2 } from "react-icons/ci";
-import { Pagination, Spin } from "antd";
-import Link from "next/link";
+import { Pagination, Spin, Modal, Button } from "antd";
 import dynamic from "next/dynamic";
-import axios from "axios";
+import { client } from "@axiosClient";
 
 import FlexBox from "@common/UI/FlexBox";
 import { Support } from "@common/UI/Headings";
@@ -13,14 +12,10 @@ import { H6 } from "../common/Typography";
 import { Small, Medium } from "../common/Paragraph";
 import { IoFilterOutline } from "react-icons/io5";
 
-const FilterModal = dynamic(() => import("./FilterModal"), {
-  ssr: false,
-});
+const FilterModal = dynamic(() => import("./FilterModal"), { ssr: false });
 
 const Wrapper = styled.div`
-  background: url("/assets/home/page-bg.png");
-  background-position: center;
-  background-size: cover;
+  background: url("/assets/home/page-bg.png") center/cover no-repeat;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -37,24 +32,22 @@ const LoaderWrapper = styled.div`
 const Container = styled(FlexBox)`
   flex-direction: column;
   padding: 1rem;
-  align-items: center;
-  gap: 1.5rem;
   width: 100%;
+  gap: 1.5rem;
 
   @media ${device.laptop} {
-    justify-content: space-between;
-    margin: auto;
-    gap: 2.5rem;
     width: 86.67%;
     max-width: 75rem;
+    margin: auto;
     padding-bottom: 150px;
+    gap: 2.5rem;
   }
 `;
 
 const Card = styled(FlexBox)`
   flex-direction: column;
   width: 100%;
-  background: #ffffff;
+  background: #fff;
   border: 1px solid #ebf0f4;
   box-shadow: 0px 3px 3px 0px #00000040;
   padding: 0.75rem;
@@ -67,60 +60,72 @@ const Card = styled(FlexBox)`
   }
 `;
 
+const HoverCard = styled(Card)`
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+  &:hover {
+    box-shadow: 0 8px 16px rgba(20, 44, 142, 0.3);
+  }
+`;
+
 const Hr = styled.hr`
   width: 100%;
   border: 1px solid #ebf0f4;
 `;
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
+const EmptyState = styled(FlexBox)`
+  width: 100%;
+  height: 60vh;
+  justify-content: center;
+  align-items: center;
 `;
 
-const News = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const News = ({
+  onlyCompanyNews = false,
+  companyFqn = ""
+}) => {
+  // applied filters
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  const [selectedNewsTypes, setSelectedNewsTypes] = useState([]);
+  // modal-only filters
+  const [mFrom, setMFrom] = useState(null);
+  const [mTo, setMTo] = useState(null);
+  const [mTypes, setMTypes] = useState([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // detail modal
+  const [detail, setDetail] = useState(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+
   const [newsList, setNewsList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  // New States for filters
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
-  const [selectedNewsTypes, setSelectedNewsTypes] = useState([]);
-
-  const pageSize = 10; // Set pageSize same as backend
+  const pageSize = 10;
 
   const fetchNews = async (page = 1) => {
+    setLoading(true);
+    let params = { page, pageSize };
+    let url;
+
+    if (onlyCompanyNews) {
+      url = `/news/company/${companyFqn}`;
+    } else {
+      if (fromDate) params.start = fromDate;
+      if (toDate) params.end = toDate;
+      if (selectedNewsTypes.length) params.newsTypes = selectedNewsTypes.join(",");
+      url = fromDate || toDate ? "/news/date" : "/news";
+    }
+
     try {
-      setLoading(true);
-
-      const params = {
-        page,
-        pageSize,
-      };
-
-      // Add filters to API call if selected
-      if (fromDate) {
-        params.fromDate = fromDate;
-      }
-      if (toDate) {
-        params.toDate = toDate;
-      }
-      if (selectedNewsTypes.length > 0) {
-        params.newsTypes = selectedNewsTypes.join(",");
-      }
-
-      const response = await axios.get(
-        "https://api-test-monarq.pamprazzi.in/news",
-        { params }
-      );
-
-      const { data, total } = response.data;
-      setNewsList(data);
-      setTotalItems(total);
-      setLoading(false);
-    } catch (error) {
-      console.error("Failed to fetch news:", error);
+      const res = await client.get(url, { params });
+      setNewsList(res.data.data);
+      setTotalItems(res.data.total);
+    } catch (err) {
+      console.error(err);
+    } finally {
       setLoading(false);
     }
   };
@@ -128,118 +133,172 @@ const News = () => {
   useEffect(() => {
     fetchNews(currentPage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, fromDate, toDate, selectedNewsTypes]);
+  }, [currentPage, fromDate, toDate, selectedNewsTypes, onlyCompanyNews, companyFqn]);
 
-  const handleApplyFilter = () => {
-    setCurrentPage(1); // Reset to page 1 when filter applied
-    fetchNews(1);
-    setIsModalOpen(false);
+  const openFilters = () => {
+    setMFrom(fromDate);
+    setMTo(toDate);
+    setMTypes(selectedNewsTypes);
+    setIsFilterOpen(true);
   };
 
-  const handleResetFilters = () => {
+  const applyFilters = () => {
+    setFromDate(mFrom);
+    setToDate(mTo);
+    setSelectedNewsTypes(mTypes);
+    setCurrentPage(1);
+    setIsFilterOpen(false);
+  };
+
+  const resetFilters = () => {
+    setMFrom(null);
+    setMTo(null);
+    setMTypes([]);
     setFromDate(null);
     setToDate(null);
     setSelectedNewsTypes([]);
-    setCurrentPage(1); // Reset to first page
-    fetchNews(1); // Fetch news after resetting
-    setIsModalOpen(false);
+    setCurrentPage(1);
+    setIsFilterOpen(false);
   };
+
+  // render the list + pagination block
+  const ListSection = (
+    <FlexBox width="100%" column rowGap="1rem">
+      {!onlyCompanyNews && (
+        <FlexBox justify="flex-end">
+          <FlexBox
+            border="1.5px solid #142C8E"
+            align="center"
+            padding="0.5rem 1rem"
+            columnGap="0.75rem"
+            borderRadius="0.4rem"
+            cursor="pointer"
+            onClick={openFilters}
+          >
+            <IoFilterOutline color="#142C8E" size={20} />
+            <Small color="#142C8E">Filter</Small>
+          </FlexBox>
+        </FlexBox>
+      )}
+
+      {loading ? (
+        <LoaderWrapper>
+          <Spin size="large" />
+        </LoaderWrapper>
+      ) : newsList.length > 0 ? (
+        newsList.map(item => (
+          <HoverCard
+            key={item.id}
+            onClick={() => {
+              setDetail(item);
+              setIsDetailOpen(true);
+            }}
+          >
+            <FlexBox width="100%" column rowGap="15px" padding="1rem">
+              {!onlyCompanyNews && <Support color="#142C8E">{item.newsType}</Support>}
+              <H6 bold>{item.newsTitle}</H6>
+              <Medium>
+                {item.newsContent.length > 100
+                  ? item.newsContent.slice(0, 100) + "..."
+                  : item.newsContent}
+              </Medium>
+              <Hr />
+              <FlexBox columnGap="4px" align="center">
+                <CiClock2 color="#687792" />
+                <Small color="#687792">
+                  {new Date(item.newsDate).toLocaleString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </Small>
+              </FlexBox>
+            </FlexBox>
+          </HoverCard>
+        ))
+      ) : (
+        <EmptyState>
+          <Medium color="#687792" style={{ fontSize: "1.5rem" }}>
+            No news found
+          </Medium>
+        </EmptyState>
+      )}
+
+      {!loading && newsList.length > 0 && (
+        <Pagination
+          current={currentPage}
+          onChange={page => {
+            setCurrentPage(page);
+            window.scrollTo(0, 0);
+          }}
+          total={totalItems}
+          pageSize={pageSize}
+          showSizeChanger={false}
+          style={{ marginTop: "1rem", alignSelf: "center" }}
+        />
+      )}
+    </FlexBox>
+  );
 
   return (
     <>
-      <Wrapper>
-        <Container>
-          <FlexBox width="100%" column rowGap="1rem">
-            <FlexBox
-              align="center"
-              justify="space-between"
-              width="100%"
-              padding="1rem 0"
-            >
-              <FlexBox
-                border="1.5px solid #142C8E"
-                align="center"
-                padding="0.5rem 1rem"
-                columnGap="0.75rem"
-                borderRadius="0.4rem"
-                cursor="pointer"
-                onClick={() => setIsModalOpen(true)}
-              >
-                <IoFilterOutline color="#142C8E" size={20} />
-                <Small color="#142C8E">Filter</Small>
-              </FlexBox>
-            </FlexBox>
-
-            {/* If loading, show loading text (you can add skeletons too) */}
-            {loading ? (
-              <LoaderWrapper width="100%" justify="center" padding="2rem">
-                <Spin size="large" />
-              </LoaderWrapper>
-            ) : (
-              newsList.map(item => (
-                <StyledLink key={item.newsId} href={`/news/${item.newsId}`}>
-                  <Card>
-                    <FlexBox width="100%" column rowGap="15px" padding="1rem">
-                      <Support color="#142C8E">{item.newsType}</Support>
-                      <H6 bold>{item.newsTitle}</H6>
-                      {/* Truncate newsContent if too long */}
-                      <Medium>
-                        {item.newsContent.length > 100
-                          ? item.newsContent.slice(0, 100) + "..."
-                          : item.newsContent}
-                      </Medium>
-                      <Hr />
-                      <FlexBox width="100%" justify="space-between">
-                        <FlexBox columnGap="4px" align="center">
-                          <CiClock2 color="#687792" />
-                          <Small color="#687792">
-                            {new Date(item.newsDate).toLocaleDateString(
-                              "en-IN",
-                              {
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                              }
-                            )}
-                          </Small>
-                        </FlexBox>
-                        <Medium bold>Read More</Medium>
-                      </FlexBox>
-                    </FlexBox>
-                  </Card>
-                </StyledLink>
-              ))
-            )}
-
-            <Pagination
-              current={currentPage}
-              onChange={page => {
-                setCurrentPage(page);
-                window.scrollTo(0, 0);
-              }}
-              total={totalItems}
-              pageSize={pageSize}
-              showSizeChanger={false}
-              style={{ marginTop: "1rem", alignSelf: "center" }}
-            />
-          </FlexBox>
-        </Container>
-      </Wrapper>
+      {onlyCompanyNews ? (
+        // company-only: just the list, centered, no wrapper/container
+        <FlexBox style={{ width: "100%"}}>
+          {ListSection}
+        </FlexBox>
+      ) : (
+        // default: with background & container
+        <Wrapper>
+          <Container>{ListSection}</Container>
+        </Wrapper>
+      )}
 
       {/* Filter Modal */}
-      {isModalOpen && (
+      {!onlyCompanyNews && (
         <FilterModal
-          setIsModalOpen={setIsModalOpen}
-          fromDate={fromDate}
-          toDate={toDate}
-          setFromDate={setFromDate}
-          setToDate={setToDate}
-          selectedNewsTypes={selectedNewsTypes}
-          setSelectedNewsTypes={setSelectedNewsTypes}
-          onApplyFilter={handleApplyFilter}
-          onResetFilters={handleResetFilters}
+          isOpen={isFilterOpen}
+          onClose={() => setIsFilterOpen(false)}
+          fromDate={mFrom}
+          toDate={mTo}
+          setFromDate={setMFrom}
+          setToDate={setMTo}
+          selectedNewsTypes={mTypes}
+          setSelectedNewsTypes={setMTypes}
+          onApply={applyFilters}
+          onReset={resetFilters}
         />
       )}
+
+      {/* Detail Modal */}
+      <Modal
+        open={isDetailOpen}
+        title={null}
+        footer={[
+          <Button key="close" onClick={() => setIsDetailOpen(false)}>
+            Close
+          </Button>,
+        ]}
+        onCancel={() => setIsDetailOpen(false)}
+        centered
+      >
+        <H6 bold>{detail?.newsTitle}</H6>
+        <FlexBox justify="space-between" style={{ margin: "0.5rem 0" }}>
+          <Small>{detail?.newsCaption}</Small>
+          <Small>
+            {new Date(detail?.newsDate).toLocaleString("en-IN", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </Small>
+        </FlexBox>
+        <Medium>{detail?.newsContent}</Medium>
+      </Modal>
     </>
   );
 };
