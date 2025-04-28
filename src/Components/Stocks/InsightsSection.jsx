@@ -94,7 +94,7 @@ export default function InsightsSection({ insightsData }) {
     }
   };
 
-  const recommendationInfo = insightsData ? getRecommendationInfo(insightsData.recommendation) : { text: 'NEUTRAL', description: '' };
+  const recommendationInfo = insightsData ? getRecommendationInfo(insightsData.buysell) : { text: 'NEUTRAL', description: '' };
 
   return (
     <BusinessSectionRight id="insights">
@@ -107,7 +107,7 @@ export default function InsightsSection({ insightsData }) {
             placement="top"
             color="#1f1f1f"
           >
-            <RecommendationBox recommendation={insightsData.recommendation}>
+            <RecommendationBox recommendation={insightsData.buysell}>
               {recommendationInfo.text}
             </RecommendationBox>
           </Tooltip>
