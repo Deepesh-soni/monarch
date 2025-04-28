@@ -420,7 +420,7 @@ const BusinessSectionLeft = styled(FlexBox)`
   gap: 1rem;
   background-color: white;
   @media ${device.laptop} {
-    width: 60%;
+    width: 50%;
   }
 `;
 

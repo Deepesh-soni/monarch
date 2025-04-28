@@ -299,14 +299,6 @@ const NavBar = () => {
             <Button
               onClick={() => {
                 setMobileNavOpen(false);
-                router.push("/profile");
-              }}
-            >
-              Profile
-            </Button>
-            <Button
-              onClick={() => {
-                setMobileNavOpen(false);
                 router.push("/auth/changepassword");
               }}
             >

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { CiClock2 } from "react-icons/ci";
 import { Pagination, Spin, Modal, Button } from "antd";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import { client } from "@axiosClient";
 
 import FlexBox from "@common/UI/FlexBox";
@@ -80,10 +81,9 @@ const EmptyState = styled(FlexBox)`
   align-items: center;
 `;
 
-const News = ({
-  onlyCompanyNews = false,
-  companyFqn = ""
-}) => {
+const News = ({ onlyCompanyNews = false, companyFqn = "" }) => {
+  const router = useRouter();
+
   // applied filters
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
@@ -115,7 +115,8 @@ const News = ({
     } else {
       if (fromDate) params.start = fromDate;
       if (toDate) params.end = toDate;
-      if (selectedNewsTypes.length) params.newsTypes = selectedNewsTypes.join(",");
+      if (selectedNewsTypes.length)
+        params.newsTypes = selectedNewsTypes.join(",");
       url = fromDate || toDate ? "/news/date" : "/news";
     }
 
@@ -195,7 +196,9 @@ const News = ({
             }}
           >
             <FlexBox width="100%" column rowGap="15px" padding="1rem">
-              {!onlyCompanyNews && <Support color="#142C8E">{item.newsType}</Support>}
+              {!onlyCompanyNews && (
+                <Support color="#142C8E">{item.newsType}</Support>
+              )}
               <H6 bold>{item.newsTitle}</H6>
               <Medium>
                 {item.newsContent.length > 100
@@ -242,21 +245,21 @@ const News = ({
     </FlexBox>
   );
 
+  // parse related companies
+  const relatedFqns = detail?.newsRelatedCo
+    ? detail.newsRelatedCo.split(",").map(f => f.trim()).filter(f => f)
+    : [];
+
   return (
     <>
       {onlyCompanyNews ? (
-        // company-only: just the list, centered, no wrapper/container
-        <FlexBox style={{ width: "100%"}}>
-          {ListSection}
-        </FlexBox>
+        <FlexBox style={{ width: "100%" }}>{ListSection}</FlexBox>
       ) : (
-        // default: with background & container
         <Wrapper>
           <Container>{ListSection}</Container>
         </Wrapper>
       )}
 
-      {/* Filter Modal */}
       {!onlyCompanyNews && (
         <FilterModal
           isOpen={isFilterOpen}
@@ -272,11 +275,24 @@ const News = ({
         />
       )}
 
-      {/* Detail Modal */}
       <Modal
         open={isDetailOpen}
         title={null}
         footer={[
+          ...(!onlyCompanyNews
+            ? relatedFqns.map(fqn => (
+              <Button
+                key={fqn}
+                type="link"
+                onClick={() => {
+                  setIsDetailOpen(false);
+                  router.push(`/stocks/${fqn}`);
+                }}
+              >
+                Open Related Company
+              </Button>
+            ))
+            : []),
           <Button key="close" onClick={() => setIsDetailOpen(false)}>
             Close
           </Button>,

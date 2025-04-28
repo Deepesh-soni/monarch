@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Skeleton, Typography, List, Tooltip, Row, Col, Divider } from "antd";
 import FlexBox from "@common/UI/FlexBox";
 import { device } from "@common/UI/Responsive";
+import { Body1, H1, Body2 } from "@common/UI/Headings";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -14,7 +15,7 @@ const BusinessSectionRight = styled(FlexBox)`
   flex-direction: column;
   background-color: white;
   @media ${device.laptop} {
-    width: 40%;
+    width: 50%;
   }
 `;
 
@@ -26,6 +27,7 @@ const HeaderContainer = styled(FlexBox)`
 
 const OutlookContainer = styled.div`
   margin-bottom: 16px;
+  margin-top: 8px;
 `;
 
 const OutlookText = styled(Text)`
@@ -99,7 +101,7 @@ export default function InsightsSection({ insightsData }) {
   return (
     <BusinessSectionRight id="insights">
       <HeaderContainer>
-        <Typography.Text strong>APART Insights</Typography.Text>
+        <H1 bold>APART Insights</H1>
         
         {insightsData && (
           <Tooltip 
@@ -118,8 +120,7 @@ export default function InsightsSection({ insightsData }) {
         <>
           <OutlookContainer>
             <div>
-              <OutlookText>Outlook:</OutlookText>
-              <Paragraph style={{ display: 'inline' }}>{insightsData.outlook}</Paragraph>
+              <Body1 style={{ display: 'inline' }}><strong>Outlook:</strong> {insightsData.outlook}</Body1>
             </div>
             <Text type="secondary" style={{ marginTop: '8px', display: 'block' }}>
               {recommendationInfo.description}
@@ -132,7 +133,7 @@ export default function InsightsSection({ insightsData }) {
                 dataSource={insightsData.pros}
                 renderItem={item => (
                   <List.Item>
-                    <Typography.Text>👍 {item}</Typography.Text>
+                    <Body2>👍 {item}</Body2>
                   </List.Item>
                 )}
               />
@@ -144,7 +145,7 @@ export default function InsightsSection({ insightsData }) {
                 dataSource={insightsData.cons}
                 renderItem={item => (
                   <List.Item>
-                    <Typography.Text>👎 {item}</Typography.Text>
+                    <Body2>👎 {item}</Body2>
                   </List.Item>
                 )}
               />
@@ -154,6 +155,8 @@ export default function InsightsSection({ insightsData }) {
       ) : (
         <>
           <Skeleton active paragraph={{ rows: 2 }} />
+          <Skeleton active title={{ width: 100 }} paragraph={{ rows: 3 }} />
+          <Skeleton active title={{ width: 100 }} paragraph={{ rows: 3 }} />
           <Skeleton active title={{ width: 100 }} paragraph={{ rows: 3 }} />
           <Skeleton active title={{ width: 100 }} paragraph={{ rows: 3 }} />
         </>
