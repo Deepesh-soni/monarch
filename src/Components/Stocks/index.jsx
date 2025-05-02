@@ -677,6 +677,7 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
       peer: peer.dividendYield,
       current: currentStock.dividendYield,
     },
+    { label: "P/E Ratio", peer: peer.peTtm, current: currentStock.peTtm },
     { label: "PB TTM", peer: peer.pbTtm, current: currentStock.pbTtm },
     { label: "ROE TTM", peer: peer.roeTtm, current: currentStock.roeTtm },
     { label: "PEG Ratio", peer: peer.pegRatio, current: currentStock.pegRatio },
@@ -1081,7 +1082,7 @@ const Stock = () => {
           <H4 bold style={{ fontSize: "1.25rem" }}>
             {formatValue(stock.price, true)}
           </H4>
-          <Medium style={{ color: changeColor }}>{stock.change}</Medium>
+          <Medium style={{ color: changeColor , fontSize: "0.875rem", fontWeight: 500 }}>{stock.change}%</Medium>
         </RightContainer>
       </HeaderRow>
       <Hr />
@@ -1276,7 +1277,7 @@ const Stock = () => {
           </Row>
           <Row>
             <Large bold>P/E Ratio</Large>
-            <Large>{stock?.pegRatio}</Large>
+            <Large>{stock?.peTtm}</Large>
           </Row>
           <Row>
             <Large bold>PBV</Large>
