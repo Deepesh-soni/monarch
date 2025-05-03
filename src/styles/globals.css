@@ -573,7 +573,7 @@ a {
   width: 500px !important;
 }
 
-.rule-fields > .ant-select.ant-select-outlined.css-dev-only-do-not-override-1d4w9r2.ant-select-single.ant-select-show-arrow {
+.rule-fields > .ant-select {
   width: 100% !important;
 }
 
@@ -581,7 +581,7 @@ a {
   width: 250px !important;
 }
 
-.rule-operators > .ant-select.ant-select-outlined.css-dev-only-do-not-override-1d4w9r2.ant-select-single.ant-select-show-arrow {
+.rule-operators > .ant-select {
   width: 100% !important;
 }
 
