@@ -1159,7 +1159,7 @@ const Stock = () => {
           <Body1>
             {(
               <>
-                {stock.details?.slice(0, 1576)}{" "}
+                {stock.details?.slice(0, 756)}{" "}
                 <a
                   href={`https://www.bseindia.com/stock-share-price/${slugify(
                     stock.companyName
