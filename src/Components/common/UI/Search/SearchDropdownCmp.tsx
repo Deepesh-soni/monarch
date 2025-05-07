@@ -72,7 +72,9 @@ const SearchableDropdown = ({ width = '100%', onChange }: Props) => {
                 background: 'white',
             }}
         >
-            <FaSearch color="#687792" />
+            <div>
+             <FaSearch color="#687792" size={16} />
+            </div>
             <Select
                 showSearch
                 labelInValue
