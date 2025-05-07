@@ -122,7 +122,11 @@ const News = ({ onlyCompanyNews = false, companyFqn = "" }) => {
 
     try {
       const res = await client.get(url, { params });
-      setNewsList(res.data.data);
+      setNewsList(res.data.data?.map((news) => ({
+        ...news, newsContent: news.newsContent
+          .replace(/<\/p>\s*<p>/gi, '\n\n')
+          .replace(/<\/?p>/gi, '')
+      })));
       setTotalItems(res.data.total);
     } catch (err) {
       console.error(err);
@@ -222,7 +226,7 @@ const News = ({ onlyCompanyNews = false, companyFqn = "" }) => {
           </HoverCard>
         ))
       ) : (
-        <EmptyState>
+        <EmptyState style={{ height: onlyCompanyNews ? '10vh' : '60vh'}}>
           <Medium color="#687792" style={{ fontSize: "1.5rem" }}>
             No news found
           </Medium>

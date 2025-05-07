@@ -131,7 +131,7 @@ const StockChart = ({ stockCode = "delhivery" }) => {
             <YAxis
               yAxisId="price"
               tickFormatter={val => `₹ ${val.toLocaleString("en-IN")}`}
-              width={ isMobile ? 60 : 100}
+              width={isMobile ? 60 : 100}
               fontSize={isMobile ? 10 : 'default'}
             />
             <YAxis
@@ -350,7 +350,6 @@ const Hr = styled.hr`
 
 const NavLinks = styled(FlexBox)`
   width: 100%;
-  position: sticky;
   top: 0;
   border: 1px solid #3c3c3c;
   border-radius: 12px;
@@ -719,6 +718,7 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
                 textAlign: "right",
                 borderBottom: "2px solid #ccc",
                 padding: "8px",
+                textAlign: 'center',
               }}
             >
               <strong>
@@ -753,6 +753,7 @@ const PeerComparisonTable = ({ peer, currentStock }) => {
                   textAlign: "right",
                   padding: "8px",
                   borderBottom: "1px solid #eee",
+                  textAlign: 'center',
                 }}
               >
                 {row.peer !== undefined ? row.peer : "N/A"}
@@ -824,7 +825,7 @@ export function CashFlowSection({ data = [] }) {
           <XAxis dataKey="year" />
           <YAxis
             tickFormatter={val => `₹ ${val.toLocaleString("en-IN")}`}
-            width={ isMobile ? 60 : 100}
+            width={isMobile ? 60 : 100}
             fontSize={isMobile ? 10 : 'default'}
           />
           <Tooltip content={<CustomCashflowTooltip />} />
@@ -837,18 +838,14 @@ export function CashFlowSection({ data = [] }) {
 
 function CustomShareholdingTooltip({ active, payload, label }) {
   if (active && payload && payload.length) {
+    // payload[0].payload has the full data object for this year
+    const row = payload[0].payload;
     return (
-      <div
-        style={{
-          background: "#fff",
-          padding: "10px",
-          border: "1px solid #ccc",
-        }}
-      >
+      <div style={{ background: "#fff", padding: 10, border: "1px solid #ccc" }}>
         <strong>Year: {label}</strong>
-        {payload.map(entry => (
-          <div key={entry.name} style={{ color: entry.color }}>
-            {_.startCase(entry.name)}: {entry.value?.toFixed(2)}%
+        {keys.map(key => (
+          <div key={key} style={{ color: keyColors[key], fontSize: 12 }}>
+            {_.startCase(key)}: {(row[key] ?? 0).toFixed(2)}%
           </div>
         ))}
       </div>
@@ -1023,6 +1020,13 @@ const Stock = () => {
     }
   };
 
+  const stockHoldingChartFiltered = useMemo(() => stockHoldingChart?.chartData?.map(row =>
+    keys.reduce((acc, k) => {
+      if (row[k] > 0) acc[k] = row[k];
+      return acc;
+    }, { YRC: row.YRC })
+  ), [stockHoldingChart]);
+
   if (loading)
     return <Spin style={{ margin: "100px auto", display: "block" }} />;
 
@@ -1082,7 +1086,7 @@ const Stock = () => {
           <H4 bold style={{ fontSize: "1.25rem" }}>
             {formatValue(stock.price, true)}
           </H4>
-          <Medium style={{ color: changeColor , fontSize: "0.875rem", fontWeight: 500 }}>{stock.change}%</Medium>
+          <Medium style={{ color: changeColor, fontSize: "0.875rem", fontWeight: 500 }}>{stock.change}%</Medium>
         </RightContainer>
       </HeaderRow>
       <Hr />
@@ -1260,46 +1264,40 @@ const Stock = () => {
         <ShareholdingLeft width="100%" column id="peers">
           <H1 bold>Shareholding Analysis</H1>
           {stockHoldingChart ? (
-            <StackedBarChart data={stockHoldingChart?.chartData} />
+            <StackedBarChart data={stockHoldingChartFiltered} />
           ) : (
             <Unavailble />
           )}
         </ShareholdingLeft>
         <ShareholdingRight>
           <H1 bold>Valuation</H1>
-          <Row>
-            <Large bold>52 Week High</Large>
-            <Large>{formatValue(stock?.high52WeekPrice, true)}</Large>
-          </Row>
-          <Row>
-            <Large bold>52 Week Low</Large>
-            <Large>{formatValue(stock?.low52WeekPrice, true)}</Large>
-          </Row>
-          <Row>
-            <Large bold>P/E Ratio</Large>
-            <Large>{stock?.peTtm}</Large>
-          </Row>
-          <Row>
-            <Large bold>PBV</Large>
-            <Large>{stock?.pbv}</Large>
-          </Row>
-          <Row>
-            <Large bold>EV to EBITDA</Large>
-            <Large>{stock?.evToEbitda}</Large>
-          </Row>
-          <Row>
-            <Large bold>EV to Capital Employed</Large>
-            <Large>₹ 1,234</Large>
-          </Row>
-          <Row>
-            <Large bold>EV to Sales</Large>
-            <Large>{stock?.evToSales}</Large>
-          </Row>
-          <Row>
-            <Large bold>PEG</Large>
-            <Large>{stock?.pegRatio}</Large>
-          </Row>
+          <ResponsiveTableWrapper>
+            <Table style={{minWidth: 'unset'}}>
+              <StyledTable>
+                <tbody>
+                  {[
+                    ["52 Week High", stock.high52WeekPrice],
+                    ["52 Week Low", stock.low52WeekPrice],
+                    ["P/E Ratio", stock.peTtm],
+                    ["PBV", stock.pbv],
+                    ["EV to EBITDA", stock.evToEbitda],
+                    ["EV to Capital Employed", stock.evToCapitalEmployed],
+                    ["EV to Sales", stock.evToSales],
+                    ["PEG", stock.pegRatio],
+                  ].map(([label, val]) => (
+                    <TableRow key={label}>
+                      <TableCell>{label}</TableCell>
+                      <TableCell>
+                        {val != null ? formatValue(val, true) : "N/A"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </tbody>
+              </StyledTable>
+            </Table>
+          </ResponsiveTableWrapper>
         </ShareholdingRight>
+
       </Section>
 
       <AnnualReportsSection newsData={newsData} />
