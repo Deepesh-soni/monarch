@@ -22,6 +22,7 @@ import { Alert } from "antd";
 import AnnualReportsSection from "./AnnualReports";
 import News from "@Components/News";
 import useMobileView from "../../hooks/useMobileView";
+import { DateTime } from "luxon";
 
 const TIME_FRAMES = ["1W", "1M", "3M", "6M", "1Y", "5Y", "MAX"];
 
@@ -503,15 +504,18 @@ const LeftContainer = styled.div`
   }
 `;
 
+
 const RightContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0.5rem;
 
   @media ${device.laptop} {
-    align-items: flex-end;
-    width: auto;
+    flex-direction: column;           /* stack price/change/date */
+    align-items: flex-end;            /* right-align them */
+    margin-top: 0;
   }
 `;
 
@@ -519,17 +523,14 @@ const HeaderRow = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 1rem;
-  gap: 0.5rem;
 
   @media ${device.laptop} {
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-between;   /* push left/right apart */
     align-items: flex-start;
-    gap: 0;
   }
 `;
+
 
 const ExchangeLinksRow = styled.div`
   margin-top: 4px;
@@ -1042,6 +1043,16 @@ const Stock = () => {
   const changeValue = parseFloat(stock.change || "0");
   const changeColor = changeValue >= 0 ? "green" : "red";
 
+  const ist = DateTime.fromISO(stock.lastRefreshed).setZone("Asia/Kolkata");
+  // format: “06 May 4:01 p.m.”
+  const datePart = ist.toFormat("dd LLL");
+  const timePart = ist
+    .toFormat("h:mm a")
+    .toLowerCase()
+    .replace("am", "a.m.")
+    .replace("pm", "p.m.");
+  const lastRefreshedLabel = `${datePart} ${timePart}`;
+
   return (
     <Wrapper>
       <HeaderRow>
@@ -1083,13 +1094,13 @@ const Stock = () => {
           </ExchangeLinksRow>
         </LeftContainer>
         <RightContainer>
-          <H4 bold style={{ fontSize: "1.25rem" }}>
-            {formatValue(stock.price, true)}
-          </H4>
-          <Medium style={{ color: changeColor, fontSize: "0.875rem", fontWeight: 500 }}>{stock.change}%</Medium>
+          <H4 bold>{formatValue(stock.price, true)}</H4>
+          <Medium style={{ color: changeColor, fontWeight: 500, fontSize: 14 }}>{stock.change}%</Medium>
+          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+            {lastRefreshedLabel}
+          </Typography.Text>
         </RightContainer>
       </HeaderRow>
-      <Hr />
       <NavLinks>
         <NavLink href="#security">Security Information</NavLink>
         <NavLink href="#business">Business Description</NavLink>
@@ -1272,12 +1283,12 @@ const Stock = () => {
         <ShareholdingRight>
           <H1 bold>Valuation</H1>
           <ResponsiveTableWrapper>
-            <Table style={{minWidth: 'unset'}}>
+            <Table style={{ minWidth: 'unset' }}>
               <StyledTable>
                 <tbody>
                   {[
-                    ["52 Week High", stock.high52WeekPrice],
-                    ["52 Week Low", stock.low52WeekPrice],
+                    ["52 Week High", formatValue(stock.high52WeekPrice, true)],
+                    ["52 Week Low", formatValue(stock.low52WeekPrice, true)],
                     ["P/E Ratio", stock.peTtm],
                     ["PBV", stock.pbv],
                     ["EV to EBITDA", stock.evToEbitda],
@@ -1288,7 +1299,7 @@ const Stock = () => {
                     <TableRow key={label}>
                       <TableCell>{label}</TableCell>
                       <TableCell>
-                        {val != null ? formatValue(val, true) : "N/A"}
+                        {val != null ? val : "N/A"}
                       </TableCell>
                     </TableRow>
                   ))}
