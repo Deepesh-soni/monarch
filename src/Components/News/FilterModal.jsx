@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
-import { Modal, DatePicker, Checkbox, Button, Space, Typography } from "antd";
+import { Modal, DatePicker, Checkbox, Button, Typography } from "antd";
 import dayjs from "dayjs";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const Footer = styled.div`
   display: flex;
@@ -24,6 +24,20 @@ export default function FilterModal({
   onApply,
   onReset,
 }) {
+  const rangeValue = useMemo(
+    () =>
+      fromDate && toDate
+        ? [dayjs(fromDate), dayjs(toDate)]
+        : [],
+    [fromDate, toDate]
+  );
+
+  const handleRangeChange = (_, dateStrings) => {
+    const [start, end] = dateStrings;
+    setFromDate(start || null);
+    setToDate(end || null);
+  };
+
   return (
     <Modal
       title="Filter News"
@@ -35,16 +49,17 @@ export default function FilterModal({
     >
       <Title level={5}>Date Range</Title>
       <DatePicker.RangePicker
-        value={
-          fromDate && toDate
-            ? [dayjs(fromDate, "YYYY-MM-DD"), dayjs(toDate, "YYYY-MM-DD")]
-            : []
-        }
-        onChange={(_, [start, end]) => {
-          setFromDate(start || null);
-          setToDate(end || null);
-        }}
+        value={rangeValue}
+        onChange={handleRangeChange}
+        allowEmpty={[true, true]}
         style={{ width: "100%", marginBottom: 16 }}
+        getPopupContainer={() => document.body}
+        placement="bottomLeft"
+        popupStyle={{
+          width: "90vw",
+          maxWidth: 400,
+          zIndex: 9999,
+        }}
       />
 
       <Title level={5}>News Type</Title>
