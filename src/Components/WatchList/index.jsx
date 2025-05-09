@@ -9,7 +9,7 @@ import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { Button, Modal, Pagination, Skeleton } from "antd";
 import { toast } from "react-toastify";
 import { H5 } from "../../Components/common/Typography";
-import { Medium, Small, Large } from "../../Components/common/Paragraph";
+import { Medium, Large } from "../../Components/common/Paragraph";
 import { client } from "@axiosClient";
 import NewUpdatePopup from "../common/NewUpdatePopup";
 import { useRouter } from "next/router";
@@ -114,7 +114,7 @@ const WatchList = () => {
         />
 
         <FlexBox width="100%" column rowGap="2rem">
-          <FlexBox align="center" justify="space-between" style={{marginTop: '16px'}}>
+          <FlexBox align="center" justify="space-between" style={{ marginTop: '16px' }}>
             <FlexBox column>
               <H5 bold>My Watchlists</H5>
               <Medium color="#687792">
