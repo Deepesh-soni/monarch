@@ -6,6 +6,16 @@ import { Result } from "antd";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, LabelList } from "recharts";
 import { blue } from "@ant-design/colors";
 import _ from "lodash";
+import { device } from "@common/UI/Responsive";
+
+const ShareholdingContainer = styled(FlexBox)`
+  flex-direction: column;
+  gap: 1rem;
+
+  @media ${device.laptop} {
+    flex-direction: row;
+  }
+`;
 
 const ShareholdingLeft = styled(FlexBox)`
   border: 1px solid #3c3c3c;
@@ -165,7 +175,7 @@ const ShareholdingAnalysis = ({ stockHoldingChart, stock }) => {
     );
 
     return (
-        <FlexBox width="100%" column>
+        <ShareholdingContainer width="100%">
             <ShareholdingLeft width="100%" column id="peers">
                 <H1 bold>Shareholding Analysis</H1>
                 {stockHoldingChart ? (
@@ -202,7 +212,7 @@ const ShareholdingAnalysis = ({ stockHoldingChart, stock }) => {
                     </Table>
                 </ResponsiveTableWrapper>
             </ShareholdingRight>
-        </FlexBox>
+        </ShareholdingContainer>
     );
 };
 
